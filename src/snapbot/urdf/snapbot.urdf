@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="Snapbot_V2.0.SLDASM">
+  <!-- Body Link -->
+  <link name="Body">
+    <inertial>
+      <origin xyz="0.000698393115871002 0.000288945802796735 0.00803423705251359" rpy="0 0 0" />
+      <mass value="0.243375116892044" />
+      <inertia ixx="0.000212893207585076" ixy="5.24940171471562E-07" ixz="-2.46229578713823E-07" iyy="0.0001937211842341" iyz="2.43146414991933E-07" izz="0.000369983133865988" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://Snapbot_V2.0.SLDASM/meshes/Body.STL" />
+      </geometry>
+      <material name="Body_Material">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://Snapbot_V2.0.SLDASM/meshes/Body.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Camera Module 1 -->
+  <link name="Camera_module_1">
+    <inertial>
+      <origin xyz="0.00587664178888978 0.00446482600512574 0.0166383704347961" rpy="0 0 0" />
+      <mass value="0.0185738207859444" />
+      <inertia ixx="1.71013884725005E-06" ixy="-2.90460159502904E-07" ixz="-2.150980252729E-08" iyy="2.07931187170696E-06" iyz="-1.44223438375534E-08" izz="2.57241224360764E-06" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://Snapbot_V2.0.SLDASM/meshes/Camera_module_1.STL" />
+      </geometry>
+      <material name="Camera_1_Material">
+        <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://Snapbot_V2.0.SLDASM/meshes/Camera_module_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="camera_1" type="continuous">
+    <origin xyz="0 0 0.05" rpy="0 0 2.61799387799149" />
+    <parent link="Body" />
+    <child link="Camera_module_1" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <!-- Add similar conversions for all links and joints in the original URDF file -->
+
+</robot>
