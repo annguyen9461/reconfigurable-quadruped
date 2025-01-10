@@ -67,8 +67,8 @@
 #define TORQUE_DISABLE                  0                   // Value for disabling the torque
 #define DXL1_MINIMUM_POSITION_VALUE     100                 // Dynamixel will rotate between this value
 #define DXL1_MAXIMUM_POSITION_VALUE     4000                // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
-#define DXL2_MINIMUM_POSITION_VALUE     -150000
-#define DXL2_MAXIMUM_POSITION_VALUE     150000
+#define DXL2_MINIMUM_POSITION_VALUE     1212
+#define DXL2_MAXIMUM_POSITION_VALUE     2280
 #define DXL1_MOVING_STATUS_THRESHOLD    10                  // Dynamixel MX moving status threshold
 #define DXL2_MOVING_STATUS_THRESHOLD    20                  // Dynamixel PRO moving status threshold
 
@@ -132,7 +132,7 @@ int main()
   // Initialize PacketHandler instance
   // Set the protocol version
   // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
-  dynamixel::PacketHandler *packetHandler1 = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION1);
+  dynamixel::PacketHandler *packetHandler1 = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION2);
   dynamixel::PacketHandler *packetHandler2 = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION2);
 
   int index = 0;
