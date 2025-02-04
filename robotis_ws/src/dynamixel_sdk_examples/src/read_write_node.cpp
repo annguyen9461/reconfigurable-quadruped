@@ -171,11 +171,11 @@ void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
     );
 
     if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_INFO(rclcpp::get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "%s", packetHandler->getTxRxResult(dxl_comm_result));
     } else if (dxl_error != 0) {
-      RCLCPP_INFO(rclcpp::get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "%s", packetHandler->getRxPacketError(dxl_error));
     } else {
-      RCLCPP_INFO(rclcpp::get_logger(), "Set [ID: %d] [Goal Position: %d]", pos_msg.id, pos_msg.position);
+      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "Set [ID: %d] [Goal Position: %d]", pos_msg.id, pos_msg.position);
     }
   }
 }
