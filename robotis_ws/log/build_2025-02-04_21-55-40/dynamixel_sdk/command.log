@@ -1,0 +1,6 @@
+Invoking command in '/robotis_ws/build/dynamixel_sdk': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /robotis_ws/src/dynamixel_sdk -DCMAKE_INSTALL_PREFIX=/robotis_ws/install/dynamixel_sdk
+Invoked command in '/robotis_ws/build/dynamixel_sdk' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /robotis_ws/src/dynamixel_sdk -DCMAKE_INSTALL_PREFIX=/robotis_ws/install/dynamixel_sdk
+Invoking command in '/robotis_ws/build/dynamixel_sdk': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /robotis_ws/build/dynamixel_sdk -- -j4 -l4
+Invoked command in '/robotis_ws/build/dynamixel_sdk' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /robotis_ws/build/dynamixel_sdk -- -j4 -l4
+Invoking command in '/robotis_ws/build/dynamixel_sdk': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /robotis_ws/build/dynamixel_sdk
+Invoked command in '/robotis_ws/build/dynamixel_sdk' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /robotis_ws/build/dynamixel_sdk

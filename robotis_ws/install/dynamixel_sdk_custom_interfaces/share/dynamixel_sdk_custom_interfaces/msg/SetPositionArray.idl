@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from dynamixel_sdk_custom_interfaces/msg/SetPositionArray.msg
+// generated code does not contain a copyright notice
+
+#include "dynamixel_sdk_custom_interfaces/msg/SetPosition.idl"
+
+module dynamixel_sdk_custom_interfaces {
+  module msg {
+    struct SetPositionArray {
+      sequence<dynamixel_sdk_custom_interfaces::msg::SetPosition> positions;
+    };
+  };
+};

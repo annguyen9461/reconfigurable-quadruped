@@ -1,0 +1,19 @@
+[01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:31:[m[K [01;31m[Kerror: [m[K‘[01m[KSetPositionArray[m[K’ does not name a type
+  151 | id extractPositionArr(const [01;31m[KSetPositionArray[m[K::SharedPtr pos_arr_msg) {
+      |                             [01;31m[K^~~~~~~~~~~~~~~~[m[K
+
+[01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:59:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kpos_arr_msg[m[K’
+  151 | SetPositionArray::SharedPtr [01;31m[Kpos_arr_msg[m[K) {
+      |                             [01;31m[K^~~~~~~~~~~[m[K
+
+[01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:58:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kpos_arr_msg[m[K’
+  151 |  SetPositionArray::SharedPtr[01;31m[K [m[K[32m[Kpos_arr_msg[m[K) {
+      |                             [01;31m[K^[m[K[32m[K~~~~~~~~~~~[m[K
+      |                             [32m[K)[m[K
+[01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:59:[m[K [01;31m[Kerror: [m[Kexpected initializer before ‘[01m[Kpos_arr_msg[m[K’
+  151 | SetPositionArray::SharedPtr [01;31m[Kpos_arr_msg[m[K) {
+      |                             [01;31m[K^~~~~~~~~~~[m[K
+
+gmake[2]: *** [CMakeFiles/read_write_node.dir/build.make:76: CMakeFiles/read_write_node.dir/src/read_write_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/read_write_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

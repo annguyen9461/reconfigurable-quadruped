@@ -1,0 +1,70 @@
+[0.041s] Invoking command in '/robotis_ws/build/dynamixel_sdk_examples': AMENT_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble LD_LIBRARY_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:${LD_LIBRARY_PATH} PYTHONPATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /robotis_ws/src/dynamixel_sdk_examples -DCMAKE_INSTALL_PREFIX=/robotis_ws/install/dynamixel_sdk_examples
+[0.196s] -- The C compiler identification is GNU 11.4.0
+[0.315s] -- The CXX compiler identification is GNU 11.4.0
+[0.326s] -- Detecting C compiler ABI info
+[0.483s] -- Detecting C compiler ABI info - done
+[0.493s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.494s] -- Detecting C compile features
+[0.494s] -- Detecting C compile features - done
+[0.499s] -- Detecting CXX compiler ABI info
+[0.666s] -- Detecting CXX compiler ABI info - done
+[0.677s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.677s] -- Detecting CXX compile features
+[0.678s] -- Detecting CXX compile features - done
+[0.681s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.907s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.070s] -- Found dynamixel_sdk: 3.7.60 (/robotis_ws/install/dynamixel_sdk/share/dynamixel_sdk/cmake)
+[1.072s] -- Found dynamixel_sdk_custom_interfaces: 3.7.60 (/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake)
+[1.115s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.122s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.133s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.157s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.184s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.224s] -- Found rclcpp: 16.0.11 (/opt/ros/humble/share/rclcpp/cmake)
+[1.287s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.291s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.341s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[1.369s] -- Found FastRTPS: /opt/ros/humble/include  
+[1.400s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.413s] -- Looking for pthread.h
+[1.565s] -- Looking for pthread.h - found
+[1.566s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.714s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.715s] -- Found Threads: TRUE  
+[1.801s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.944s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.946s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.946s] -- Configured cppcheck include dirs: /robotis_ws/src/dynamixel_sdk_examples/include
+[1.946s] -- Configured cppcheck exclude dirs and/or files: 
+[1.947s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.947s] -- Configured cpplint exclude dirs and/or files: 
+[1.950s] -- Added test 'lint_cmake' to check CMake code style
+[1.954s] -- Added test 'uncrustify' to check C / C++ code style
+[1.955s] -- Configured uncrustify additional arguments: 
+[1.957s] -- Added test 'xmllint' to check XML markup files
+[1.961s] -- Configuring done
+[1.981s] -- Generating done
+[1.987s] -- Build files have been written to: /robotis_ws/build/dynamixel_sdk_examples
+[2.003s] Invoked command in '/robotis_ws/build/dynamixel_sdk_examples' returned '0': AMENT_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble LD_LIBRARY_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:${LD_LIBRARY_PATH} PYTHONPATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /robotis_ws/src/dynamixel_sdk_examples -DCMAKE_INSTALL_PREFIX=/robotis_ws/install/dynamixel_sdk_examples
+[2.005s] Invoking command in '/robotis_ws/build/dynamixel_sdk_examples': AMENT_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble LD_LIBRARY_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:${LD_LIBRARY_PATH} PYTHONPATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /robotis_ws/build/dynamixel_sdk_examples -- -j4 -l4
+[2.110s] [ 50%] [32mBuilding CXX object CMakeFiles/read_write_node.dir/src/read_write_node.cpp.o[0m
+[6.327s] [01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:31:[m[K [01;31m[Kerror: [m[K‘[01m[KSetPositionArray[m[K’ does not name a type
+[6.327s]   151 | id extractPositionArr(const [01;31m[KSetPositionArray[m[K::SharedPtr pos_arr_msg) {
+[6.327s]       |                             [01;31m[K^~~~~~~~~~~~~~~~[m[K
+[6.327s] 
+[6.327s] [01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:59:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kpos_arr_msg[m[K’
+[6.327s]   151 | SetPositionArray::SharedPtr [01;31m[Kpos_arr_msg[m[K) {
+[6.327s]       |                             [01;31m[K^~~~~~~~~~~[m[K
+[6.327s] 
+[6.327s] [01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:58:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K)[m[K’ before ‘[01m[Kpos_arr_msg[m[K’
+[6.327s]   151 |  SetPositionArray::SharedPtr[01;31m[K [m[K[32m[Kpos_arr_msg[m[K) {
+[6.327s]       |                             [01;31m[K^[m[K[32m[K~~~~~~~~~~~[m[K
+[6.327s]       |                             [32m[K)[m[K
+[6.327s] [01m[K/robotis_ws/src/dynamixel_sdk_examples/src/read_write_node.cpp:151:59:[m[K [01;31m[Kerror: [m[Kexpected initializer before ‘[01m[Kpos_arr_msg[m[K’
+[6.328s]   151 | SetPositionArray::SharedPtr [01;31m[Kpos_arr_msg[m[K) {
+[6.328s]       |                             [01;31m[K^~~~~~~~~~~[m[K
+[6.328s] 
+[12.065s] gmake[2]: *** [CMakeFiles/read_write_node.dir/build.make:76: CMakeFiles/read_write_node.dir/src/read_write_node.cpp.o] Error 1
+[12.065s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/read_write_node.dir/all] Error 2
+[12.065s] gmake: *** [Makefile:146: all] Error 2
+[12.069s] Invoked command in '/robotis_ws/build/dynamixel_sdk_examples' returned '2': AMENT_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble LD_LIBRARY_PATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:${LD_LIBRARY_PATH} PYTHONPATH=/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /robotis_ws/build/dynamixel_sdk_examples -- -j4 -l4
