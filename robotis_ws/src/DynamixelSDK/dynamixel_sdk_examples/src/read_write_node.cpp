@@ -33,6 +33,7 @@
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dynamixel_sdk_custom_interfaces/msg/set_position.hpp"
+#include "dynamixel_sdk_custom_interfaces/msg/set_position_array.hpp"
 #include "dynamixel_sdk_custom_interfaces/srv/get_position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rcutils/cmdline_parser.h"
@@ -104,6 +105,16 @@ ReadWriteNode::ReadWriteNode()
     }
     );
 
+  set_position_arr_subscriber_ = 
+    this->create_subscription<SetPositionArray>(
+    "set_position_arr",   // topic name
+    QOS_RKL10V,           // QoS (Quality of Service) - to handle message reliability and delivery
+    [this](const SetPositionArray::SharedPtr pos_arr_msg) -> void
+    {
+      extractPositionArr(pos_arr_msg);
+    }
+    );
+
   auto get_present_position =
     [this](
     const std::shared_ptr<GetPosition::Request> request,
@@ -134,6 +145,36 @@ ReadWriteNode::ReadWriteNode()
 
 ReadWriteNode::~ReadWriteNode()
 {
+}
+
+void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
+  for (const auto & pos_msg : pos_arr_msg->positions) 
+  {
+    uint8_t dxl_error = 0;
+
+    // Position Value of X series is 4 byte data.
+    // For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
+    uint32_t goal_position = static_cast<uint32_t>(pos_msg.position);  // Convert int32 -> uint32
+
+    // Write Goal Position (length : 4 bytes)
+    // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
+    dxl_comm_result =
+    packetHandler->write4ByteTxRx(
+      portHandler,
+      (uint8_t) pos_msg->id,
+      ADDR_GOAL_POSITION,
+      goal_position,
+      &dxl_error
+    );
+
+    if (dxl_comm_result != COMM_SUCCESS) {
+      RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+    } else if (dxl_error != 0) {
+      RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", pos_msg->id, pos_msg->position);
+    }
+  }
 }
 
 void setupDynamixel(uint8_t dxl_id)
