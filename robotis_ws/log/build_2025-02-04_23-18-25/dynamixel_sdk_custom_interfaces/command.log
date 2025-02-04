@@ -1,0 +1,1 @@
+Invoking command in '/robotis_ws2/build/dynamixel_sdk_custom_interfaces': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/humble /usr/bin/cmake /robotis_ws2/src/DynamixelSDK/dynamixel_sdk_custom_interfaces -DCMAKE_INSTALL_PREFIX=/robotis_ws2/install/dynamixel_sdk_custom_interfaces

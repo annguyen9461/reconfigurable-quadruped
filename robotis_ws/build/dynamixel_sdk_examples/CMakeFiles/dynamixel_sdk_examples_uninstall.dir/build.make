@@ -53,7 +53,7 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /robotis_ws/src/dynamixel_sdk_examples
+CMAKE_SOURCE_DIR = /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /robotis_ws/build/dynamixel_sdk_examples
@@ -82,6 +82,6 @@ CMakeFiles/dynamixel_sdk_examples_uninstall.dir/clean:
 .PHONY : CMakeFiles/dynamixel_sdk_examples_uninstall.dir/clean
 
 CMakeFiles/dynamixel_sdk_examples_uninstall.dir/depend:
-	cd /robotis_ws/build/dynamixel_sdk_examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/dynamixel_sdk_examples /robotis_ws/src/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples/CMakeFiles/dynamixel_sdk_examples_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /robotis_ws/build/dynamixel_sdk_examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples/CMakeFiles/dynamixel_sdk_examples_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/dynamixel_sdk_examples_uninstall.dir/depend
 

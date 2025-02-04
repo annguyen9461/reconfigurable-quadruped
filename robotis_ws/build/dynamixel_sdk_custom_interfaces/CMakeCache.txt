@@ -25,7 +25,7 @@ AMENT_CMAKE_ENVIRONMENT_PARENT_PREFIX_PATH_GENERATION:BOOL=ON
 
 //Replace the CMake install command with a custom implementation
 // using symlinks instead of copying resources
-AMENT_CMAKE_SYMLINK_INSTALL:BOOL=OFF
+AMENT_CMAKE_SYMLINK_INSTALL:BOOL=1
 
 //Generate an uninstall target to revert the effects of the install
 // step
@@ -253,7 +253,7 @@ PYTHON_LIBRARY_DEBUG:FILEPATH=PYTHON_LIBRARY_DEBUG-NOTFOUND
 Python3_EXECUTABLE:FILEPATH=/usr/bin/python3
 
 //Name of the computer/site where compile is being run
-SITE:STRING=cb1e4af00541
+SITE:STRING=mocha2
 
 //Path to a library.
 _lib:FILEPATH=/opt/ros/humble/lib/libbuiltin_interfaces__rosidl_typesupport_fastrtps_cpp.so
@@ -331,7 +331,7 @@ dynamixel_sdk_custom_interfaces_BINARY_DIR:STATIC=/robotis_ws/build/dynamixel_sd
 dynamixel_sdk_custom_interfaces_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-dynamixel_sdk_custom_interfaces_SOURCE_DIR:STATIC=/robotis_ws/src/dynamixel_sdk_custom_interfaces
+dynamixel_sdk_custom_interfaces_SOURCE_DIR:STATIC=/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
 
 //Dependencies for the target
 dynamixel_sdk_custom_interfaces__rosidl_generator_c_LIB_DEPENDS:STATIC=general;builtin_interfaces::builtin_interfaces__rosidl_generator_c;general;rosidl_runtime_c::rosidl_runtime_c;general;rcutils::rcutils;
@@ -517,7 +517,7 @@ CMAKE_GENERATOR_PLATFORM:INTERNAL=
 CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/robotis_ws/src/dynamixel_sdk_custom_interfaces
+CMAKE_HOME_DIRECTORY:INTERNAL=/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER
@@ -608,4 +608,6 @@ _Python3_EXECUTABLE:INTERNAL=/usr/bin/python3
 //Python3 Properties
 _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;10;12;64;;cpython-310-aarch64-linux-gnu;/usr/lib/python3.10;/usr/lib/python3.10;/usr/lib/python3/dist-packages;/usr/lib/python3/dist-packages
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=0f3e53742e142b1d9e50e4ca5b901dd8
+//Index for unique symlink install targets
+__AMENT_CMAKE_SYMLINK_INSTALL_TARGETS_INDEX:INTERNAL=3
 

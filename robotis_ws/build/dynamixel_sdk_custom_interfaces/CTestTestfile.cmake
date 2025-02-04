@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: /robotis_ws/src/dynamixel_sdk_custom_interfaces
+# Source directory: /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
 # Build directory: /robotis_ws/build/dynamixel_sdk_custom_interfaces
 # 
 # This file includes the relevant testing commands required for 
