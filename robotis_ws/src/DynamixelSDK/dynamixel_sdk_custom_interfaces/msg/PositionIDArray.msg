@@ -1,0 +1,2 @@
+# PositionIDArray.msg
+PositionID[] positions
