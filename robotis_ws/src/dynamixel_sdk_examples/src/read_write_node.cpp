@@ -1,4 +1,4 @@
-// Copyright 2021 ROBOTIS CO., LTD.
+// Copyright 2020 ROBOTIS CO., LTD.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,245 +13,134 @@
 // limitations under the License.
 
 /*******************************************************************************
-// This example is written for DYNAMIXEL X(excluding XL-320) and MX(2.0) series with U2D2.
-// For other series, please refer to the product eManual and modify the Control Table addresses and other definitions.
-// To test this example, please follow the commands below.
-//
-// Open terminal #1
-// $ ros2 run dynamixel_sdk_examples read_write_node
-//
-// Open terminal #2 (run one of below commands at a time)
-// $ ros2 topic pub -1 /set_position dynamixel_sdk_custom_interfaces/SetPosition "{id: 1, position: 1000}"
-// $ ros2 service call /get_position dynamixel_sdk_custom_interfaces/srv/GetPosition "id: 1"
-//
-// Author: Will Son
+ * This example is written for DYNAMIXEL X(excluding XL-320) and MX(2.0) series with U2D2.
+ * For other series, please refer to the product eManual and modify the Control Table addresses and other definitions.
+ * To test this example, please follow the commands below.
+ *
+ * Open terminal #1
+ * $ roscore
+ *
+ * Open terminal #2
+ * $ rosrun dynamixel_sdk_examples read_write_node
+ *
+ * Open terminal #3 (run one of below commands at a time)
+ * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 1, position: 0}"
+ * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 1, position: 1000}"
+ * $ rosservice call /get_position "id: 1"
+ * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 2, position: 0}"
+ * $ rostopic pub -1 /set_position dynamixel_sdk_examples/SetPosition "{id: 2, position: 1000}"
+ * $ rosservice call /get_position "id: 2"
+ *
+ * Author: Zerom
 *******************************************************************************/
 
-#include <cstdio>
-#include <memory>
-#include <string>
+#include <ros/ros.h>
 
+#include "std_msgs/String.h"
+#include "dynamixel_sdk_examples/GetPosition.h"
+#include "dynamixel_sdk_examples/SetPosition.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "dynamixel_sdk_custom_interfaces/msg/set_position.hpp"
-#include "dynamixel_sdk_custom_interfaces/msg/set_position_array.hpp"
-#include "dynamixel_sdk_custom_interfaces/srv/get_position.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include "rcutils/cmdline_parser.h"
 
-#include "read_write_node.hpp"
+using namespace dynamixel;
 
-// Control table address for X series (except XL-320)
-#define ADDR_OPERATING_MODE 11
-#define ADDR_TORQUE_ENABLE 64
-#define ADDR_GOAL_POSITION 116
+// Control table address
+#define ADDR_TORQUE_ENABLE    64
+#define ADDR_GOAL_POSITION    116
 #define ADDR_PRESENT_POSITION 132
 
 // Protocol version
-#define PROTOCOL_VERSION 2.0  // Default Protocol version of DYNAMIXEL X series.
+#define PROTOCOL_VERSION      2.0             // Default Protocol version of DYNAMIXEL X series.
 
 // Default setting
-#define BAUDRATE 57600  // Default Baudrate of DYNAMIXEL X series
-#define DEVICE_NAME "/dev/ttyUSB0"  // [Linux]: "/dev/ttyUSB*", [Windows]: "COM*"
+#define DXL1_ID               1               // DXL1 ID
+#define DXL2_ID               2               // DXL2 ID
+#define BAUDRATE              57600           // Default Baudrate of DYNAMIXEL X series
+#define DEVICE_NAME           "/dev/ttyUSB0"  // [Linux] To find assigned port, use "$ ls /dev/ttyUSB*" command
 
-dynamixel::PortHandler * portHandler;
-dynamixel::PacketHandler * packetHandler;
+PortHandler * portHandler;
+PacketHandler * packetHandler;
 
-uint8_t dxl_error = 0;
-uint32_t goal_position = 0;
-int dxl_comm_result = COMM_TX_FAIL;
-
-using SetPositionArray = dynamixel_sdk_custom_interfaces::msg::SetPositionArray;
-
-
-ReadWriteNode::ReadWriteNode()
-: Node("read_write_node")
+bool getPresentPositionCallback(
+  dynamixel_sdk_examples::GetPosition::Request & req,
+  dynamixel_sdk_examples::GetPosition::Response & res)
 {
-  RCLCPP_INFO(this->get_logger(), "Run read write node");
+  uint8_t dxl_error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
 
-  this->declare_parameter("qos_depth", 10);
-  int8_t qos_depth = 0;
-  this->get_parameter("qos_depth", qos_depth);
+  // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(int16_t) for the Position Value.
+  int32_t position = 0;
 
-  const auto QOS_RKL10V =
-    rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
-
-  set_position_subscriber_ =
-    this->create_subscription<SetPosition>(
-    "set_position",
-    QOS_RKL10V,
-    [this](const SetPosition::SharedPtr msg) -> void
-    {
-      uint8_t dxl_error = 0;
-
-      // Position Value of X series is 4 byte data.
-      // For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
-      uint32_t goal_position = (unsigned int)msg->position;  // Convert int32 -> uint32
-
-      // Write Goal Position (length : 4 bytes)
-      // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
-      dxl_comm_result =
-      packetHandler->write4ByteTxRx(
-        portHandler,
-        (uint8_t) msg->id,
-        ADDR_GOAL_POSITION,
-        goal_position,
-        &dxl_error
-      );
-
-      if (dxl_comm_result != COMM_SUCCESS) {
-        RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-      } else if (dxl_error != 0) {
-        RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
-      } else {
-        RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", msg->id, msg->position);
-      }
-    }
-    );
-
-  set_position_arr_subscriber_ = 
-    this->create_subscription<SetPositionArray>(
-    "set_position_arr",   // topic name
-    QOS_RKL10V,           // QoS (Quality of Service) - to handle message reliability and delivery
-    [this](const SetPositionArray::SharedPtr pos_arr_msg) -> void
-    {
-      this->extractPositionArr(pos_arr_msg);
-    }
-    );
-
-  auto get_present_position =
-    [this](
-    const std::shared_ptr<GetPosition::Request> request,
-    std::shared_ptr<GetPosition::Response> response) -> void
-    {
-      // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
-      // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
-      dxl_comm_result = packetHandler->read4ByteTxRx(
-        portHandler,
-        (uint8_t) request->id,
-        ADDR_PRESENT_POSITION,
-        reinterpret_cast<uint32_t *>(&present_position),
-        &dxl_error
-      );
-
-      RCLCPP_INFO(
-        this->get_logger(),
-        "Get [ID: %d] [Present Position: %d]",
-        request->id,
-        present_position
-      );
-
-      response->position = present_position;
-    };
-
-  get_position_server_ = create_service<GetPosition>("get_position", get_present_position);
-}
-
-ReadWriteNode::~ReadWriteNode()
-{
-}
-
-void ReadWriteNode::extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
-  for (const auto & pos_msg : pos_arr_msg->positions) 
-  {
-    uint8_t dxl_error = 0;
-
-    // Position Value of X series is 4 byte data.
-    // For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
-    uint32_t goal_position = static_cast<uint32_t>(pos_msg.position);  // Convert int32 -> uint32
-
-    // Write Goal Position (length : 4 bytes)
-    // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
-    dxl_comm_result =
-    packetHandler->write4ByteTxRx(
-      portHandler,
-      (uint8_t) pos_msg.id,
-      ADDR_GOAL_POSITION,
-      goal_position,
-      &dxl_error
-    );
-
-    if (dxl_comm_result != COMM_SUCCESS) {
-      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "%s", packetHandler->getTxRxResult(dxl_comm_result));
-    } else if (dxl_error != 0) {
-      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "%s", packetHandler->getRxPacketError(dxl_error));
-    } else {
-      RCLCPP_INFO(rclcpp::get_logger("in extractPositionArr"), "Set [ID: %d] [Goal Position: %d]", pos_msg.id, pos_msg.position);
-    }
-  }
-}
-
-void setupDynamixel(uint8_t dxl_id)
-{
-  // Use Position Control Mode
-  dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler,
-    dxl_id,
-    ADDR_OPERATING_MODE,
-    3,
-    &dxl_error
-  );
-
-  if (dxl_comm_result != COMM_SUCCESS) {
-    RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set Position Control Mode.");
+  // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
+  // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
+  dxl_comm_result = packetHandler->read4ByteTxRx(
+    portHandler, (uint8_t)req.id, ADDR_PRESENT_POSITION, (uint32_t *)&position, &dxl_error);
+  if (dxl_comm_result == COMM_SUCCESS) {
+    ROS_INFO("getPosition : [ID:%d] -> [POSITION:%d]", req.id, position);
+    res.position = position;
+    return true;
   } else {
-    RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set Position Control Mode.");
-  }
-
-  // Enable Torque of DYNAMIXEL
-  dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler,
-    dxl_id,
-    ADDR_TORQUE_ENABLE,
-    1,
-    &dxl_error
-  );
-
-  if (dxl_comm_result != COMM_SUCCESS) {
-    RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to enable torque.");
-  } else {
-    RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to enable torque.");
+    ROS_INFO("Failed to get position! Result: %d", dxl_comm_result);
+    return false;
   }
 }
 
-int main(int argc, char * argv[])
+void setPositionCallback(const dynamixel_sdk_examples::SetPosition::ConstPtr & msg)
 {
-  portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
-  packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+  uint8_t dxl_error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
 
-  // Open Serial Port
-  dxl_comm_result = portHandler->openPort();
-  if (dxl_comm_result == false) {
-    RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to open the port!");
+  // Position Value of X series is 4 byte data. For AX & MX(1.0) use 2 byte data(uint16_t) for the Position Value.
+  uint32_t position = (unsigned int)msg->position; // Convert int32 -> uint32
+
+  // Write Goal Position (length : 4 bytes)
+  // When writing 2 byte data to AX / MX(1.0), use write2ByteTxRx() instead.
+  dxl_comm_result = packetHandler->write4ByteTxRx(
+    portHandler, (uint8_t)msg->id, ADDR_GOAL_POSITION, position, &dxl_error);
+  if (dxl_comm_result == COMM_SUCCESS) {
+    ROS_INFO("setPosition : [ID:%d] [POSITION:%d]", msg->id, msg->position);
+  } else {
+    ROS_ERROR("Failed to set position! Result: %d", dxl_comm_result);
+  }
+}
+
+int main(int argc, char ** argv)
+{
+  uint8_t dxl_error = 0;
+  int dxl_comm_result = COMM_TX_FAIL;
+
+  portHandler = PortHandler::getPortHandler(DEVICE_NAME);
+  packetHandler = PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+  if (!portHandler->openPort()) {
+    ROS_ERROR("Failed to open the port!");
     return -1;
-  } else {
-    RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to open the port.");
   }
 
-  // Set the baudrate of the serial port (use DYNAMIXEL Baudrate)
-  dxl_comm_result = portHandler->setBaudRate(BAUDRATE);
-  if (dxl_comm_result == false) {
-    RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set the baudrate!");
+  if (!portHandler->setBaudRate(BAUDRATE)) {
+    ROS_ERROR("Failed to set the baudrate!");
     return -1;
-  } else {
-    RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set the baudrate.");
   }
 
-  setupDynamixel(BROADCAST_ID);
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL1_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL1_ID);
+    return -1;
+  }
 
-  rclcpp::init(argc, argv);
+  dxl_comm_result = packetHandler->write1ByteTxRx(
+    portHandler, DXL2_ID, ADDR_TORQUE_ENABLE, 1, &dxl_error);
+  if (dxl_comm_result != COMM_SUCCESS) {
+    ROS_ERROR("Failed to enable torque for Dynamixel ID %d", DXL2_ID);
+    return -1;
+  }
 
-  auto readwritenode = std::make_shared<ReadWriteNode>();
-  rclcpp::spin(readwritenode);
-  rclcpp::shutdown();
+  ros::init(argc, argv, "read_write_node");
+  ros::NodeHandle nh;
+  ros::ServiceServer get_position_srv = nh.advertiseService("/get_position", getPresentPositionCallback);
+  ros::Subscriber set_position_sub = nh.subscribe("/set_position", 10, setPositionCallback);
+  ros::spin();
 
-  // Disable Torque of DYNAMIXEL
-  packetHandler->write1ByteTxRx(
-    portHandler,
-    BROADCAST_ID,
-    ADDR_TORQUE_ENABLE,
-    0,
-    &dxl_error
-  );
-
+  portHandler->closePort();
   return 0;
 }
