@@ -1,2 +1,0 @@
-# PositionIDArray.msg
-PositionID[] positions
