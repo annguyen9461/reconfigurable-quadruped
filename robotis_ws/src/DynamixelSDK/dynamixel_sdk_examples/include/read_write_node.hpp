@@ -31,7 +31,7 @@ class ReadWriteNode : public rclcpp::Node
 {
 public:
   using SetPosition = dynamixel_sdk_custom_interfaces::msg::SetPosition;
-  using SetPostitionArray = dynamixel_sdk_custom_interfaces::msg::SetPositionArray;
+  using SetPositionArray = dynamixel_sdk_custom_interfaces::msg::SetPositionArray;
   using GetPosition = dynamixel_sdk_custom_interfaces::srv::GetPosition;
 
   ReadWriteNode();
