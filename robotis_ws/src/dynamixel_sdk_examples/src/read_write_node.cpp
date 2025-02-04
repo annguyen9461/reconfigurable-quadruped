@@ -164,7 +164,7 @@ void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
     dxl_comm_result =
     packetHandler->write4ByteTxRx(
       portHandler,
-      (uint8_t) pos_msg->id,
+      (uint8_t) pos_msg.id,
       ADDR_GOAL_POSITION,
       goal_position,
       &dxl_error
@@ -173,9 +173,9 @@ void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
     if (dxl_comm_result != COMM_SUCCESS) {
       RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
     } else if (dxl_error != 0) {
-      RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "%s", packetHandler->getRxPacketError(dxl_error));
     } else {
-      RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", pos_msg->id, pos_msg->position);
+      RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Set [ID: %d] [Goal Position: %d]", pos_msg->id, pos_msg.position);
     }
   }
 }
