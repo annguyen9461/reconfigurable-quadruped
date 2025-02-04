@@ -60,6 +60,8 @@ uint8_t dxl_error = 0;
 uint32_t goal_position = 0;
 int dxl_comm_result = COMM_TX_FAIL;
 
+using SetPositionArray = dynamixel_sdk_custom_interfaces::msg::SetPositionArray;
+
 
 ReadWriteNode::ReadWriteNode()
 : Node("read_write_node")
