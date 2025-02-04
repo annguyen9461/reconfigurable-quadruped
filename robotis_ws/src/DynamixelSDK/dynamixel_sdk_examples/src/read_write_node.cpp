@@ -111,7 +111,7 @@ ReadWriteNode::ReadWriteNode()
     QOS_RKL10V,           // QoS (Quality of Service) - to handle message reliability and delivery
     [this](const SetPositionArray::SharedPtr pos_arr_msg) -> void
     {
-      extractPositionArr(pos_arr_msg);
+      this->extractPositionArr(pos_arr_msg);
     }
     );
 

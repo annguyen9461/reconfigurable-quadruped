@@ -43,6 +43,10 @@ private:
   rclcpp::Service<GetPosition>::SharedPtr get_position_server_;
 
   int present_position;
+
+  void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg);
+
 };
 
 #endif  // READ_WRITE_NODE_HPP_
+
