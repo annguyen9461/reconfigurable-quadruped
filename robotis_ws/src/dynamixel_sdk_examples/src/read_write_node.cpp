@@ -150,7 +150,7 @@ ReadWriteNode::~ReadWriteNode()
 {
 }
 
-void extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
+void ReadWriteNode::extractPositionArr(const SetPositionArray::SharedPtr pos_arr_msg) {
   for (const auto & pos_msg : pos_arr_msg->positions) 
   {
     uint8_t dxl_error = 0;
