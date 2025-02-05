@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
+CMAKE_SOURCE_DIR = /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /robotis_ws/build/dynamixel_sdk_custom_interfaces
+CMAKE_BINARY_DIR = /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces
 
 # Utility rule file for dynamixel_sdk_custom_interfaces__cpp.
 
@@ -71,6 +71,11 @@ CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__struct.hpp
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__traits.hpp
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.hpp
+CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp
+CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp
+CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp
+CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp
+CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/get_position.hpp
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__builder.hpp
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__struct.hpp
@@ -94,11 +99,12 @@ rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: /opt/
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: /opt/ros/humble/share/rosidl_generator_cpp/resource/srv__struct.hpp.em
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: /opt/ros/humble/share/rosidl_generator_cpp/resource/srv__traits.hpp.em
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.idl
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: rosidl_adapter/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: /opt/ros/humble/share/builtin_interfaces/msg/Duration.idl
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp: /opt/ros/humble/share/builtin_interfaces/msg/Time.idl
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code for ROS interfaces"
-	/usr/bin/python3 /opt/ros/humble/share/rosidl_generator_cpp/cmake/../../../lib/rosidl_generator_cpp/rosidl_generator_cpp --generator-arguments-file /robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_cpp__arguments.json
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating C++ code for ROS interfaces"
+	/usr/bin/python3 /opt/ros/humble/share/rosidl_generator_cpp/cmake/../../../lib/rosidl_generator_cpp/rosidl_generator_cpp --generator-arguments-file /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_cpp__arguments.json
 
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__builder.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__builder.hpp
@@ -111,6 +117,21 @@ rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__tr
 
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.hpp
+
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp
+
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp
+
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp
+
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp
+
+rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp
 
 rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/get_position.hpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
 	@$(CMAKE_COMMAND) -E touch_nocreate rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/get_position.hpp
@@ -132,7 +153,12 @@ dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__struct.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__traits.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.hpp
+dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp
+dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp
+dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp
+dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position.hpp
+dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__builder.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__struct.hpp
 dynamixel_sdk_custom_interfaces__cpp: rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__traits.hpp
@@ -150,6 +176,6 @@ CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/clean:
 .PHONY : CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/clean
 
 CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/depend:
-	cd /robotis_ws/build/dynamixel_sdk_custom_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/dynamixel_sdk_custom_interfaces__cpp.dir/depend
 

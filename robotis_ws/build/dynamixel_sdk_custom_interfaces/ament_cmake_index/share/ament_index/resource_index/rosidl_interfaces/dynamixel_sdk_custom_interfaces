@@ -1,5 +1,7 @@
 msg/SetPosition.idl
 msg/SetPosition.msg
+msg/SetPositionArr.idl
+msg/SetPositionArr.msg
 srv/GetPosition.idl
 srv/GetPosition.srv
 srv/GetPosition_Request.msg

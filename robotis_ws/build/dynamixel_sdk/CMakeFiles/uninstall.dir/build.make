@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /robotis_ws/src/DynamixelSDK/dynamixel_sdk
+CMAKE_SOURCE_DIR = /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /robotis_ws/build/dynamixel_sdk
+CMAKE_BINARY_DIR = /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk
 
 # Utility rule file for uninstall.
 
@@ -78,6 +78,6 @@ CMakeFiles/uninstall.dir/clean:
 .PHONY : CMakeFiles/uninstall.dir/clean
 
 CMakeFiles/uninstall.dir/depend:
-	cd /robotis_ws/build/dynamixel_sdk && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/DynamixelSDK/dynamixel_sdk /robotis_ws/src/DynamixelSDK/dynamixel_sdk /robotis_ws/build/dynamixel_sdk /robotis_ws/build/dynamixel_sdk /robotis_ws/build/dynamixel_sdk/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/uninstall.dir/depend
 

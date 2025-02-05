@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples
+CMAKE_SOURCE_DIR = /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /robotis_ws/build/dynamixel_sdk_examples
+CMAKE_BINARY_DIR = /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples
 
 # Utility rule file for dynamixel_sdk_examples_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/dynamixel_sdk_examples_uninstall.dir/compiler_depend.make
 include CMakeFiles/dynamixel_sdk_examples_uninstall.dir/progress.make
 
 CMakeFiles/dynamixel_sdk_examples_uninstall:
-	/usr/bin/cmake -P /robotis_ws/build/dynamixel_sdk_examples/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 dynamixel_sdk_examples_uninstall: CMakeFiles/dynamixel_sdk_examples_uninstall
 dynamixel_sdk_examples_uninstall: CMakeFiles/dynamixel_sdk_examples_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/dynamixel_sdk_examples_uninstall.dir/clean:
 .PHONY : CMakeFiles/dynamixel_sdk_examples_uninstall.dir/clean
 
 CMakeFiles/dynamixel_sdk_examples_uninstall.dir/depend:
-	cd /robotis_ws/build/dynamixel_sdk_examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples /robotis_ws/build/dynamixel_sdk_examples/CMakeFiles/dynamixel_sdk_examples_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples/CMakeFiles/dynamixel_sdk_examples_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/dynamixel_sdk_examples_uninstall.dir/depend
 

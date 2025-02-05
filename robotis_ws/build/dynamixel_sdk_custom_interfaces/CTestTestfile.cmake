@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
-# Build directory: /robotis_ws/build/dynamixel_sdk_custom_interfaces
+# Source directory: /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
+# Build directory: /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

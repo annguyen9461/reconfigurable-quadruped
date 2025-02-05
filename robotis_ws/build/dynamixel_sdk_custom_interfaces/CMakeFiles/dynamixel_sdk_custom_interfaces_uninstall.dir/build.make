@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
+CMAKE_SOURCE_DIR = /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /robotis_ws/build/dynamixel_sdk_custom_interfaces
+CMAKE_BINARY_DIR = /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces
 
 # Utility rule file for dynamixel_sdk_custom_interfaces_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/compiler_depend
 include CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/progress.make
 
 CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall:
-	/usr/bin/cmake -P /robotis_ws/build/dynamixel_sdk_custom_interfaces/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 dynamixel_sdk_custom_interfaces_uninstall: CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall
 dynamixel_sdk_custom_interfaces_uninstall: CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/clean:
 .PHONY : CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/clean
 
 CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/depend:
-	cd /robotis_ws/build/dynamixel_sdk_custom_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces /robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/dynamixel_sdk_custom_interfaces_uninstall.dir/depend
 

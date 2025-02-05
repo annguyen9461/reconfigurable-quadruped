@@ -1,7 +1,8 @@
 {
   "package_name": "dynamixel_sdk_custom_interfaces",
   "non_idl_tuples": [
-    "/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces:msg/SetPosition.msg",
-    "/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces:srv/GetPosition.srv"
+    "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces:msg/SetPosition.msg",
+    "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces:msg/SetPositionArr.msg",
+    "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces:srv/GetPosition.srv"
   ]
 }

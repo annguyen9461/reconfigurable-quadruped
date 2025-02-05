@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DRCUTILS_ENABLE_FAULT_INJECTION -DROSIDL_TYPESUPPORT_FASTRTPS_C_BUILDING_DLL_dynamixel_sdk_custom_interfaces -DROS_PACKAGE_NAME=\"dynamixel_sdk_custom_interfaces\"
 
-CXX_INCLUDES = -I/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_fastrtps_c -I/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_c -isystem /opt/ros/humble/include/fastcdr -isystem /opt/ros/humble/include/rosidl_runtime_c -isystem /opt/ros/humble/include/rcutils -isystem /opt/ros/humble/include/rosidl_typesupport_interface -isystem /opt/ros/humble/include/rosidl_runtime_cpp -isystem /opt/ros/humble/include/rosidl_typesupport_fastrtps_cpp -isystem /opt/ros/humble/include/rmw -isystem /opt/ros/humble/include/rosidl_typesupport_fastrtps_c -isystem /opt/ros/humble/include/builtin_interfaces
+CXX_INCLUDES = -I/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_fastrtps_c -I/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_c -isystem /opt/ros/humble/include/fastcdr -isystem /opt/ros/humble/include/rosidl_runtime_c -isystem /opt/ros/humble/include/rcutils -isystem /opt/ros/humble/include/rosidl_typesupport_interface -isystem /opt/ros/humble/include/rosidl_runtime_cpp -isystem /opt/ros/humble/include/rosidl_typesupport_fastrtps_cpp -isystem /opt/ros/humble/include/rmw -isystem /opt/ros/humble/include/rosidl_typesupport_fastrtps_c -isystem /opt/ros/humble/include/builtin_interfaces
 
 CXX_FLAGS = -fPIC -Wall -Wextra -Wpedantic -std=gnu++14
 

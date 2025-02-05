@@ -1,10 +1,11 @@
 {
   "package_name": "dynamixel_sdk_custom_interfaces",
-  "output_dir": "/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_cpp/dynamixel_sdk_custom_interfaces",
+  "output_dir": "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_cpp/dynamixel_sdk_custom_interfaces",
   "template_dir": "/opt/ros/humble/share/rosidl_typesupport_cpp/resource",
   "idl_tuples": [
-    "/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces:msg/SetPosition.idl",
-    "/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces:srv/GetPosition.idl"
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces:msg/SetPosition.idl",
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces:msg/SetPositionArr.idl",
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces:srv/GetPosition.idl"
   ],
   "ros_interface_dependencies": [
     "builtin_interfaces:/opt/ros/humble/share/builtin_interfaces/msg/Duration.idl",
@@ -17,8 +18,9 @@
     "/opt/ros/humble/share/rosidl_typesupport_cpp/resource/idl__type_support.cpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_cpp/resource/msg__type_support.cpp.em",
     "/opt/ros/humble/share/rosidl_typesupport_cpp/resource/srv__type_support.cpp.em",
-    "/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl",
-    "/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl",
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl",
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.idl",
+    "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl",
     "/opt/ros/humble/share/builtin_interfaces/msg/Duration.idl",
     "/opt/ros/humble/share/builtin_interfaces/msg/Time.idl"
   ]
