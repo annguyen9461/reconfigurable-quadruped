@@ -15,17 +15,9 @@ find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
-set(msg_files
-  "msg/SetPositionArr.msg"  # Add the new message file
-)
-
-set(srv_files
-  "srv/GetPosition.srv"
-)
-
 rosidl_generate_interfaces(${PROJECT_NAME}
-  ${msg_files}
-  ${srv_files}
+  "msg/SetPositionArr.msg"  # Add the new message file
+  "srv/GetPosition.srv"
   DEPENDENCIES builtin_interfaces
 )
 
