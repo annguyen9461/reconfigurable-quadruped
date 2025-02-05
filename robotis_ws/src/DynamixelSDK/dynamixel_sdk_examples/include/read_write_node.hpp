@@ -23,6 +23,7 @@
 #include "rcutils/cmdline_parser.h"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dynamixel_sdk_custom_interfaces/msg/set_position.hpp"
+#include "dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp"  // Include the new message
 #include "dynamixel_sdk_custom_interfaces/srv/get_position.hpp"
 
 
@@ -30,6 +31,7 @@ class ReadWriteNode : public rclcpp::Node
 {
 public:
   using SetPosition = dynamixel_sdk_custom_interfaces::msg::SetPosition;
+  using SetPositionArr = dynamixel_sdk_custom_interfaces::msg::SetPositionArr;  // Add the new message type
   using GetPosition = dynamixel_sdk_custom_interfaces::srv::GetPosition;
 
   ReadWriteNode();
@@ -37,6 +39,7 @@ public:
 
 private:
   rclcpp::Subscription<SetPosition>::SharedPtr set_position_subscriber_;
+  rclcpp::Subscription<SetPositionArr>::SharedPtr set_position_arr_subscriber_;  // Add the new subscriber
   rclcpp::Service<GetPosition>::SharedPtr get_position_server_;
 
   int present_position;

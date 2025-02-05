@@ -33,6 +33,7 @@
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dynamixel_sdk_custom_interfaces/msg/set_position.hpp"
+#include "dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp"  // Include the new message
 #include "dynamixel_sdk_custom_interfaces/srv/get_position.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rcutils/cmdline_parser.h"
@@ -54,6 +55,7 @@
 
 dynamixel::PortHandler * portHandler;
 dynamixel::PacketHandler * packetHandler;
+dynamixel::GroupSyncWrite * groupSyncWrite;  // Add GroupSyncWrite object
 
 uint8_t dxl_error = 0;
 uint32_t goal_position = 0;
@@ -71,6 +73,7 @@ ReadWriteNode::ReadWriteNode()
   const auto QOS_RKL10V =
     rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
 
+  // Subscriber for single motor control
   set_position_subscriber_ =
     this->create_subscription<SetPosition>(
     "set_position",
@@ -100,6 +103,51 @@ ReadWriteNode::ReadWriteNode()
         RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
       } else {
         RCLCPP_INFO(this->get_logger(), "Set [ID: %d] [Goal Position: %d]", msg->id, msg->position);
+      }
+    }
+    );
+
+  // Subscriber for multi-motor control
+  set_position_arr_subscriber_ =
+    this->create_subscription<SetPositionArr>(
+    "set_position_arr",
+    QOS_RKL10V,
+    [this](const SetPositionArr::SharedPtr msg) -> void
+    {
+      
+      if (msg->ids.size() != msg->positions.size()) {
+        RCLCPP_ERROR(this->get_logger(), "IDs and Positions arrays must have the same length!");
+        return;
+      }
+
+      // Clear the group before adding new parameters
+      groupSyncWrite->clearParam();
+
+      for (size_t i = 0; i < msg->ids.size(); i++) {
+        uint8_t id = msg->ids[i];
+        uint32_t goal_position = (unsigned int)msg->positions[i];
+
+        // Prepare data for sync write
+        uint8_t param_goal_position[4];
+        param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+        param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+        // Add parameter for the motor
+        if (!groupSyncWrite->addParam(id, param_goal_position)) {
+          RCLCPP_ERROR(this->get_logger(), "Failed to add parameter for ID: %d", id);
+        }
+      }
+
+      // Send sync write packet
+      dxl_comm_result = groupSyncWrite->txPacket();
+      if (dxl_comm_result != COMM_SUCCESS) {
+        RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getTxRxResult(dxl_comm_result));
+      } else if (dxl_error != 0) {
+        RCLCPP_INFO(this->get_logger(), "%s", packetHandler->getRxPacketError(dxl_error));
+      } else {
+        RCLCPP_INFO(this->get_logger(), "Sync write packet sent successfully!");
       }
     }
     );
@@ -134,6 +182,9 @@ ReadWriteNode::ReadWriteNode()
 
 ReadWriteNode::~ReadWriteNode()
 {
+  // Clear the group and free memory
+  groupSyncWrite->clearParam();
+  delete groupSyncWrite;
 }
 
 void setupDynamixel(uint8_t dxl_id)
