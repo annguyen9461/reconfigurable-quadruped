@@ -16,7 +16,7 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 set(msg_files
-  "msg/SetPosition.msg"
+  # "msg/SetPosition.msg"
   "msg/SetPositionArr.msg"  # Add the new message file
 )
 
