@@ -1,0 +1,15 @@
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/ament_index/resource_index/package_run_dependencies/quad_interfaces
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/ament_index/resource_index/parent_prefix_path/quad_interfaces
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/environment/ament_prefix_path.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/environment/ament_prefix_path.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/environment/path.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/environment/path.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/local_setup.bash
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/local_setup.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/local_setup.zsh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/local_setup.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/package.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/ament_index/resource_index/packages/quad_interfaces
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/cmake/quad_interfacesConfig.cmake
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/cmake/quad_interfacesConfig-version.cmake
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_interfaces/share/quad_interfaces/package.xml

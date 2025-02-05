@@ -1,0 +1,16 @@
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/lib/quad_control/control
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/ament_index/resource_index/package_run_dependencies/quad_control
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/ament_index/resource_index/parent_prefix_path/quad_control
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/environment/ament_prefix_path.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/environment/ament_prefix_path.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/environment/path.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/environment/path.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/local_setup.bash
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/local_setup.sh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/local_setup.zsh
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/local_setup.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/package.dsv
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/ament_index/resource_index/packages/quad_control
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/cmake/quad_controlConfig.cmake
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/cmake/quad_controlConfig-version.cmake
+/home/an/reconfigurable_quadruped/ros2_ws/install/quad_control/share/quad_control/package.xml

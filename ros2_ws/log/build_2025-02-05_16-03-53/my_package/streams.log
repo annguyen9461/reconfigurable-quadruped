@@ -1,0 +1,22 @@
+[0.037s] Invoking command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/an/reconfigurable_quadruped/ros2_ws/build/my_package -- -j4 -l4
+[0.178s] [100%] Built target my_node
+[0.221s] Invoked command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/an/reconfigurable_quadruped/ros2_ws/build/my_package -- -j4 -l4
+[0.250s] Invoking command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/an/reconfigurable_quadruped/ros2_ws/build/my_package
+[0.270s] -- Install configuration: ""
+[0.270s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/lib/my_package/my_node
+[0.270s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/package_run_dependencies/my_package
+[0.270s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/parent_prefix_path/my_package
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/ament_prefix_path.sh
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/ament_prefix_path.dsv
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/path.sh
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/path.dsv
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.bash
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.sh
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.zsh
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.dsv
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/package.dsv
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/packages/my_package
+[0.271s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/cmake/my_packageConfig.cmake
+[0.272s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/cmake/my_packageConfig-version.cmake
+[0.272s] -- Up-to-date: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/package.xml
+[0.275s] Invoked command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/an/reconfigurable_quadruped/ros2_ws/build/my_package

@@ -1,0 +1,51 @@
+[0.046s] Invoking command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/an/reconfigurable_quadruped/ros2_ws/src/my_package -DCMAKE_INSTALL_PREFIX=/home/an/reconfigurable_quadruped/ros2_ws/install/my_package
+[0.731s] -- The C compiler identification is GNU 13.3.0
+[1.171s] -- The CXX compiler identification is GNU 13.3.0
+[1.222s] -- Detecting C compiler ABI info
+[1.461s] -- Detecting C compiler ABI info - done
+[1.477s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.478s] -- Detecting C compile features
+[1.479s] -- Detecting C compile features - done
+[1.497s] -- Detecting CXX compiler ABI info
+[1.773s] -- Detecting CXX compiler ABI info - done
+[1.790s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.790s] -- Detecting CXX compile features
+[1.791s] -- Detecting CXX compile features - done
+[1.797s] -- Found ament_cmake: 2.5.3 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[2.170s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[2.491s] -- Found ament_lint_auto: 0.17.1 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[2.762s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[2.762s] -- Configured cppcheck include dirs: $<BUILD_INTERFACE:/home/an/reconfigurable_quadruped/ros2_ws/src/my_package/include>
+[2.762s] -- Configured cppcheck exclude dirs and/or files: 
+[2.764s] -- Added test 'lint_cmake' to check CMake code style
+[2.768s] -- Added test 'uncrustify' to check C / C++ code style
+[2.768s] -- Configured uncrustify additional arguments: 
+[2.769s] -- Added test 'xmllint' to check XML markup files
+[2.774s] -- Configuring done (2.6s)
+[2.782s] -- Generating done (0.0s)
+[2.785s] -- Build files have been written to: /home/an/reconfigurable_quadruped/ros2_ws/build/my_package
+[2.794s] Invoked command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/an/reconfigurable_quadruped/ros2_ws/src/my_package -DCMAKE_INSTALL_PREFIX=/home/an/reconfigurable_quadruped/ros2_ws/install/my_package
+[2.797s] Invoking command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/an/reconfigurable_quadruped/ros2_ws/build/my_package -- -j4 -l4
+[2.928s] [ 50%] [32mBuilding CXX object CMakeFiles/my_node.dir/src/my_node.cpp.o[0m
+[3.036s] [100%] [32m[1mLinking CXX executable my_node[0m
+[3.141s] [100%] Built target my_node
+[3.164s] Invoked command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/an/reconfigurable_quadruped/ros2_ws/build/my_package -- -j4 -l4
+[3.185s] Invoking command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/an/reconfigurable_quadruped/ros2_ws/build/my_package
+[3.200s] -- Install configuration: ""
+[3.200s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/lib/my_package/my_node
+[3.200s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/package_run_dependencies/my_package
+[3.201s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/parent_prefix_path/my_package
+[3.201s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/ament_prefix_path.sh
+[3.201s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/ament_prefix_path.dsv
+[3.202s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/path.sh
+[3.202s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/environment/path.dsv
+[3.202s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.bash
+[3.202s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.sh
+[3.202s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.zsh
+[3.203s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/local_setup.dsv
+[3.203s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/package.dsv
+[3.203s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/ament_index/resource_index/packages/my_package
+[3.203s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/cmake/my_packageConfig.cmake
+[3.203s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/cmake/my_packageConfig-version.cmake
+[3.204s] -- Installing: /home/an/reconfigurable_quadruped/ros2_ws/install/my_package/share/my_package/package.xml
+[3.207s] Invoked command in '/home/an/reconfigurable_quadruped/ros2_ws/build/my_package' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/an/reconfigurable_quadruped/ros2_ws/build/my_package
