@@ -1,6 +1,1 @@
-# Constants
-# Request
-uint8 id
----
-# Response
-int32 position
+/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/srv/GetPosition.srv

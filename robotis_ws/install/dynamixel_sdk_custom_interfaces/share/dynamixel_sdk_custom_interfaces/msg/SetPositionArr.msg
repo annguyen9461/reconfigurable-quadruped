@@ -1,2 +1,1 @@
-uint8[] ids
-int32[] positions
+/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.msg

@@ -1,0 +1,440 @@
+[0.000000] (-) TimerEvent: {}
+[0.000469] (-) JobUnselected: {'identifier': 'dynamixel_sdk'}
+[0.001335] (-) JobUnselected: {'identifier': 'dynamixel_sdk_examples'}
+[0.001585] (dynamixel_sdk_custom_interfaces) JobQueued: {'identifier': 'dynamixel_sdk_custom_interfaces', 'dependencies': OrderedDict()}
+[0.002232] (dynamixel_sdk_custom_interfaces) JobStarted: {'identifier': 'dynamixel_sdk_custom_interfaces'}
+[0.032636] (dynamixel_sdk_custom_interfaces) JobProgress: {'identifier': 'dynamixel_sdk_custom_interfaces', 'progress': 'cmake'}
+[0.036950] (dynamixel_sdk_custom_interfaces) Command: {'cmd': ['/usr/bin/cmake', '/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces'], 'cwd': '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('HOSTNAME', 'cb1e4af00541'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk/lib:/robotis_ws2/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws2/install/dynamixel_sdk/lib:/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/reconfigurable_quadruped/robotis_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install:/robotis_ws/install:/robotis_ws2/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/robotis_ws2/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble')]), 'shell': False}
+[0.099680] (-) TimerEvent: {}
+[0.170055] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.199826] (-) TimerEvent: {}
+[0.300296] (-) TimerEvent: {}
+[0.320437] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.344514] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.400540] (-) TimerEvent: {}
+[0.501235] (-) TimerEvent: {}
+[0.513319] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.532025] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.533745] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.534621] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.543500] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.601405] (-) TimerEvent: {}
+[0.702014] (-) TimerEvent: {}
+[0.736558] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.750814] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.752105] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.755026] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.764959] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.802201] (-) TimerEvent: {}
+[0.902819] (-) TimerEvent: {}
+[1.003241] (-) TimerEvent: {}
+[1.034070] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[1.103381] (-) TimerEvent: {}
+[1.166993] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[1.203516] (-) TimerEvent: {}
+[1.238859] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found builtin_interfaces: 1.2.1 (/opt/ros/humble/share/builtin_interfaces/cmake)\n'}
+[1.296445] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[1.304141] (-) TimerEvent: {}
+[1.314641] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[1.341476] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[1.370057] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[1.404164] (-) TimerEvent: {}
+[1.417529] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.458986] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[1.504275] (-) TimerEvent: {}
+[1.604674] (-) TimerEvent: {}
+[1.705092] (-) TimerEvent: {}
+[1.805568] (-) TimerEvent: {}
+[1.906067] (-) TimerEvent: {}
+[1.969158] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[2.006356] (-) TimerEvent: {}
+[2.107026] (-) TimerEvent: {}
+[2.207491] (-) TimerEvent: {}
+[2.307922] (-) TimerEvent: {}
+[2.408366] (-) TimerEvent: {}
+[2.489368] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.508558] (-) TimerEvent: {}
+[2.609170] (-) TimerEvent: {}
+[2.709691] (-) TimerEvent: {}
+[2.721690] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[2.768083] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[2.776388] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[2.809954] (-) TimerEvent: {}
+[2.843157] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[2.843631] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[2.843800] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[2.843948] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.10.so\n'}
+[2.885081] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[2.910152] (-) TimerEvent: {}
+[2.978743] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Configuring done\n'}
+[3.010266] (-) TimerEvent: {}
+[3.060209] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Generating done\n'}
+[3.090957] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Build files have been written to: /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces\n'}
+[3.110472] (-) TimerEvent: {}
+[3.116401] (dynamixel_sdk_custom_interfaces) CommandEnded: {'returncode': 0}
+[3.117551] (dynamixel_sdk_custom_interfaces) JobProgress: {'identifier': 'dynamixel_sdk_custom_interfaces', 'progress': 'build'}
+[3.119276] (dynamixel_sdk_custom_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--build', '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces', '--', '-j4', '-l4'], 'cwd': '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('HOSTNAME', 'cb1e4af00541'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk/lib:/robotis_ws2/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws2/install/dynamixel_sdk/lib:/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/reconfigurable_quadruped/robotis_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install:/robotis_ws/install:/robotis_ws2/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/robotis_ws2/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble')]), 'shell': False}
+[3.210604] (-) TimerEvent: {}
+[3.219597] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[  2%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[3.266184] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[  4%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[3.291669] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_symlink_dynamixel_sdk_custom_interfaces\n'}
+[3.310826] (-) TimerEvent: {}
+[3.413433] (-) TimerEvent: {}
+[3.513865] (-) TimerEvent: {}
+[3.614257] (-) TimerEvent: {}
+[3.679877] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'running egg_info\n'}
+[3.686721] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'creating dynamixel_sdk_custom_interfaces.egg-info\n'}
+[3.690900] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'writing dynamixel_sdk_custom_interfaces.egg-info/PKG-INFO\n'}
+[3.692889] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'writing dependency_links to dynamixel_sdk_custom_interfaces.egg-info/dependency_links.txt\n'}
+[3.698277] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'writing top-level names to dynamixel_sdk_custom_interfaces.egg-info/top_level.txt\n'}
+[3.699484] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"writing manifest file 'dynamixel_sdk_custom_interfaces.egg-info/SOURCES.txt'\n"}
+[3.714442] (-) TimerEvent: {}
+[3.719723] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"reading manifest file 'dynamixel_sdk_custom_interfaces.egg-info/SOURCES.txt'\n"}
+[3.725540] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"writing manifest file 'dynamixel_sdk_custom_interfaces.egg-info/SOURCES.txt'\n"}
+[3.814599] (-) TimerEvent: {}
+[3.871374] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[  4%] Built target ament_cmake_python_build_dynamixel_sdk_custom_interfaces_egg\n'}
+[3.914706] (-) TimerEvent: {}
+[4.015440] (-) TimerEvent: {}
+[4.116915] (-) TimerEvent: {}
+[4.201431] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[  4%] Built target dynamixel_sdk_custom_interfaces__cpp\n'}
+[4.202169] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_c.dir/rosidl_generator_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__functions.c.o\x1b[0m\n'}
+[4.202459] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_c.dir/rosidl_generator_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position__functions.c.o\x1b[0m\n'}
+[4.203560] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_c.dir/rosidl_generator_c/dynamixel_sdk_custom_interfaces/srv/detail/get_position__functions.c.o\x1b[0m\n'}
+[4.219435] (-) TimerEvent: {}
+[4.259539] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 12%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[4.320436] (-) TimerEvent: {}
+[4.377451] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 14%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[4.388712] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 17%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[4.425496] (-) TimerEvent: {}
+[4.462649] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 19%] \x1b[32m\x1b[1mLinking C shared library libdynamixel_sdk_custom_interfaces__rosidl_generator_c.so\x1b[0m\n'}
+[4.525655] (-) TimerEvent: {}
+[4.612115] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 19%] Built target dynamixel_sdk_custom_interfaces__rosidl_generator_c\n'}
+[4.628414] (-) TimerEvent: {}
+[4.658767] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 21%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[4.730432] (-) TimerEvent: {}
+[4.831007] (-) TimerEvent: {}
+[4.934429] (-) TimerEvent: {}
+[5.034877] (-) TimerEvent: {}
+[5.075425] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/dynamixel_sdk_custom_interfaces/msg/set_position__type_support.cpp.o\x1b[0m\n'}
+[5.135050] (-) TimerEvent: {}
+[5.235623] (-) TimerEvent: {}
+[5.336151] (-) TimerEvent: {}
+[5.364855] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/dynamixel_sdk_custom_interfaces/msg/detail/dds_fastrtps/set_position__type_support.cpp.o\x1b[0m\n'}
+[5.427553] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 27%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.cpp.o\x1b[0m\n'}
+[5.436349] (-) TimerEvent: {}
+[5.541433] (-) TimerEvent: {}
+[5.606246] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 29%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support_c.cpp.o\x1b[0m\n'}
+[5.642038] (-) TimerEvent: {}
+[5.747643] (-) TimerEvent: {}
+[5.848646] (-) TimerEvent: {}
+[5.952520] (-) TimerEvent: {}
+[5.985149] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 31%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr__type_support.cpp.o\x1b[0m\n'}
+[6.052754] (-) TimerEvent: {}
+[6.154443] (-) TimerEvent: {}
+[6.255494] (-) TimerEvent: {}
+[6.356863] (-) TimerEvent: {}
+[6.459191] (-) TimerEvent: {}
+[6.462969] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.cpp.o\x1b[0m\n'}
+[6.527483] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 36%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/dynamixel_sdk_custom_interfaces/msg/detail/dds_fastrtps/set_position_arr__type_support.cpp.o\x1b[0m\n'}
+[6.559353] (-) TimerEvent: {}
+[6.654631] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 38%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support_c.cpp.o\x1b[0m\n'}
+[6.662177] (-) TimerEvent: {}
+[6.763430] (-) TimerEvent: {}
+[6.868771] (-) TimerEvent: {}
+[6.883985] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/dynamixel_sdk_custom_interfaces/srv/get_position__type_support.cpp.o\x1b[0m\n'}
+[6.969131] (-) TimerEvent: {}
+[7.071760] (-) TimerEvent: {}
+[7.174061] (-) TimerEvent: {}
+[7.278812] (-) TimerEvent: {}
+[7.381886] (-) TimerEvent: {}
+[7.486271] (-) TimerEvent: {}
+[7.588142] (-) TimerEvent: {}
+[7.694647] (-) TimerEvent: {}
+[7.801426] (-) TimerEvent: {}
+[7.903268] (-) TimerEvent: {}
+[8.007833] (-) TimerEvent: {}
+[8.112509] (-) TimerEvent: {}
+[8.217501] (-) TimerEvent: {}
+[8.321094] (-) TimerEvent: {}
+[8.405854] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 42%] \x1b[32m\x1b[1mLinking CXX shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[8.424201] (-) TimerEvent: {}
+[8.471434] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 44%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/dynamixel_sdk_custom_interfaces/srv/detail/get_position__type_support_c.cpp.o\x1b[0m\n'}
+[8.525550] (-) TimerEvent: {}
+[8.602534] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 44%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp\n'}
+[8.625790] (-) TimerEvent: {}
+[8.642559] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 46%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/dynamixel_sdk_custom_interfaces/srv/detail/dds_fastrtps/get_position__type_support.cpp.o\x1b[0m\n'}
+[8.706599] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 48%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/dynamixel_sdk_custom_interfaces/srv/detail/get_position__type_support.cpp.o\x1b[0m\n'}
+[8.726177] (-) TimerEvent: {}
+[8.833633] (-) TimerEvent: {}
+[8.935491] (-) TimerEvent: {}
+[8.940146] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 51%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[9.035729] (-) TimerEvent: {}
+[9.139235] (-) TimerEvent: {}
+[9.244536] (-) TimerEvent: {}
+[9.345645] (-) TimerEvent: {}
+[9.452485] (-) TimerEvent: {}
+[9.554698] (-) TimerEvent: {}
+[9.659543] (-) TimerEvent: {}
+[9.763423] (-) TimerEvent: {}
+[9.866824] (-) TimerEvent: {}
+[9.971051] (-) TimerEvent: {}
+[9.999284] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 53%] \x1b[32m\x1b[1mLinking CXX shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[10.071721] (-) TimerEvent: {}
+[10.172529] (-) TimerEvent: {}
+[10.277517] (-) TimerEvent: {}
+[10.312396] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 55%] \x1b[32m\x1b[1mLinking CXX shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[10.377769] (-) TimerEvent: {}
+[10.401064] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 55%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c\n'}
+[10.478199] (-) TimerEvent: {}
+[10.493356] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 59%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[10.498732] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 59%] \x1b[32m\x1b[1mLinking CXX shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[10.578349] (-) TimerEvent: {}
+[10.614844] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.c.o\x1b[0m\n'}
+[10.655528] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 61%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp\n'}
+[10.681124] (-) TimerEvent: {}
+[10.690554] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 63%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.c.o\x1b[0m\n'}
+[10.765372] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 65%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/dynamixel_sdk_custom_interfaces/srv/detail/get_position__type_support.c.o\x1b[0m\n'}
+[10.783107] (-) TimerEvent: {}
+[10.861658] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 65%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp\n'}
+[10.883460] (-) TimerEvent: {}
+[10.929866] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 68%] \x1b[32m\x1b[1mLinking C shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[10.983984] (-) TimerEvent: {}
+[11.030595] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 68%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c\n'}
+[11.084035] (-) TimerEvent: {}
+[11.184733] (-) TimerEvent: {}
+[11.285542] (-) TimerEvent: {}
+[11.387754] (-) TimerEvent: {}
+[11.419154] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 70%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/dynamixel_sdk_custom_interfaces/msg/set_position_arr__type_support.cpp.o\x1b[0m\n'}
+[11.420199] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 72%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/dynamixel_sdk_custom_interfaces/msg/set_position__type_support.cpp.o\x1b[0m\n'}
+[11.429639] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 74%] \x1b[32mBuilding CXX object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_c.dir/rosidl_typesupport_c/dynamixel_sdk_custom_interfaces/srv/get_position__type_support.cpp.o\x1b[0m\n'}
+[11.489495] (-) TimerEvent: {}
+[11.579339] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 76%] \x1b[32m\x1b[1mLinking CXX shared library libdynamixel_sdk_custom_interfaces__rosidl_typesupport_c.so\x1b[0m\n'}
+[11.589772] (-) TimerEvent: {}
+[11.688500] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 76%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_c\n'}
+[11.690132] (-) TimerEvent: {}
+[11.769810] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 76%] Built target dynamixel_sdk_custom_interfaces\n'}
+[11.790359] (-) TimerEvent: {}
+[11.843631] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 78%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[11.890512] (-) TimerEvent: {}
+[11.991144] (-) TimerEvent: {}
+[12.091896] (-) TimerEvent: {}
+[12.192721] (-) TimerEvent: {}
+[12.293358] (-) TimerEvent: {}
+[12.393859] (-) TimerEvent: {}
+[12.494233] (-) TimerEvent: {}
+[12.594632] (-) TimerEvent: {}
+[12.695055] (-) TimerEvent: {}
+[12.796437] (-) TimerEvent: {}
+[12.864440] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 78%] Built target dynamixel_sdk_custom_interfaces__py\n'}
+[12.896656] (-) TimerEvent: {}
+[12.937095] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 85%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_py.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/srv/_get_position_s.c.o\x1b[0m\n'}
+[12.937571] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 85%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_py.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/msg/_set_position_arr_s.c.o\x1b[0m\n'}
+[12.937876] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 85%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_generator_py.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/msg/_set_position_s.c.o\x1b[0m\n'}
+[12.997286] (-) TimerEvent: {}
+[13.097876] (-) TimerEvent: {}
+[13.191465] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 87%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/dynamixel_sdk_custom_interfaces/libdynamixel_sdk_custom_interfaces__rosidl_generator_py.so\x1b[0m\n'}
+[13.200758] (-) TimerEvent: {}
+[13.303282] (-) TimerEvent: {}
+[13.343798] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 87%] Built target dynamixel_sdk_custom_interfaces__rosidl_generator_py\n'}
+[13.403666] (-) TimerEvent: {}
+[13.410677] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 93%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_introspection_c.c.o\x1b[0m\n'}
+[13.413380] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 93%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[13.414818] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 93%] \x1b[32mBuilding C object CMakeFiles/dynamixel_sdk_custom_interfaces__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[13.503862] (-) TimerEvent: {}
+[13.604724] (-) TimerEvent: {}
+[13.706743] (-) TimerEvent: {}
+[13.745508] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 97%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[13.746284] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[ 97%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[13.753163] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[13.807075] (-) TimerEvent: {}
+[13.893957] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[100%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c__pyext\n'}
+[13.897535] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[100%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_c__pyext\n'}
+[13.907485] (-) TimerEvent: {}
+[13.912245] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'[100%] Built target dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c__pyext\n'}
+[13.965988] (dynamixel_sdk_custom_interfaces) CommandEnded: {'returncode': 0}
+[13.967607] (dynamixel_sdk_custom_interfaces) JobProgress: {'identifier': 'dynamixel_sdk_custom_interfaces', 'progress': 'install'}
+[13.990859] (dynamixel_sdk_custom_interfaces) Command: {'cmd': ['/usr/bin/cmake', '--install', '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces'], 'cwd': '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('HOSTNAME', 'cb1e4af00541'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk/lib:/robotis_ws2/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws2/install/dynamixel_sdk/lib:/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib:/robotis_ws/install/dynamixel_sdk/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/root'), ('OLDPWD', '/reconfigurable_quadruped/robotis_ws/src'), ('ROS_PYTHON_VERSION', '3'), ('COLCON_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install:/robotis_ws/install:/robotis_ws2/install'), ('ROS_DISTRO', 'humble'), ('_', '/usr/local/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'), ('LANG', 'C.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('PWD', '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces'), ('LC_ALL', 'C.UTF-8'), ('PYTHONPATH', '/robotis_ws2/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble')]), 'shell': False}
+[14.007686] (-) TimerEvent: {}
+[14.019544] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[14.021375] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[14.022666] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/ament_index/resource_index/rosidl_interfaces/dynamixel_sdk_custom_interfaces\n'}
+[14.064913] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__functions.h\n'}
+[14.101076] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__struct.h\n'}
+[14.108030] (-) TimerEvent: {}
+[14.137180] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.h\n'}
+[14.180744] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__functions.h\n'}
+[14.208164] (-) TimerEvent: {}
+[14.212671] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.h\n'}
+[14.242011] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.h\n'}
+[14.273614] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/rosidl_generator_c__visibility_control.h\n'}
+[14.299490] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/set_position.h\n'}
+[14.308360] (-) TimerEvent: {}
+[14.329048] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/set_position_arr.h\n'}
+[14.364996] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__functions.h\n'}
+[14.395542] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__struct.h\n'}
+[14.408905] (-) TimerEvent: {}
+[14.435630] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__type_support.h\n'}
+[14.472296] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/get_position.h\n'}
+[14.505146] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/library_path.sh\n'}
+[14.508880] (-) TimerEvent: {}
+[14.530633] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/library_path.dsv\n'}
+[14.568155] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__rosidl_typesupport_fastrtps_c.h\n'}
+[14.597603] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__rosidl_typesupport_fastrtps_c.h\n'}
+[14.609664] (-) TimerEvent: {}
+[14.639216] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[14.675771] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__rosidl_typesupport_fastrtps_c.h\n'}
+[14.708207] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__builder.hpp\n'}
+[14.709630] (-) TimerEvent: {}
+[14.739580] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__struct.hpp\n'}
+[14.777569] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__traits.hpp\n'}
+[14.807994] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__type_support.hpp\n'}
+[14.809743] (-) TimerEvent: {}
+[14.828165] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp\n'}
+[14.864810] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp\n'}
+[14.900968] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp\n'}
+[14.909909] (-) TimerEvent: {}
+[14.917758] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp\n'}
+[14.948370] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp\n'}
+[14.976886] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/set_position.hpp\n'}
+[15.009541] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp\n'}
+[15.010039] (-) TimerEvent: {}
+[15.039599] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__builder.hpp\n'}
+[15.070960] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__struct.hpp\n'}
+[15.099060] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__traits.hpp\n'}
+[15.110605] (-) TimerEvent: {}
+[15.136943] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__type_support.hpp\n'}
+[15.178596] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/get_position.hpp\n'}
+[15.210619] (-) TimerEvent: {}
+[15.211170] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[15.239732] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[15.272544] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[15.302477] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[15.310790] (-) TimerEvent: {}
+[15.327922] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__rosidl_typesupport_introspection_c.h\n'}
+[15.363755] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__rosidl_typesupport_introspection_c.h\n'}
+[15.396063] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[15.411476] (-) TimerEvent: {}
+[15.425992] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__rosidl_typesupport_introspection_c.h\n'}
+[15.457570] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position__rosidl_typesupport_introspection_cpp.hpp\n'}
+[15.488688] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__rosidl_typesupport_introspection_cpp.hpp\n'}
+[15.511575] (-) TimerEvent: {}
+[15.518805] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/include/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces/srv/detail/get_position__rosidl_typesupport_introspection_cpp.hpp\n'}
+[15.553203] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/pythonpath.sh\n'}
+[15.573262] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/pythonpath.dsv\n'}
+[15.611864] (-) TimerEvent: {}
+[15.614841] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces-3.7.60-py3.10.egg-info/PKG-INFO\n'}
+[15.659641] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces-3.7.60-py3.10.egg-info/SOURCES.txt\n'}
+[15.692607] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces-3.7.60-py3.10.egg-info/dependency_links.txt\n'}
+[15.710033] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces-3.7.60-py3.10.egg-info/top_level.txt\n'}
+[15.712284] (-) TimerEvent: {}
+[15.753908] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/__init__.py\n'}
+[15.786717] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_c.c\n'}
+[15.810235] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[15.812356] (-) TimerEvent: {}
+[15.847613] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[15.873763] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[15.908480] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[15.912478] (-) TimerEvent: {}
+[15.936207] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[15.964833] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/libdynamixel_sdk_custom_interfaces__rosidl_generator_py.so\n'}
+[16.001544] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/__init__.py\n'}
+[16.012601] (-) TimerEvent: {}
+[16.018956] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position.py\n'}
+[16.060015] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position_arr.py\n'}
+[16.094916] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position_arr_s.c\n'}
+[16.112883] (-) TimerEvent: {}
+[16.117097] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position_s.c\n'}
+[16.153504] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv/__init__.py\n'}
+[16.182338] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv/_get_position.py\n'}
+[16.213195] (-) TimerEvent: {}
+[16.220784] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv/_get_position_s.c\n'}
+[16.263765] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Up-to-date symlink: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[16.264283] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Up-to-date symlink: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[16.264738] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Up-to-date symlink: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[16.265264] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl\n'}
+[16.296779] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.idl\n'}
+[16.313402] (-) TimerEvent: {}
+[16.337711] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl\n'}
+[16.372874] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/msg/SetPosition.msg\n'}
+[16.399351] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.msg\n'}
+[16.413545] (-) TimerEvent: {}
+[16.429392] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/srv/GetPosition.srv\n'}
+[16.465259] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/srv/GetPosition_Request.msg\n'}
+[16.496903] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/srv/GetPosition_Response.msg\n'}
+[16.513738] (-) TimerEvent: {}
+[16.537162] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/ament_index/resource_index/package_run_dependencies/dynamixel_sdk_custom_interfaces\n'}
+[16.572898] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/ament_index/resource_index/parent_prefix_path/dynamixel_sdk_custom_interfaces\n'}
+[16.598386] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/ament_prefix_path.sh\n'}
+[16.613851] (-) TimerEvent: {}
+[16.628832] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/ament_prefix_path.dsv\n'}
+[16.665259] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/path.sh\n'}
+[16.696525] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/environment/path.dsv\n'}
+[16.714009] (-) TimerEvent: {}
+[16.728998] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/local_setup.bash\n'}
+[16.770755] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/local_setup.sh\n'}
+[16.803098] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/local_setup.zsh\n'}
+[16.814405] (-) TimerEvent: {}
+[16.831764] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/local_setup.dsv\n'}
+[16.865028] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/package.dsv\n'}
+[16.894858] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/ament_index/resource_index/packages/dynamixel_sdk_custom_interfaces\n'}
+[16.914457] (-) TimerEvent: {}
+[16.933206] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/rosidl_cmake-extras.cmake\n'}
+[16.963666] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[16.997704] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[17.014848] (-) TimerEvent: {}
+[17.034977] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[17.068278] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[17.099651] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[17.114917] (-) TimerEvent: {}
+[17.139565] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[17.174982] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfacesConfig.cmake\n'}
+[17.199368] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfacesConfig-version.cmake\n'}
+[17.215044] (-) TimerEvent: {}
+[17.228136] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Symlinking: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/package.xml\n'}
+[17.262668] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_generator_c.so\n'}
+[17.263438] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_generator_c.so" to ""\n'}
+[17.263987] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.so\n'}
+[17.264564] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[17.264823] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.so\n'}
+[17.265537] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[17.265762] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.so\n'}
+[17.266283] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.so" to ""\n'}
+[17.266665] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_c.so\n'}
+[17.267829] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_c.so" to ""\n'}
+[17.268675] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.so\n'}
+[17.272301] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[17.274352] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.so\n'}
+[17.277841] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_typesupport_cpp.so" to ""\n'}
+[17.315244] (-) TimerEvent: {}
+[17.367223] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Listing '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces'...\n"}
+[17.367710] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/__init__.py'...\n"}
+[17.367993] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Listing '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg'...\n"}
+[17.368147] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/__init__.py'...\n"}
+[17.368258] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position.py'...\n"}
+[17.368413] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/msg/_set_position_arr.py'...\n"}
+[17.368528] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Listing '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv'...\n"}
+[17.368626] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv/__init__.py'...\n"}
+[17.368708] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b"Compiling '/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces/srv/_get_position.py'...\n"}
+[17.394176] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_generator_py.so\n'}
+[17.395171] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Set runtime path of "/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/lib/libdynamixel_sdk_custom_interfaces__rosidl_generator_py.so" to ""\n'}
+[17.395483] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_generator_cExport.cmake\n'}
+[17.395819] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_generator_cExport-noconfig.cmake\n'}
+[17.396238] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[17.396666] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[17.397112] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_generator_cppExport.cmake\n'}
+[17.397516] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[17.397855] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[17.398248] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cExport.cmake\n'}
+[17.398662] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[17.399000] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cExport.cmake\n'}
+[17.399391] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[17.399776] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[17.400095] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[17.400455] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cppExport.cmake\n'}
+[17.400844] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/dynamixel_sdk_custom_interfaces__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[17.401227] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_generator_pyExport.cmake\n'}
+[17.401649] (dynamixel_sdk_custom_interfaces) StdoutLine: {'line': b'-- Installing: /reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake/export_dynamixel_sdk_custom_interfaces__rosidl_generator_pyExport-noconfig.cmake\n'}
+[17.405954] (dynamixel_sdk_custom_interfaces) CommandEnded: {'returncode': 0}
+[17.415649] (-) TimerEvent: {}
+[17.477107] (dynamixel_sdk_custom_interfaces) JobEnded: {'identifier': 'dynamixel_sdk_custom_interfaces', 'rc': 0}
+[17.478079] (-) EventReactorShutdown: {}

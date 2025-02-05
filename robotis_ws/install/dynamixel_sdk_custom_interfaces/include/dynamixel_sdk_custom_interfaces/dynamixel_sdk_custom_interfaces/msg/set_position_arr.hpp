@@ -1,12 +1,1 @@
-// generated from rosidl_generator_cpp/resource/idl.hpp.em
-// generated code does not contain a copyright notice
-
-#ifndef DYNAMIXEL_SDK_CUSTOM_INTERFACES__MSG__SET_POSITION_ARR_HPP_
-#define DYNAMIXEL_SDK_CUSTOM_INTERFACES__MSG__SET_POSITION_ARR_HPP_
-
-#include "dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__struct.hpp"
-#include "dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__builder.hpp"
-#include "dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__traits.hpp"
-#include "dynamixel_sdk_custom_interfaces/msg/detail/set_position_arr__type_support.hpp"
-
-#endif  // DYNAMIXEL_SDK_CUSTOM_INTERFACES__MSG__SET_POSITION_ARR_HPP_
+/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_cpp/dynamixel_sdk_custom_interfaces/msg/set_position_arr.hpp

@@ -1,3 +1,1 @@
-# Messages
-uint8 id
-int32 position
+/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPosition.msg
