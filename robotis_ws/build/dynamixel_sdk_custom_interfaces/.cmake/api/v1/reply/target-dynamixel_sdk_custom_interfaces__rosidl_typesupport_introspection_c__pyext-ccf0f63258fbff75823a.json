@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "rosidl_generator_py/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so"
+			"path" : "rosidl_generator_py/dynamixel_sdk_custom_interfaces/dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so"
 		}
 	],
 	"backtrace" : 5,
@@ -42,7 +42,7 @@
 			{
 				"command" : 3,
 				"file" : 3,
-				"line" : 27,
+				"line" : 26,
 				"parent" : 0
 			},
 			{
@@ -118,13 +118,13 @@
 			{
 				"command" : 6,
 				"file" : 0,
-				"line" : 273,
+				"line" : 229,
 				"parent" : 4
 			},
 			{
 				"command" : 6,
 				"file" : 0,
-				"line" : 229,
+				"line" : 273,
 				"parent" : 4
 			},
 			{
@@ -229,7 +229,7 @@
 					"define" : "ROS_PACKAGE_NAME=\"dynamixel_sdk_custom_interfaces\""
 				},
 				{
-					"define" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c__pyext_EXPORTS"
+					"define" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c__pyext_EXPORTS"
 				}
 			],
 			"includes" : 
@@ -248,7 +248,7 @@
 				},
 				{
 					"backtrace" : 6,
-					"path" : "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_fastrtps_c"
+					"path" : "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_typesupport_introspection_c"
 				},
 				{
 					"backtrace" : 26,
@@ -283,27 +283,27 @@
 				{
 					"backtrace" : 6,
 					"isSystem" : true,
-					"path" : "/opt/ros/humble/include/fastcdr"
-				},
-				{
-					"backtrace" : 6,
-					"isSystem" : true,
-					"path" : "/opt/ros/humble/include/rosidl_runtime_cpp"
-				},
-				{
-					"backtrace" : 6,
-					"isSystem" : true,
-					"path" : "/opt/ros/humble/include/rosidl_typesupport_fastrtps_cpp"
-				},
-				{
-					"backtrace" : 6,
-					"isSystem" : true,
-					"path" : "/opt/ros/humble/include/rosidl_typesupport_fastrtps_c"
+					"path" : "/opt/ros/humble/include/rosidl_typesupport_introspection_c"
 				},
 				{
 					"backtrace" : 9,
 					"isSystem" : true,
-					"path" : "/opt/ros/humble/include/rosidl_typesupport_introspection_c"
+					"path" : "/opt/ros/humble/include/fastcdr"
+				},
+				{
+					"backtrace" : 9,
+					"isSystem" : true,
+					"path" : "/opt/ros/humble/include/rosidl_runtime_cpp"
+				},
+				{
+					"backtrace" : 9,
+					"isSystem" : true,
+					"path" : "/opt/ros/humble/include/rosidl_typesupport_fastrtps_cpp"
+				},
+				{
+					"backtrace" : 9,
+					"isSystem" : true,
+					"path" : "/opt/ros/humble/include/rosidl_typesupport_fastrtps_c"
 				},
 				{
 					"backtrace" : 9,
@@ -321,27 +321,27 @@
 	"dependencies" : 
 	[
 		{
+			"backtrace" : 14,
+			"id" : "dynamixel_sdk_custom_interfaces__py::@5c3fb1e61178127079ca"
+		},
+		{
 			"backtrace" : 6,
 			"id" : "dynamixel_sdk_custom_interfaces__rosidl_generator_c::@6890427a1f51a3e7e1df"
 		},
 		{
-			"backtrace" : 14,
-			"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df"
+			"backtrace" : 15,
+			"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df"
 		},
 		{
-			"backtrace" : 15,
+			"backtrace" : 14,
 			"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_c::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 6,
 			"id" : "dynamixel_sdk_custom_interfaces__rosidl_generator_py::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 15,
-			"id" : "dynamixel_sdk_custom_interfaces__py::@5c3fb1e61178127079ca"
 		}
 	],
-	"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c__pyext::@6890427a1f51a3e7e1df",
+	"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
@@ -366,7 +366,7 @@
 			},
 			{
 				"backtrace" : 6,
-				"fragment" : "libdynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c.so",
+				"fragment" : "libdynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c.so",
 				"role" : "libraries"
 			},
 			{
@@ -424,12 +424,12 @@
 				"role" : "libraries"
 			},
 			{
-				"fragment" : "/opt/ros/humble/lib/librosidl_typesupport_fastrtps_c.so",
+				"backtrace" : 9,
+				"fragment" : "/opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_c.so",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 9,
-				"fragment" : "/opt/ros/humble/lib/libbuiltin_interfaces__rosidl_generator_c.so",
+				"fragment" : "/opt/ros/humble/lib/librosidl_typesupport_fastrtps_c.so",
 				"role" : "libraries"
 			},
 			{
@@ -478,8 +478,8 @@
 		],
 		"language" : "C"
 	},
-	"name" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_fastrtps_c__pyext",
-	"nameOnDisk" : "dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so",
+	"name" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_introspection_c__pyext",
+	"nameOnDisk" : "dynamixel_sdk_custom_interfaces_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so",
 	"paths" : 
 	{
 		"build" : ".",
@@ -501,7 +501,7 @@
 			"backtrace" : 5,
 			"compileGroupIndex" : 0,
 			"isGenerated" : true,
-			"path" : "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_py/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_fastrtps_c.c",
+			"path" : "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_generator_py/dynamixel_sdk_custom_interfaces/_dynamixel_sdk_custom_interfaces_s.ep.rosidl_typesupport_introspection_c.c",
 			"sourceGroupIndex" : 0
 		}
 	],

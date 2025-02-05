@@ -42,7 +42,7 @@
 			{
 				"command" : 3,
 				"file" : 3,
-				"line" : 27,
+				"line" : 26,
 				"parent" : 0
 			},
 			{
@@ -305,6 +305,10 @@
 	"dependencies" : 
 	[
 		{
+			"backtrace" : 13,
+			"id" : "dynamixel_sdk_custom_interfaces__py::@5c3fb1e61178127079ca"
+		},
+		{
 			"backtrace" : 6,
 			"id" : "dynamixel_sdk_custom_interfaces__rosidl_generator_c::@6890427a1f51a3e7e1df"
 		},
@@ -315,10 +319,6 @@
 		{
 			"backtrace" : 6,
 			"id" : "dynamixel_sdk_custom_interfaces__rosidl_generator_py::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 13,
-			"id" : "dynamixel_sdk_custom_interfaces__py::@5c3fb1e61178127079ca"
 		}
 	],
 	"id" : "dynamixel_sdk_custom_interfaces__rosidl_typesupport_c__pyext::@6890427a1f51a3e7e1df",
