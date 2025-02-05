@@ -5,6 +5,8 @@
 
 module dynamixel_sdk_custom_interfaces {
   module msg {
+    @verbatim (language="comment", text=
+      "Messages")
     struct SetPositionArr {
       sequence<uint8> ids;
 

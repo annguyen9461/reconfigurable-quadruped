@@ -23,6 +23,9 @@ extern "C"
 #include "rosidl_runtime_c/primitives_sequence.h"
 
 /// Struct defined in msg/SetPositionArr in the package dynamixel_sdk_custom_interfaces.
+/**
+  * Messages
+ */
 typedef struct dynamixel_sdk_custom_interfaces__msg__SetPositionArr
 {
   rosidl_runtime_c__uint8__Sequence ids;

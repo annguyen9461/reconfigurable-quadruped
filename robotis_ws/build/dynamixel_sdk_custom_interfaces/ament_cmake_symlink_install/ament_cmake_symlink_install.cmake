@@ -358,17 +358,11 @@ include("/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfa
 # install("TARGETS" "dynamixel_sdk_custom_interfaces__rosidl_typesupport_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/dynamixel_sdk_custom_interfaces")
 include("/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/ament_cmake_symlink_install_targets_2_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
-# install(FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
-ament_cmake_symlink_install_files("/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces" FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPosition.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
-
 # install(FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
 ament_cmake_symlink_install_files("/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces" FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
 
 # install(FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/srv")
 ament_cmake_symlink_install_files("/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces" FILES "/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_custom_interfaces/rosidl_adapter/dynamixel_sdk_custom_interfaces/srv/GetPosition.idl" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/srv")
-
-# install(FILES "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPosition.msg" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
-ament_cmake_symlink_install_files("/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces" FILES "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPosition.msg" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
 
 # install(FILES "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.msg" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")
 ament_cmake_symlink_install_files("/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces" FILES "/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_custom_interfaces/msg/SetPositionArr.msg" "DESTINATION" "share/dynamixel_sdk_custom_interfaces/msg")

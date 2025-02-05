@@ -1,0 +1,59 @@
+[0.051s] Invoking command in '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples': CMAKE_PREFIX_PATH=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble /usr/bin/cmake /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples
+[0.200s] -- The C compiler identification is GNU 11.4.0
+[0.321s] -- The CXX compiler identification is GNU 11.4.0
+[0.333s] -- Detecting C compiler ABI info
+[0.497s] -- Detecting C compiler ABI info - done
+[0.507s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.508s] -- Detecting C compile features
+[0.508s] -- Detecting C compile features - done
+[0.513s] -- Detecting CXX compiler ABI info
+[0.687s] -- Detecting CXX compiler ABI info - done
+[0.698s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.699s] -- Detecting CXX compile features
+[0.699s] -- Detecting CXX compile features - done
+[0.704s] -- Found ament_cmake: 1.3.11 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.942s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.073s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.127s] -- Found dynamixel_sdk: 3.7.60 (/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk/share/dynamixel_sdk/cmake)
+[1.129s] -- Found dynamixel_sdk_custom_interfaces: 3.7.60 (/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces/share/dynamixel_sdk_custom_interfaces/cmake)
+[1.192s] -- Found rosidl_generator_c: 3.1.6 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.202s] -- Found rosidl_adapter: 3.1.6 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.217s] -- Found rosidl_generator_cpp: 3.1.6 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.237s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.273s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.316s] -- Found rclcpp: 16.0.11 (/opt/ros/humble/share/rclcpp/cmake)
+[1.392s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.397s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[1.452s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[1.483s] -- Found FastRTPS: /opt/ros/humble/include  
+[1.518s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.533s] -- Looking for pthread.h
+[1.698s] -- Looking for pthread.h - found
+[1.699s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.852s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.854s] -- Found Threads: TRUE  
+[1.949s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[2.117s] -- Added test 'copyright' to check source files copyright and LICENSE
+[2.119s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[2.119s] -- Configured cppcheck include dirs: /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples/include
+[2.119s] -- Configured cppcheck exclude dirs and/or files: 
+[2.121s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[2.121s] -- Configured cpplint exclude dirs and/or files: 
+[2.122s] -- Added test 'lint_cmake' to check CMake code style
+[2.123s] -- Added test 'uncrustify' to check C / C++ code style
+[2.123s] -- Configured uncrustify additional arguments: 
+[2.124s] -- Added test 'xmllint' to check XML markup files
+[2.126s] -- Configuring done
+[2.143s] -- Generating done
+[2.148s] -- Build files have been written to: /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples
+[2.177s] Invoked command in '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples' returned '0': CMAKE_PREFIX_PATH=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble /usr/bin/cmake /reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples
+[2.181s] Invoking command in '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples': CMAKE_PREFIX_PATH=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble /usr/bin/cmake --build /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples -- -j4 -l4
+[2.291s] [ 50%] [32mBuilding CXX object CMakeFiles/read_write_node.dir/src/read_write_node.cpp.o[0m
+[2.431s] [01m[K/reconfigurable_quadruped/robotis_ws/src/DynamixelSDK/dynamixel_sdk_examples/src/read_write_node.cpp:35:10:[m[K [01;31m[Kfatal error: [m[Kdynamixel_sdk_custom_interfaces/msg/set_position.hpp: No such file or directory
+[2.431s]    35 | #include [01;31m[K"dynamixel_sdk_custom_interfaces/msg/set_position.hpp"[m[K
+[2.431s]       |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+[2.431s] compilation terminated.
+[2.435s] gmake[2]: *** [CMakeFiles/read_write_node.dir/build.make:76: CMakeFiles/read_write_node.dir/src/read_write_node.cpp.o] Error 1
+[2.435s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/read_write_node.dir/all] Error 2
+[2.435s] gmake: *** [Makefile:146: all] Error 2
+[2.439s] Invoked command in '/reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples' returned '2': CMAKE_PREFIX_PATH=/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_custom_interfaces:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk:/reconfigurable_quadruped/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_examples:/robotis_ws2/install/dynamixel_sdk_custom_interfaces:/robotis_ws2/install/dynamixel_sdk:/robotis_ws/install/dynamixel_sdk_examples:/robotis_ws/install/dynamixel_sdk_custom_interfaces:/robotis_ws/install/dynamixel_sdk:/opt/ros/humble /usr/bin/cmake --build /reconfigurable_quadruped/robotis_ws/build/dynamixel_sdk_examples -- -j4 -l4
