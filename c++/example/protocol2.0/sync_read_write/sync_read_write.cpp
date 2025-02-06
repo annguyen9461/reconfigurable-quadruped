@@ -39,6 +39,8 @@
 #include "dynamixel_sdk.h"                                  // Uses Dynamixel SDK library
 
 #include <string.h>
+#include <chrono>
+#include <thread>
 
 #define MAX_INPUT_SIZE 100      // define max input buffer size
 
@@ -72,6 +74,7 @@
 
 int DXL_ID;
 bool toggle_position = false;  // Toggles between the two positions
+bool forward_running = false;
 
 void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
@@ -199,8 +202,12 @@ void move_to_home(dynamixel::GroupSyncWrite &groupSyncWrite,
                   dynamixel::PortHandler *portHandler) 
 {
     // Define home positions
+    // int home_positions[NUM_MOTORS + 1] = {0, 
+    //     1364, 2001, 2048, 2826, 2107, 1057, 288, 2021, 21, 2833, 2094, 1013
+    // };
+
     int home_positions[NUM_MOTORS + 1] = {0, 
-        1364, 2001, 2048, 2826, 2107, 1057, 288, 2021, 21, 2833, 2094, 1013
+        1289, 2051, 2062, 2908, 2046, 990, 342, 1987, 26, 2833, 2069, 1060
     };
 
     printf("Moving all motors to home position...\n");
@@ -242,16 +249,23 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
                   dynamixel::PortHandler *portHandler) 
 {
     // Define the two alternating positions
-    int top_left_up[NUM_MOTORS + 1] = {0, 
-        1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 21, 3119, 2104, 1013
+    int top_left_lift[NUM_MOTORS + 1] = {0, 
+        1779, 2283, 2048, 2398, 2105, 1056, 224, 2283, 26, 3119, 2104, 1013
+    };
+    int top_left_fw[NUM_MOTORS + 1] = {0, 
+        1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 26, 3119, 2104, 1013
     };
 
-    int top_right_up[NUM_MOTORS + 1] = {0, 
-        1060, 2015, 2045, 2940, 2107, 1057, 711, 2032, 21, 2387, 2101, 1009
+
+    int top_right_lift[NUM_MOTORS + 1] = {0, 
+        1060, 2015, 2045, 2940, 1788, 1057, 711, 2032, 26, 2387, 1814, 1009
+    };
+    int top_right_fw[NUM_MOTORS + 1] = {0, 
+        1060, 2015, 2045, 2940, 2107, 1057, 711, 2032, 26, 2387, 2101, 1009
     };
 
     // Toggle between the two position sets
-    int* target_positions = toggle_position ? top_right_up : top_left_up;
+    int* target_positions = toggle_position ? top_right_fw : top_left_fw;
     toggle_position = !toggle_position;  // Flip the toggle for next time
 
     printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
@@ -287,7 +301,6 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
 
     printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 }
-
 
 
 int main()
@@ -390,12 +403,28 @@ int main()
     }
 
     // If user enters "home", move all motors to home positions
-    else if (strcmp(command, "home") == 0) {
+    else if (strcmp(command, "ho") == 0) {
       move_to_home(groupSyncWrite, packetHandler, portHandler);
     }
+
     else if (strcmp(command, "fw") == 0) {
-      move_forward(groupSyncWrite, packetHandler, portHandler);
+        if (!forward_running) {
+            move_forward(groupSyncWrite, packetHandler, portHandler);
+        } else {
+            printf("Already moving forward! Type 'stop' to halt.\n");
+        }
     }
+
+    // If user enters "stop", halt continuous movement
+    else if (strcmp(command, "stop") == 0) {
+        if (forward_running) {
+            forward_running = false;
+            printf("Stopping forward motion...\n");
+        } else {
+            printf("Motors are not moving.\n");
+        }
+    }
+
     // handle "enable" or "disable" command
     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
     {
