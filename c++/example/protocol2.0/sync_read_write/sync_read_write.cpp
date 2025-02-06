@@ -189,6 +189,51 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
   }
 }
 
+
+void move_to_home(dynamixel::GroupSyncWrite &groupSyncWrite, 
+                  dynamixel::PacketHandler *packetHandler, 
+                  dynamixel::PortHandler *portHandler) 
+{
+    // Define home positions
+    int home_positions[NUM_MOTORS + 1] = {0, 
+        1364, 2001, 2048, 2826, 2107, 1057, 288, 2021, 21, 2833, 2094, 1013
+    };
+
+    printf("Moving all motors to home position...\n");
+
+    // Clear previous SyncWrite parameters
+    groupSyncWrite.clearParam();
+
+    for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
+    {
+        uint8_t param_goal_position[4];
+        int goal_position = home_positions[id];
+
+        param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+        param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+        // Add goal position to SyncWrite buffer
+        if (!groupSyncWrite.addParam(id, param_goal_position)) {
+            fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+            continue;
+        }
+    }
+
+    // Transmit the home positions to all motors at once
+    int dxl_comm_result = groupSyncWrite.txPacket();
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+    }
+
+    // Clear SyncWrite buffer after sending data
+    groupSyncWrite.clearParam();
+
+    printf("All motors moved to home position.\n");
+}
+
+
 int DXL_ID;
 
 int main()
@@ -288,6 +333,11 @@ int main()
     // If user enters "get", scan all Dynamixel IDs
     if (strcmp(command, "get") == 0) {
       scan_motors(groupSyncRead, packetHandler, portHandler);
+    }
+
+    // If user enters "home", move all motors to home positions
+    else if (strcmp(command, "home") == 0) {
+        move_to_home(groupSyncWrite, packetHandler, portHandler);
     }
 
     // handle "enable" or "disable" command
