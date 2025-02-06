@@ -45,11 +45,11 @@
 // Control table address
 #define ADDR_PRO_TORQUE_ENABLE          64                 // Control table address is different in Dynamixel model
 #define ADDR_PRO_GOAL_POSITION          116
-#define ADDR_PRO_PRESENT_POSITION       132
+#define ADDR_PRESENT_POSITION       132
 
 // Data Byte Length
 #define LEN_PRO_GOAL_POSITION           4
-#define LEN_PRO_PRESENT_POSITION        4
+#define LEN_PRESENT_POSITION        4
 
 // Protocol version
 #define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
@@ -133,7 +133,7 @@ int main()
   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PRO_GOAL_POSITION, LEN_PRO_GOAL_POSITION);
 
   // Initialize Groupsyncread instance for Present Position
-  dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION);
+  dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
 
   int index = 0;
   int dxl_comm_result = COMM_TX_FAIL;               // Communication result
@@ -218,134 +218,108 @@ int main()
     return 0;
   }
 
-  while(1)
+  while (1)
   {
     char input[MAX_INPUT_SIZE];
 
     printf("Enter motor ID and position (e.g., '14:1000, 15:2000') type 'exit' to quit:\n");
     fgets(input, sizeof(input), stdin);   // Read user input
+    input[strcspn(input, "\n")] = 0;  // Remove newline character
 
     // Exit condition
     if (strncmp(input, "exit", 4) == 0) break;
 
-    int dxl_id, goal_position;
-    char *token = strtok(input, ", ");  //Split by comma and space
+    // If user enters "get", scan all Dynamixel IDs
+    if (strcmp(input, "get") == 0) {
+        printf("Scanning for connected Dynamixel motors...\n");
 
-    // printf("Press any key to continue! (or press ESC to quit!)\n");
-    // if (getch() == ESC_ASCII_VALUE)
-    //   break;
+        // Clear previous parameters
+        groupSyncRead.clearParam();
+        
+        // Scan for active motors
+        for (int id = 1; id <= MAX_ID; id++) {
+            int dxl_comm_result = packetHandler->ping(portHandler, id);
+            if (dxl_comm_result == COMM_SUCCESS) {
+                printf("Found Dynamixel ID: %d\n", id);
 
-    while (token != NULL) 
+                // Add ID to GroupSyncRead
+                bool dxl_addparam_result = groupSyncRead.addParam(id);
+                if (!dxl_addparam_result) {
+                    printf("Failed to add ID %d to SyncRead\n", id);
+                }
+            }
+        }
+
+        // Read all present positions
+        int dxl_comm_result = groupSyncRead.txRxPacket();
+        if (dxl_comm_result != COMM_SUCCESS) {
+            printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        }
+
+        // Print present positions of connected motors
+        printf("\nCurrent Positions:\n");
+        for (int id = 1; id <= MAX_ID; id++) {
+            if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
+                int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
+                printf("[ID:%d] Position: %d\n", id, position);
+            }
+        }
+        printf("\n");
+    }
+    else
     {
-      // Find the colon separator
-      char *colon = strchr(token, ':');
-      if (!colon) {
-        printf("Invalid format. Expected: ID1:Position1, ID2:Position2\n");
-        break;
-      }
+      int dxl_id, goal_position;
+      char *token = strtok(input, ", ");  // Split by comma and space
 
-      // Extract ID and position
-      *colon = '\0';    // Replace ':' with null to split key and value
-      dxl_id = atoi(token);   // Convert ID
-      goal_position = atoi(colon + 1);   // Convert position 
-
-      printf("Moving Dynamixel ID %d to Position %d\n", dxl_id, goal_position);
-
-      // Send goal position to the motor
-      uint8_t param_goal_position[4];
-      param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-      param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-      param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-      param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
-
-      // Add to SyncWrite buffer
-      if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
-          fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", dxl_id);
-          continue;
-      }
-
-      token = strtok(NULL, ", ");  // Move to next pair
-
-      // // Allocate goal position value into byte array ID1
-      // param_goal_position1[0] = DXL_LOBYTE(DXL_LOWORD(dxl_goal_position[index]));
-      // param_goal_position1[1] = DXL_HIBYTE(DXL_LOWORD(dxl_goal_position[index]));
-      // param_goal_position1[2] = DXL_LOBYTE(DXL_HIWORD(dxl_goal_position[index]));
-      // param_goal_position1[3] = DXL_HIBYTE(DXL_HIWORD(dxl_goal_position[index]));
-
-      // // Allocate goal position value into byte array ID2
-      // param_goal_position2[0] = DXL_LOBYTE(DXL_LOWORD(dxl_goal_position[index]));
-      // param_goal_position2[1] = DXL_HIBYTE(DXL_LOWORD(dxl_goal_position[index]));
-      // param_goal_position2[2] = DXL_LOBYTE(DXL_HIWORD(dxl_goal_position[index]));
-      // param_goal_position2[3] = DXL_HIBYTE(DXL_HIWORD(dxl_goal_position[index]));
-
-
-      // // Add Dynamixel#1 goal position value to the Syncwrite storage
-      // dxl_addparam_result = groupSyncWrite.addParam(DXL1_ID, param_goal_position1);
-      // if (dxl_addparam_result != true)
-      // {
-      //   fprintf(stderr, "[ID:%03d] groupSyncWrite addparam failed", DXL1_ID);
-      //   return 0;
-      // }
-
-      // // Add Dynamixel#2 goal position value to the Syncwrite parameter storage
-      // dxl_addparam_result = groupSyncWrite.addParam(DXL2_ID, param_goal_position2);
-      // if (dxl_addparam_result != true)
-      // {
-      //   fprintf(stderr, "[ID:%03d] groupSyncWrite addparam failed", DXL2_ID);
-      //   return 0;
-      // }
-
-      // Syncwrite goal position
-      dxl_comm_result = groupSyncWrite.txPacket();
-      if (dxl_comm_result != COMM_SUCCESS) printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-
-      // Clear syncwrite parameter storage
-      // Clear buffer for next input
+      // Clear previous SyncWrite parameters
       groupSyncWrite.clearParam();
 
-
-      // Syncread present position
-      dxl_comm_result = groupSyncRead.txRxPacket();
-      if (dxl_comm_result != COMM_SUCCESS)
+      while (token != NULL) 
       {
-        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+          // Find the colon separator
+          char *colon = strchr(token, ':');
+          if (!colon) {
+              printf("Invalid format. Expected: ID1:Position1, ID2:Position2\n");
+              break;
+          }
+
+          // Extract ID and position
+          *colon = '\0';    // Replace ':' with null to split key and value
+          dxl_id = atoi(token);   // Convert ID
+          goal_position = atoi(colon + 1);   // Convert position
+
+          printf("Moving Dynamixel ID %d to Position %d\n", dxl_id, goal_position);
+
+          // Send goal position to the motor
+          uint8_t param_goal_position[4];
+          param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+          param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+          param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+          param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+          // Add to SyncWrite buffer
+          if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
+              fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", dxl_id);
+              continue;
+          }
+
+          token = strtok(NULL, ", ");  // Move to next pair
       }
-      else if (groupSyncRead.getError(DXL1_ID, &dxl_error))
-      {
-        printf("[ID:%03d] %s\n", DXL1_ID, packetHandler->getRxPacketError(dxl_error));
-      }
-      else if (groupSyncRead.getError(DXL2_ID, &dxl_error))
-      {
-        printf("[ID:%03d] %s\n", DXL2_ID, packetHandler->getRxPacketError(dxl_error));
+
+      // Transmit goal positions to all motors at once
+      dxl_comm_result = groupSyncWrite.txPacket();
+      if (dxl_comm_result != COMM_SUCCESS) {
+          printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
       }
 
-      // Check if groupsyncread data of Dynamixel#1 is available
-      dxl_getdata_result = groupSyncRead.isAvailable(DXL1_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION);
-      if (dxl_getdata_result != true)
-      {
-        fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed", DXL1_ID);
-        return 0;
-      }
+      // Clear SyncWrite buffer
+      groupSyncWrite.clearParam();
 
-      // Check if groupsyncread data of Dynamixel#2 is available
-      dxl_getdata_result = groupSyncRead.isAvailable(DXL2_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION);
-      if (dxl_getdata_result != true)
-      {
-        fprintf(stderr, "[ID:%03d] groupSyncRead getdata failed", DXL2_ID);
-        return 0;
-      }
-
-      // Get Dynamixel#1 present position value
-      dxl1_present_position = groupSyncRead.getData(DXL1_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION);
-
-      // Get Dynamixel#2 present position value
-      dxl2_present_position = groupSyncRead.getData(DXL2_ID, ADDR_PRO_PRESENT_POSITION, LEN_PRO_PRESENT_POSITION);
-
-      printf("[ID:%03d] GoalPos:%03d  PresPos:%03d\t[ID:%03d] GoalPos:%03d  PresPos:%03d\n", DXL1_ID, dxl1_present_position, DXL2_ID, dxl2_present_position);
-
-    }
-    
+      // Wait until motors reach the goal position
+      int32_t dxl1_present_position = 0, dxl2_present_position = 0;
+    } 
   }
+
 
   // Disable Dynamixel#1 Torque
   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL1_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
