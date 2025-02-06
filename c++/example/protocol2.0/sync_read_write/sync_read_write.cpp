@@ -169,7 +169,7 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
                 dynamixel::PortHandler *portHandler, 
                 const char *command, char *ids_str)
 {
-  bool enable = (strcmp(command, "enable") == 0) ? TORQUE_ENABLE : TORQUE_DISABLE;
+  bool enable = (strcmp(command, "en") == 0) ? TORQUE_ENABLE : TORQUE_DISABLE;
   uint8_t dxl_error = 0;
 
   char *token = strtok(ids_str, " ");
@@ -291,7 +291,7 @@ int main()
     }
 
     // handle "enable" or "disable" command
-    else if (strcmp(command, "enable") == 0 || strcmp(command, "disable") == 0)
+    else if (strcmp(command, "en") == 0 || strcmp(command, "dis") == 0)
     {
       if (args == NULL) {
         printf("Error: No motor IDs provides.\n");
