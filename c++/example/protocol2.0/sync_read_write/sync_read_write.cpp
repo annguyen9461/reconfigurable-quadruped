@@ -57,6 +57,7 @@
 // Default setting
 #define DXL1_ID                         14                   // Dynamixel#1 ID: 1
 #define DXL2_ID                         15                   // Dynamixel#2 ID: 2
+#define DXL3_ID                         13                   
 #define BAUDRATE                        57600
 #define DEVICENAME                      "/dev/ttyUSB0"      // Check which port is being used on your controller
                                                             // ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
@@ -68,6 +69,13 @@
 #define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
 
 #define ESC_ASCII_VALUE                 0x1b
+
+#define NUM_MOTORs                      12                  // IDs from 1 to 12
+
+void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
+                 dynamixel::PacketHandler *packetHandler, 
+                 dynamixel::PortHandler *portHandler);
+
 
 int getch()
 {
@@ -117,6 +125,46 @@ int kbhit(void)
 #endif
 }
 
+void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
+                 dynamixel::PacketHandler *packetHandler, 
+                 dynamixel::PortHandler *portHandler)
+{
+  printf("Scanning for connected Dynamixel motors...\n");
+
+  // Clear previous parameters
+  groupSyncRead.clearParam();
+  
+  // Scan for active motors
+  for (int id = 1; id <= MAX_ID; id++) {
+      int dxl_comm_result = packetHandler->ping(portHandler, id);
+      if (dxl_comm_result == COMM_SUCCESS) {
+          printf("Found Dynamixel ID: %d\n", id);
+
+          // Add ID to GroupSyncRead
+          bool dxl_addparam_result = groupSyncRead.addParam(id);
+          if (!dxl_addparam_result) {
+              printf("Failed to add ID %d to SyncRead\n", id);
+          }
+      }
+  }
+
+  // Read all present positions
+  int dxl_comm_result = groupSyncRead.txRxPacket();
+  if (dxl_comm_result != COMM_SUCCESS) {
+      printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
+  }
+
+  // Print present positions of connected motors
+  printf("\nCurrent Positions:\n");
+  for (int id = 1; id <= MAX_ID; id++) {
+      if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
+          int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
+          printf("[ID:%d] Position: %d\n", id, position);
+      }
+  }
+  printf("\n");
+}
+
 int main()
 {
   // Initialize PortHandler instance
@@ -135,16 +183,10 @@ int main()
   // Initialize Groupsyncread instance for Present Position
   dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
 
-  int index = 0;
   int dxl_comm_result = COMM_TX_FAIL;               // Communication result
   bool dxl_addparam_result = false;                 // addParam result
-  bool dxl_getdata_result = false;                  // GetParam result
-  int dxl_goal_position[2] = {DXL_MINIMUM_POSITION_VALUE, DXL_MAXIMUM_POSITION_VALUE};  // Goal position
 
   uint8_t dxl_error = 0;                            // Dynamixel error
-  uint8_t param_goal_position1[4];
-  uint8_t param_goal_position2[4];
-  int32_t dxl1_present_position = 0, dxl2_present_position = 0;                         // Present position
 
   // Open port
   if (portHandler->openPort())
@@ -231,40 +273,7 @@ int main()
 
     // If user enters "get", scan all Dynamixel IDs
     if (strcmp(input, "get") == 0) {
-        printf("Scanning for connected Dynamixel motors...\n");
-
-        // Clear previous parameters
-        groupSyncRead.clearParam();
-        
-        // Scan for active motors
-        for (int id = 1; id <= MAX_ID; id++) {
-            int dxl_comm_result = packetHandler->ping(portHandler, id);
-            if (dxl_comm_result == COMM_SUCCESS) {
-                printf("Found Dynamixel ID: %d\n", id);
-
-                // Add ID to GroupSyncRead
-                bool dxl_addparam_result = groupSyncRead.addParam(id);
-                if (!dxl_addparam_result) {
-                    printf("Failed to add ID %d to SyncRead\n", id);
-                }
-            }
-        }
-
-        // Read all present positions
-        int dxl_comm_result = groupSyncRead.txRxPacket();
-        if (dxl_comm_result != COMM_SUCCESS) {
-            printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
-        }
-
-        // Print present positions of connected motors
-        printf("\nCurrent Positions:\n");
-        for (int id = 1; id <= MAX_ID; id++) {
-            if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-                int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-                printf("[ID:%d] Position: %d\n", id, position);
-            }
-        }
-        printf("\n");
+      scan_motors(groupSyncRead, packetHandler, portHandler);
     }
     else
     {
@@ -314,9 +323,6 @@ int main()
 
       // Clear SyncWrite buffer
       groupSyncWrite.clearParam();
-
-      // Wait until motors reach the goal position
-      int32_t dxl1_present_position = 0, dxl2_present_position = 0;
     } 
   }
 
