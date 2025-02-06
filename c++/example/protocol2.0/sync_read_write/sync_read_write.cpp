@@ -67,12 +67,15 @@
 
 #define ESC_ASCII_VALUE                 0x1b
 
-#define NUM_MOTORs                      12                  // IDs from 1 to 12
+#define NUM_MOTORS                      20                  // IDs from 1 to 12
 
 void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
                  dynamixel::PortHandler *portHandler);
 
+void set_torque(dynamixel::PacketHandler *packetHandler, 
+                dynamixel::PortHandler *portHandler, 
+                const char *command, char *ids_str); 
 
 int getch()
 {
@@ -160,6 +163,30 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
       }
   }
   printf("\n");
+}
+
+void set_torque(dynamixel::PacketHandler *packetHandler, 
+                dynamixel::PortHandler *portHandler, 
+                const char *command, char *ids_str)
+{
+  bool enable = (strcmp(command, "enable") == 0) ? TORQUE_ENABLE : TORQUE_DISABLE;
+  uint8_t dxl_error = 0;
+
+  char *token = strtok(ids_str, " ");
+  while (token != NULL) {
+      int dxl_id = atoi(token);
+      if (dxl_id < 1 || dxl_id > NUM_MOTORS) {
+          printf("Invalid ID: %d. Must be between 1 and %d.\n", dxl_id, NUM_MOTORS);
+      } else {
+          int dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, dxl_id, ADDR_PRO_TORQUE_ENABLE, enable, &dxl_error);
+          if (dxl_comm_result != COMM_SUCCESS) {
+              printf("[ID:%d] Torque change failed: %s\n", dxl_id, packetHandler->getTxRxResult(dxl_comm_result));
+          } else {
+              printf("[ID:%d] Torque %s\n", dxl_id, enable ? "ENABLED" : "DISABLED");
+          }
+      }
+      token = strtok(NULL, " ");
+  }
 }
 
 int DXL_ID;
@@ -252,10 +279,27 @@ int main()
     // Exit condition
     if (strncmp(input, "exit", 4) == 0) break;
 
+    // Parse first word
+    char *command = strtok(input, " ");
+    char *args = strtok(NULL, "");  // Get the rest of the input
+
+    if (command == NULL) continue;  // Skip empty input
+
     // If user enters "get", scan all Dynamixel IDs
-    if (strcmp(input, "get") == 0) {
+    if (strcmp(command, "get") == 0) {
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
+
+    // handle "enable" or "disable" command
+    else if (strcmp(command, "enable") == 0 || strcmp(command, "disable") == 0)
+    {
+      if (args == NULL) {
+        printf("Error: No motor IDs provides.\n");
+      } else {
+        set_torque(packetHandler, portHandler, command, args);
+      }
+    }
+    // handle setting motor positions
     else
     {
       int dxl_id, goal_position;
