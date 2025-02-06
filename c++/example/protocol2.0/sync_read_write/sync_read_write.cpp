@@ -291,7 +291,7 @@ int main()
     }
 
     // handle "enable" or "disable" command
-    else if (strcmp(command, "en") == 0 || strcmp(command, "dis") == 0)
+    else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
     {
       if (args == NULL) {
         printf("Error: No motor IDs provides.\n");
