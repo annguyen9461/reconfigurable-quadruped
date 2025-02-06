@@ -69,6 +69,10 @@
 
 #define NUM_MOTORS                      20                  // IDs from 1 to 12
 
+
+int DXL_ID;
+bool toggle_position = false;  // Toggles between the two positions
+
 void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
                  dynamixel::PortHandler *portHandler);
@@ -233,8 +237,58 @@ void move_to_home(dynamixel::GroupSyncWrite &groupSyncWrite,
     printf("All motors moved to home position.\n");
 }
 
+void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite, 
+                  dynamixel::PacketHandler *packetHandler, 
+                  dynamixel::PortHandler *portHandler) 
+{
+    // Define the two alternating positions
+    int top_left_up[NUM_MOTORS + 1] = {0, 
+        1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 21, 3119, 2104, 1013
+    };
 
-int DXL_ID;
+    int top_right_up[NUM_MOTORS + 1] = {0, 
+        1060, 2015, 2045, 2940, 2107, 1057, 711, 2032, 21, 2387, 2101, 1009
+    };
+
+    // Toggle between the two position sets
+    int* target_positions = toggle_position ? top_right_up : top_left_up;
+    toggle_position = !toggle_position;  // Flip the toggle for next time
+
+    printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
+
+    // Clear previous SyncWrite parameters
+    groupSyncWrite.clearParam();
+
+    for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
+    {
+        uint8_t param_goal_position[4];
+        int goal_position = target_positions[id];
+
+        param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+        param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+        param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+        // Add goal position to SyncWrite buffer
+        if (!groupSyncWrite.addParam(id, param_goal_position)) {
+            fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+            continue;
+        }
+    }
+
+    // Transmit the target positions to all motors at once
+    int dxl_comm_result = groupSyncWrite.txPacket();
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+    }
+
+    // Clear SyncWrite buffer after sending data
+    groupSyncWrite.clearParam();
+
+    printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
+}
+
+
 
 int main()
 {
@@ -337,9 +391,11 @@ int main()
 
     // If user enters "home", move all motors to home positions
     else if (strcmp(command, "home") == 0) {
-        move_to_home(groupSyncWrite, packetHandler, portHandler);
+      move_to_home(groupSyncWrite, packetHandler, portHandler);
     }
-
+    else if (strcmp(command, "fw") == 0) {
+      move_forward(groupSyncWrite, packetHandler, portHandler);
+    }
     // handle "enable" or "disable" command
     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
     {
