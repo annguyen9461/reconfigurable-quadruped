@@ -202,7 +202,13 @@ int home_positions[NUM_MOTORS + 1] = {0,
 int circle_positions[NUM_MOTORS + 1] = {0, 
   1062, 2947, 24, 3059, 1174, 3046, 22, 1096, 1004, 3089, 2943, 1055
 };
+int blue_folded_under_cir1[NUM_MOTORS + 1] = {0, 
+    1059, 2945, 1201, 3060, 1175, 1897, 23, 1047, 1007, 3089, 2994, 1052
+};
 
+int yellow_folded_above_cir2[NUM_MOTORS + 1] = {0, 
+    1062, 2957, 19, 3059, 1164, 3068, 23, 1057, 1010, 3088, 2986, 1051
+};
 void move_to(
           int* positions,
           dynamixel::GroupSyncWrite &groupSyncWrite, 
@@ -423,7 +429,9 @@ int main()
 
     // If user enters "home", move all motors to home positions
     else if (strcmp(command, "ci") == 0) {
-      move_to(circle_positions, groupSyncWrite, packetHandler);
+      move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(yellow_folded_above_cir2, groupSyncWrite, packetHandler);
     }
 
     // MOVE FORWARD
