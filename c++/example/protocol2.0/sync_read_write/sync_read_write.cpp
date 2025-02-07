@@ -427,11 +427,17 @@ int main()
       move_to(home_positions, groupSyncWrite, packetHandler);
     }
 
-    // If user enters "home", move all motors to home positions
+    // HOME TO CIRCLE
     else if (strcmp(command, "ci") == 0) {
       move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
       std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
       move_to(yellow_folded_above_cir2, groupSyncWrite, packetHandler);
+    }
+    // CIRCLE TO HOME
+    else if (strcmp(command, "cho") == 0) {
+      move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(home_positions, groupSyncWrite, packetHandler);
     }
 
     // MOVE FORWARD
@@ -453,15 +459,15 @@ int main()
         }
     }
 
-    // If user enters "stop", halt continuous movement
-    else if (strcmp(command, "stop") == 0) {
-        if (forward_running) {
-            forward_running = false;
-            printf("Stopping forward motion...\n");
-        } else {
-            printf("Motors are not moving.\n");
-        }
-    }
+    // // If user enters "stop", halt continuous movement
+    // else if (strcmp(command, "stop") == 0) {
+    //     if (forward_running) {
+    //         forward_running = false;
+    //         printf("Stopping forward motion...\n");
+    //     } else {
+    //         printf("Motors are not moving.\n");
+    //     }
+    // }
 
     // handle "enable" or "disable" command
     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
