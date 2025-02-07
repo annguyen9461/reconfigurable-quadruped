@@ -209,6 +209,27 @@ int blue_folded_under_cir1[NUM_MOTORS + 1] = {0,
 int yellow_folded_above_cir2[NUM_MOTORS + 1] = {0, 
     1062, 2957, 19, 3059, 1164, 3068, 23, 1057, 1010, 3088, 2986, 1051
 };
+
+// Roll Forward - Open Blue (Motors 8 and 11)
+int roll_fw_open_blue[NUM_MOTORS + 1] = {0, 
+    1062, 2996, 20, 3059, 1130, 3069, 23, 1685, 1010, 3088, 2381, 1050
+};
+
+// Roll Forward - Close Blue (Motors 8 and 11)
+int roll_fw_close_blue[NUM_MOTORS + 1] = {0, 
+    1062, 2996, 19, 3059, 1131, 3069, 23, 1026, 1010, 3088, 3084, 1047
+};
+
+// Roll Forward - Open Yellow (Motors 5 and 2)
+int roll_fw_open_yellow[NUM_MOTORS + 1] = {0, 
+    1062, 2505, 19, 3059, 1613, 3068, 25, 1085, 1015, 3089, 2986, 1056
+};
+
+// Roll Forward - Close Yellow (Motors 5 and 2)
+int roll_fw_close_yellow[NUM_MOTORS + 1] = {0, 
+    1062, 2969, 18, 3059, 1093, 3067, 23, 1101, 1010, 3088, 2978, 1051
+};
+
 void move_to(
           int* positions,
           dynamixel::GroupSyncWrite &groupSyncWrite, 
@@ -440,23 +461,50 @@ int main()
       move_to(home_positions, groupSyncWrite, packetHandler);
     }
 
-    // MOVE FORWARD
+    // WALK FORWARD
     else if (strcmp(command, "fw") == 0) {
-        if (!forward_running) {
-          move_forward(groupSyncWrite, packetHandler);
-        } else {
-          printf("Already moving forward! Type 'stop' to halt.\n");
-        }
+      if (!forward_running) {
+        move_forward(groupSyncWrite, packetHandler);
+      } else {
+        printf("Already moving forward! Type 'stop' to halt.\n");
+      }
     }
-    // MOVE FORWARD CONTINUOUSLY
+    // WALK FORWARD CONTINUOUSLY
     else if (strcmp(command, "fwc") == 0) {
-        if (!forward_running) {
-          while (1) {
-            move_forward(groupSyncWrite, packetHandler);
-          }
-        } else {
-          printf("Already moving forward! Type 'stop' to halt.\n");
+      if (!forward_running) {
+        while (1) {
+          move_forward(groupSyncWrite, packetHandler);
         }
+      } else {
+        printf("Already moving forward! Type 'stop' to halt.\n");
+      }
+    }
+
+    // ROLL FORWARD CONTINUOUSLY
+    else if (strcmp(command, "rf") == 0) {
+      while (1) {
+        move_to(roll_fw_open_blue, groupSyncWrite, packetHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+        move_to(roll_fw_close_blue, groupSyncWrite, packetHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
+
+        move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+        move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler);
+      }
+    }
+    // ROLL FORWARD BLUE
+    else if (strcmp(command, "rfb") == 0) {
+      move_to(roll_fw_open_blue, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(roll_fw_close_blue, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
+    }
+    // ROLL FORWARD YELLOW
+    else if (strcmp(command, "rfy") == 0) {
+      move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler);
     }
 
     // // If user enters "stop", halt continuous movement
