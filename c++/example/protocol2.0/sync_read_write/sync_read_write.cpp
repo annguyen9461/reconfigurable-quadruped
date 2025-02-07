@@ -196,51 +196,49 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
   }
 }
 
+int home_positions[NUM_MOTORS + 1] = {0, 
+  1289, 2051, 2062, 2908, 2046, 990, 342, 1987, 1000, 2833, 2069, 1060
+};
+int circle_positions[NUM_MOTORS + 1] = {0, 
+  1062, 2947, 24, 3059, 1174, 3046, 22, 1096, 1004, 3089, 2943, 1055
+};
 
-void move_to_home(dynamixel::GroupSyncWrite &groupSyncWrite, 
-                  dynamixel::PacketHandler *packetHandler) 
+void move_to(
+          int* positions,
+          dynamixel::GroupSyncWrite &groupSyncWrite, 
+          dynamixel::PacketHandler *packetHandler) 
 {
-    // Define home positions
-    // int home_positions[NUM_MOTORS + 1] = {0, 
-    //     1364, 2001, 2048, 2826, 2107, 1057, 288, 2021, 21, 2833, 2094, 1013
-    // };
+  printf("Moving all motors to home position...\n");
 
-    int home_positions[NUM_MOTORS + 1] = {0, 
-        1289, 2051, 2062, 2908, 2046, 990, 342, 1987, 1000, 2833, 2069, 1060
-    };
+  // Clear previous SyncWrite parameters
+  groupSyncWrite.clearParam();
 
-    printf("Moving all motors to home position...\n");
+  for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
+  {
+      uint8_t param_goal_position[4];
+      int goal_position = positions[id];
 
-    // Clear previous SyncWrite parameters
-    groupSyncWrite.clearParam();
+      param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+      param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+      param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+      param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
 
-    for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
-    {
-        uint8_t param_goal_position[4];
-        int goal_position = home_positions[id];
+      // Add goal position to SyncWrite buffer
+      if (!groupSyncWrite.addParam(id, param_goal_position)) {
+          fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+          continue;
+      }
+  }
+  // Transmit the home positions to all motors at once
+  int dxl_comm_result = groupSyncWrite.txPacket();
+  if (dxl_comm_result != COMM_SUCCESS) {
+      printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+  }
 
-        param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-        param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-        param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-        param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+  // Clear SyncWrite buffer after sending data
+  groupSyncWrite.clearParam();
 
-        // Add goal position to SyncWrite buffer
-        if (!groupSyncWrite.addParam(id, param_goal_position)) {
-            fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
-            continue;
-        }
-    }
-
-    // Transmit the home positions to all motors at once
-    int dxl_comm_result = groupSyncWrite.txPacket();
-    if (dxl_comm_result != COMM_SUCCESS) {
-        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-    }
-
-    // Clear SyncWrite buffer after sending data
-    groupSyncWrite.clearParam();
-
-    printf("All motors moved to home position.\n");
+  printf("All motors moved to home position.\n");
 }
 
 void move_to_target_positions(
@@ -249,8 +247,6 @@ void move_to_target_positions(
                       dynamixel::PacketHandler *packetHandler 
                       )
 {
- 
-
   printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 
   // Clear previous SyncWrite parameters
@@ -422,14 +418,30 @@ int main()
 
     // If user enters "home", move all motors to home positions
     else if (strcmp(command, "ho") == 0) {
-      move_to_home(groupSyncWrite, packetHandler);
+      move_to(home_positions, groupSyncWrite, packetHandler);
     }
 
+    // If user enters "home", move all motors to home positions
+    else if (strcmp(command, "ci") == 0) {
+      move_to(circle_positions, groupSyncWrite, packetHandler);
+    }
+
+    // MOVE FORWARD
     else if (strcmp(command, "fw") == 0) {
         if (!forward_running) {
-            move_forward(groupSyncWrite, packetHandler);
+          move_forward(groupSyncWrite, packetHandler);
         } else {
-            printf("Already moving forward! Type 'stop' to halt.\n");
+          printf("Already moving forward! Type 'stop' to halt.\n");
+        }
+    }
+    // MOVE FORWARD CONTINUOUSLY
+    else if (strcmp(command, "fwc") == 0) {
+        if (!forward_running) {
+          while (1) {
+            move_forward(groupSyncWrite, packetHandler);
+          }
+        } else {
+          printf("Already moving forward! Type 'stop' to halt.\n");
         }
     }
 
