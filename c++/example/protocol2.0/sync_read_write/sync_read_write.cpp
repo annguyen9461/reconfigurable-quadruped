@@ -290,10 +290,10 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
 {
   // Define the two alternating positions
   int top_left_lift[NUM_MOTORS + 1] = {0, 
-      1779, 2283, 2048, 2398, 2105, 1056, 224, 2283, 1000, 3119, 2104, 1013
+      1779, 2283, 2048, 2398, 2105, 1056, 224, 2283, 1000, 2959, 2046, 1013
   };
   int top_left_fw[NUM_MOTORS + 1] = {0, 
-      1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 1000, 3119, 2104, 1013
+      1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 1000, 2959, 2046, 1013
   };
 
   int top_right_lift[NUM_MOTORS + 1] = {0, 
