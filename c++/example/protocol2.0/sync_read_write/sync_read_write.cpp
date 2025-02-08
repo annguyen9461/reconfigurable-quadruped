@@ -196,6 +196,10 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
   }
 }
 
+int home2_positions[NUM_MOTORS + 1] = {0, 
+    1632, 2052, 2060, 2490, 2047, 991, 693, 1967, 1005, 2361, 2085, 1056
+};
+
 int home_positions[NUM_MOTORS + 1] = {0, 
   1289, 2051, 2062, 2908, 2046, 990, 342, 1987, 1000, 2833, 2069, 1060
 };
@@ -443,9 +447,14 @@ int main()
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
 
-    // If user enters "home", move all motors to home positions
+    // If user enters "ho", move all motors to home positions
     else if (strcmp(command, "ho") == 0) {
       move_to(home_positions, groupSyncWrite, packetHandler);
+    }
+
+    // If user enters "ho2", move all motors to home positions where body is horizontal
+    else if (strcmp(command, "ho2") == 0) {
+      move_to(home2_positions, groupSyncWrite, packetHandler);
     }
 
     // HOME TO CIRCLE
