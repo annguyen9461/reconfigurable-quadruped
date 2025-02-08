@@ -197,7 +197,7 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
 }
 
 int home2_positions[NUM_MOTORS + 1] = {0, 
-    1632, 2052, 2060, 2490, 2047, 991, 693, 1967, 1005, 2361, 2085, 1056
+    1632, 2265, 2060, 2490, 1909, 985, 693, 2155, 1014, 2325, 1852, 1065
 };
 
 int home_positions[NUM_MOTORS + 1] = {0, 
@@ -346,6 +346,7 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
   // Toggle between the two position sets
   toggle_position = !toggle_position;  // Flip the toggle for next time
 }
+
 
 
 int main()
