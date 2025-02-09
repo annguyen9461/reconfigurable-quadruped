@@ -197,11 +197,15 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
 }
 
 int home2_positions[NUM_MOTORS + 1] = {0, 
-    1632, 2265, 2060, 2490, 1909, 985, 693, 2155, 1014, 2325, 1852, 1065
+    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
+};
+
+int home2_perpen[NUM_MOTORS + 1] = {0, 
+    1632, 2031, 2058, 2449, 2076, 1022, 661, 2008, 1015, 2513, 2062, 1060
 };
 
 int home_positions[NUM_MOTORS + 1] = {0, 
-  1289, 2051, 2062, 2908, 2046, 990, 342, 1987, 1000, 2833, 2069, 1060
+  1313, 2030, 2060, 2818, 2076, 1021, 305, 2007, 1016, 2868, 2066, 1062
 };
 int circle_positions[NUM_MOTORS + 1] = {0, 
   1062, 2947, 24, 3059, 1174, 3046, 22, 1096, 1004, 3089, 2943, 1055
@@ -209,7 +213,6 @@ int circle_positions[NUM_MOTORS + 1] = {0,
 int blue_folded_under_cir1[NUM_MOTORS + 1] = {0, 
     1059, 2945, 1201, 3060, 1175, 1897, 23, 1047, 1007, 3089, 2994, 1052
 };
-
 int yellow_folded_above_cir2[NUM_MOTORS + 1] = {0, 
     1062, 2957, 19, 3059, 1164, 3068, 23, 1057, 1010, 3088, 2986, 1051
 };
@@ -347,6 +350,20 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
   toggle_position = !toggle_position;  // Flip the toggle for next time
 }
 
+// Lift Top Left Blue UP (Motor 11)
+int lift_top_left_blue_up[NUM_MOTORS + 1] = {0, 
+    1632, 2253, 2060, 2490, 1920, 983, 693, 2133, 1013, 2324, 1675, 1061
+};
+
+// Move Top Left Blue Forward (Motor 10)
+int move_top_left_blue_fw[NUM_MOTORS + 1] = {0, 
+    1632, 2253, 2059, 2491, 1922, 983, 693, 2133, 1014, 2549, 1759, 1060
+};
+
+// Set Motor 11 Down
+int set_motor_11_down[NUM_MOTORS + 1] = {0, 
+    1632, 2253, 2060, 2490, 1919, 983, 693, 2133, 1014, 2549, 1863, 1064
+};
 
 
 int main()
@@ -450,6 +467,8 @@ int main()
 
     // If user enters "ho", move all motors to home positions
     else if (strcmp(command, "ho") == 0) {
+      move_to(home2_perpen, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
       move_to(home_positions, groupSyncWrite, packetHandler);
     }
 
@@ -488,6 +507,17 @@ int main()
       } else {
         printf("Already moving forward! Type 'stop' to halt.\n");
       }
+    }
+    // WALK FORWARD
+    else if (strcmp(command, "fwbl") == 0) {
+      move_to(lift_top_left_blue_up, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(move_top_left_blue_fw, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(set_motor_11_down, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      move_to(home2_positions, groupSyncWrite, packetHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
     }
 
     // ROLL FORWARD CONTINUOUSLY
