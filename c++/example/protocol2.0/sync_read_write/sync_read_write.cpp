@@ -203,7 +203,7 @@ void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead,
       }
   }
   printf("Present motor positions UPDATED\n");
-  for (int id = 1; id <= sizeof(present_positions); id++) {
+  for (int id = 1; id <= NUM_MOTORS; id++) {
     printf("[ID: %d] Position: %d\n", id, present_positions[id]);
   }
 }
@@ -351,8 +351,31 @@ void move_to_target_positions(
   printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 }
 
-void gradual_transition(int initial_position, int goal_position) {
-  int step_size = 10;
+void gradual_transition(int* cur_positions, 
+                         int* next_positions, 
+                         dynamixel::GroupSyncWrite &groupSyncWrite, 
+                         dynamixel::PacketHandler *packetHandler) {
+    const int step_size = 20;  // number of steps for smooth transition
+    int step_arr[NUM_MOTORS + 1] = {0};
+
+    int num_motors = NUM_MOTORS;
+
+    // loop range to start from 1 (ignoring index 0)
+    for (int i = 1; i <= num_motors; i++) {
+        step_arr[i] = (next_positions[i] - cur_positions[i]) / step_size;
+    }
+
+    // perform transitions for each step
+    for (int step = 0; step < step_size; step++) {
+        // update motor transition based on respective step size
+        for (int i = 1; i <= num_motors; i++) {
+            cur_positions[i] += step_arr[i];
+        }
+        move_to(cur_positions, groupSyncWrite, packetHandler);
+    }
+
+    // ensure final position is accurate (due to integer division)
+    move_to(next_positions, groupSyncWrite, packetHandler);
 }
 
 void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite, 
@@ -508,9 +531,10 @@ int main()
 
     // If user enters "ho", move all motors to home positions
     else if (strcmp(command, "ho") == 0) {
-      move_to(home2_perpen, groupSyncWrite, packetHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(home_positions, groupSyncWrite, packetHandler);
+      // move_to(home2_perpen, groupSyncWrite, packetHandler);
+      // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+      // move_to(home_positions, groupSyncWrite, packetHandler);
+      gradual_transition(present_positions, home_positions, groupSyncWrite, packetHandler);
     }
 
     // If user enters "ho2", move all motors to home positions where body is horizontal
