@@ -69,7 +69,7 @@
 
 #define ESC_ASCII_VALUE                 0x1b
 
-#define NUM_MOTORS                      20                  // IDs from 1 to 12
+#define NUM_MOTORS                      12                  // IDs from 1 to 12
 
 
 int DXL_ID;
@@ -83,6 +83,10 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
 void set_torque(dynamixel::PacketHandler *packetHandler, 
                 dynamixel::PortHandler *portHandler, 
                 const char *command, char *ids_str); 
+
+int present_positions[NUM_MOTORS + 1] = {0, 
+    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
+};
 
 int getch()
 {
@@ -142,7 +146,7 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
   groupSyncRead.clearParam();
   
   // Scan for active motors
-  for (int id = 1; id <= MAX_ID; id++) {
+  for (int id = 1; id <= NUM_MOTORS; id++) {
       int dxl_comm_result = packetHandler->ping(portHandler, id);
       if (dxl_comm_result == COMM_SUCCESS) {
           printf("Found Dynamixel ID: %d\n", id);
@@ -163,13 +167,45 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
 
   // Print present positions of connected motors
   printf("\nCurrent Positions:\n");
-  for (int id = 1; id <= MAX_ID; id++) {
+  for (int id = 1; id <= NUM_MOTORS; id++) {
       if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
           int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
           printf("[ID:%d] Position: %d\n", id, position);
       }
   }
   printf("\n");
+}
+
+void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead, 
+                 dynamixel::PacketHandler *packetHandler, 
+                 dynamixel::PortHandler *portHandler)
+{
+  // Clear previous parameters
+  groupSyncRead.clearParam();
+
+  // Scan for active motors
+  for (int id = 1; id <= NUM_MOTORS; id++) {
+      int dxl_comm_result = packetHandler->ping(portHandler, id);
+      if (dxl_comm_result == COMM_SUCCESS) {
+          // Add ID to GroupSyncRead
+          bool dxl_addparam_result = groupSyncRead.addParam(id);
+      }
+  }
+
+  // Read all present positions
+  int dxl_comm_result = groupSyncRead.txRxPacket();
+
+  // Update present positions of connected motors
+  for (int id = 1; id <= NUM_MOTORS; id++) {
+      if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
+          int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
+          present_positions[id] = position;
+      }
+  }
+  printf("Present motor positions UPDATED\n");
+  for (int id = 1; id <= sizeof(present_positions); id++) {
+    printf("[ID: %d] Position: %d\n", id, present_positions[id]);
+  }
 }
 
 void set_torque(dynamixel::PacketHandler *packetHandler, 
@@ -315,6 +351,10 @@ void move_to_target_positions(
   printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 }
 
+void gradual_transition(int initial_position, int goal_position) {
+  int step_size = 10;
+}
+
 void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite, 
                   dynamixel::PacketHandler *packetHandler) 
 {
@@ -445,6 +485,7 @@ int main()
 
   while (1)
   {
+    update_present_positions(groupSyncRead, packetHandler, portHandler);
     char input[MAX_INPUT_SIZE];
 
     printf("Enter motor ID and position (e.g., '14:1000, 15:2000') type 'exit' to quit:\n");
