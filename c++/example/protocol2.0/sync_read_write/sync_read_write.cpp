@@ -142,26 +142,32 @@ int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
 }
 
+// Moves the motor up by a given degree amount
 int go_up(int degree, int leg_num, int curr_pos_motor) {
-  int motor_down = updown_map[leg_num].first;
-  int motor_up = updown_map[leg_num].second;
-  int diff = degree_to_pos_diff(degree);
-  if (motor_down > motor_up) {
-    return curr_pos_motor + diff;
-  } else {
-    return curr_pos_motor - diff;
-  }
+    int motor_down = updown_map[leg_num].first;
+    int motor_up = updown_map[leg_num].second;
+    int diff = degree_to_pos_diff(degree);
+
+    // Ensure position stays within limits
+    if (motor_up > motor_down) {
+        return std::min(curr_pos_motor + diff, motor_up);
+    } else {
+        return std::max(curr_pos_motor - diff, motor_up);
+    }
 }
 
+// Moves the motor down by a given degree amount
 int go_down(int degree, int leg_num, int curr_pos_motor) {
-  int motor_down = updown_map[leg_num].first;
-  int motor_up = updown_map[leg_num].second;
-  int diff = degree_to_pos_diff(degree);
-  if (motor_up > motor_down) {
-    return curr_pos_motor + diff;
-  } else {
-    return curr_pos_motor - diff;
-  }
+    int motor_down = updown_map[leg_num].first;
+    int motor_up = updown_map[leg_num].second;
+    int diff = degree_to_pos_diff(degree);
+
+    // Ensure position stays within limits
+    if (motor_down > motor_up) {
+        return std::max(curr_pos_motor - diff, motor_down);
+    } else {
+        return std::min(curr_pos_motor + diff, motor_down);
+    }
 }
 
 int DXL_ID;
