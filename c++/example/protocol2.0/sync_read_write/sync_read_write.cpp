@@ -42,6 +42,8 @@
 #include <chrono>
 #include <thread>
 
+#include <map>
+
 #define MAX_INPUT_SIZE 100      // define max input buffer size
 
 // Control table address
@@ -72,6 +74,96 @@
 #define NUM_MOTORS                      12                  // IDs from 1 to 12
 
 
+
+// Perpendicular to body (1,4,7,10)
+#define MAX_MOTOR1  3064  // Parallel body along LONG side
+#define MIN_MOTOR1  2045  // Perpendicular to body
+
+#define MAX_MOTOR4  2066  // Perpendicular to body
+#define MIN_MOTOR4  1039  // Parallel body along LONG side
+
+#define MAX_MOTOR7  3063  // Parallel body along LONG side
+#define MIN_MOTOR7  2036  // Perpendicular to body
+
+#define MAX_MOTOR10 3051  // Perpendicular to body
+#define MIN_MOTOR10 2048  // Parallel body along LONG side
+
+// Up and down movement (2,5,8,11)
+#define DOWN_MOTOR2  2055  // Down (neutral)
+#define UP_MOTOR2  3086  // Up
+
+#define DOWN_MOTOR5  2034  // Down (neutral)
+#define UP_MOTOR5  996   // Up
+
+#define DOWN_MOTOR8  2046  // Down (neutral)
+#define UP_MOTOR8  3132  // Up
+
+#define DOWN_MOTOR11 2042  // Down (neutral)
+#define UP_MOTOR11 1005  // Up
+
+
+// Perpendicular to body (1,4,7,10)
+#define MIN_ANGLE_MOTOR1  (2045.0 / 4095.0 * 360.0)  // ≈ 179.8 degrees
+#define MAX_ANGLE_MOTOR1  (3064.0 / 4095.0 * 360.0)  // ≈ 269.4 degrees
+
+#define MIN_ANGLE_MOTOR4  (1039.0 / 4095.0 * 360.0)  // ≈ 91.3 degrees
+#define MAX_ANGLE_MOTOR4  (2066.0 / 4095.0 * 360.0)  // ≈ 181.7 degrees
+
+#define MIN_ANGLE_MOTOR7  (2036.0 / 4095.0 * 360.0)  // ≈ 179.0 degrees
+#define MAX_ANGLE_MOTOR7  (3063.0 / 4095.0 * 360.0)  // ≈ 269.3 degrees
+
+#define MIN_ANGLE_MOTOR10 (2048.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
+#define MAX_ANGLE_MOTOR10 (3051.0 / 4095.0 * 360.0)  // ≈ 268.2 degrees
+
+// Up and down movement (2,5,8,11)
+#define MIN_ANGLE_MOTOR2  180.66  // Down (neutral)
+#define MAX_ANGLE_MOTOR2  271.30  // Up
+
+#define MIN_ANGLE_MOTOR5  178.81  // Down (neutral)
+#define MAX_ANGLE_MOTOR5  87.56   // Up
+
+#define MIN_ANGLE_MOTOR8  179.87  // Down (neutral)
+#define MAX_ANGLE_MOTOR8  275.34  // Up
+
+#define MIN_ANGLE_MOTOR11 179.52  // Down (neutral)
+#define MAX_ANGLE_MOTOR11 88.35   // Up
+
+std::map<int, std::pair<int, int>> updown_map = {
+  {1, {DOWN_MOTOR2, UP_MOTOR2}},
+  {2, {DOWN_MOTOR5, UP_MOTOR5}},
+  {3, {DOWN_MOTOR8, UP_MOTOR8}},
+  {4, {DOWN_MOTOR11, UP_MOTOR11}}
+};
+
+// int motor2_down = updown_map[2].first;
+// int motor2_up = updown_map[2].second;
+
+int degree_to_pos_diff(int degree) {
+  return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
+}
+
+int go_up(int degree, int leg_num, int curr_pos_motor) {
+  int motor_down = updown_map[leg_num].first;
+  int motor_up = updown_map[leg_num].second;
+  int diff = degree_to_pos_diff(degree);
+  if (motor_down > motor_up) {
+    return curr_pos_motor + diff;
+  } else {
+    return curr_pos_motor - diff;
+  }
+}
+
+int go_down(int degree, int leg_num, int curr_pos_motor) {
+  int motor_down = updown_map[leg_num].first;
+  int motor_up = updown_map[leg_num].second;
+  int diff = degree_to_pos_diff(degree);
+  if (motor_up > motor_down) {
+    return curr_pos_motor + diff;
+  } else {
+    return curr_pos_motor - diff;
+  }
+}
+
 int DXL_ID;
 bool toggle_position = false;  // Toggles between the two positions
 bool forward_running = false;
@@ -87,6 +179,11 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
 int present_positions[NUM_MOTORS + 1] = {0, 
     1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
 };
+
+int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
+    2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
+};
+
 
 int getch()
 {
@@ -549,101 +646,116 @@ int main()
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
 
-    // If user enters "ho", move all motors to home positions
-    else if (strcmp(command, "ho") == 0) {
-      // move_to(home2_perpen, groupSyncWrite, packetHandler);
-      // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      // move_to(home_positions, groupSyncWrite, packetHandler);
-      gradual_transition(present_positions, home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    }
 
-    // If user enters "ho2", move all motors to home positions where body is horizontal
-    else if (strcmp(command, "ho2") == 0) {
-      // move_to(home2_positions, groupSyncWrite, packetHandler);
-      gradual_transition(present_positions, home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    }
 
-    // HOME TO CIRCLE
-    else if (strcmp(command, "ci") == 0) {
-      // move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
-      // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      // move_to(yellow_folded_above_cir2, groupSyncWrite, packetHandler);
-      gradual_transition(present_positions, blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      gradual_transition(present_positions, yellow_folded_above_cir2, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    }
-    // CIRCLE TO HOME
-    else if (strcmp(command, "cho") == 0) {
-      move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    }
 
-    // WALK FORWARD
-    else if (strcmp(command, "fw") == 0) {
-      if (!forward_running) {
-        move_forward(groupSyncWrite, packetHandler);
-      } else {
-        printf("Already moving forward! Type 'stop' to halt.\n");
-      }
-    }
-    // WALK FORWARD CONTINUOUSLY
-    else if (strcmp(command, "fwc") == 0) {
-      if (!forward_running) {
-        while (1) {
-          move_forward(groupSyncWrite, packetHandler);
-        }
-      } else {
-        printf("Already moving forward! Type 'stop' to halt.\n");
-      }
-    }
-    // WALK FORWARD
-    else if (strcmp(command, "fwbl") == 0) {
-      move_to(lift_top_left_blue_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(move_top_left_blue_fw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(set_motor_11_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    }
 
-    // ROLL FORWARD CONTINUOUSLY
-    else if (strcmp(command, "rf") == 0) {
-      while (1) {
-        move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-        move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
 
-        move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-        move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      }
-    }
-    // ROLL FORWARD BLUE
-    else if (strcmp(command, "rfb") == 0) {
-      move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
-    }
-    // ROLL FORWARD YELLOW
-    else if (strcmp(command, "rfy") == 0) {
-      move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-      move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    }
 
-    // // If user enters "stop", halt continuous movement
-    // else if (strcmp(command, "stop") == 0) {
-    //     if (forward_running) {
-    //         forward_running = false;
-    //         printf("Stopping forward motion...\n");
-    //     } else {
-    //         printf("Motors are not moving.\n");
-    //     }
+
+
+    // // If user enters "ho", move all motors to home positions
+    // else if (strcmp(command, "ho") == 0) {
+    //   // move_to(home2_perpen, groupSyncWrite, packetHandler);
+    //   // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   // move_to(home_positions, groupSyncWrite, packetHandler);
+    //   gradual_transition(present_positions, home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
     // }
+
+    // // If user enters "ho2", move all motors to home positions where body is horizontal
+    // else if (strcmp(command, "ho2") == 0) {
+    //   // move_to(home2_positions, groupSyncWrite, packetHandler);
+    //   gradual_transition(present_positions, home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    // }
+
+    // // HOME TO CIRCLE
+    // else if (strcmp(command, "ci") == 0) {
+    //   // move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
+    //   // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   // move_to(yellow_folded_above_cir2, groupSyncWrite, packetHandler);
+    //   gradual_transition(present_positions, blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   gradual_transition(present_positions, yellow_folded_above_cir2, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    // }
+    // // CIRCLE TO HOME
+    // else if (strcmp(command, "cho") == 0) {
+    //   move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    // }
+
+    // // WALK FORWARD
+    // else if (strcmp(command, "fw") == 0) {
+    //   if (!forward_running) {
+    //     move_forward(groupSyncWrite, packetHandler);
+    //   } else {
+    //     printf("Already moving forward! Type 'stop' to halt.\n");
+    //   }
+    // }
+    // // WALK FORWARD CONTINUOUSLY
+    // else if (strcmp(command, "fwc") == 0) {
+    //   if (!forward_running) {
+    //     while (1) {
+    //       move_forward(groupSyncWrite, packetHandler);
+    //     }
+    //   } else {
+    //     printf("Already moving forward! Type 'stop' to halt.\n");
+    //   }
+    // }
+    // // WALK FORWARD
+    // else if (strcmp(command, "fwbl") == 0) {
+    //   move_to(lift_top_left_blue_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(move_top_left_blue_fw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(set_motor_11_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    // }
+
+    // // ROLL FORWARD CONTINUOUSLY
+    // else if (strcmp(command, "rf") == 0) {
+    //   while (1) {
+    //     move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //     move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
+
+    //     move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //     move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   }
+    // }
+    // // ROLL FORWARD BLUE
+    // else if (strcmp(command, "rfb") == 0) {
+    //   move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
+    // }
+    // // ROLL FORWARD YELLOW
+    // else if (strcmp(command, "rfy") == 0) {
+    //   move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+    //   move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // handle "enable" or "disable" command
     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)

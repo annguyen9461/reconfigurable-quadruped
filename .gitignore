@@ -2,3 +2,4 @@
 *.o
 dynamixelSDK/c++/build/linux64/.objects/
 dynamixelSDK/c++/build/linux64/libdxl_x64_cpp.so
+c++/build/linux64/libdxl_x64_cpp.so
