@@ -742,7 +742,7 @@ int main()
       if (leg_ids.empty()) {
         std::cout << "Error: No leg IDs provided.\n";
       } else {
-        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+        std::cout << "Moving counter-clockwise " << degree << " degrees for IDs: ";
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
