@@ -957,30 +957,59 @@ int main()
     }
 
 
-    // else if (command == "set") {
-    //   std::unordered_map<int, int> positions;
-    //   std::string pair;
+    else if (command == "set") {
+      std::unordered_map<int, int> positions;
+      std::string pair;
       
-    //   while (iss >> pair) {
-    //     size_t pos = pair.find(':');
-    //     if (pos == std::string::npos) {
-    //       std::cout << "Invalid format. Expected 'set ID:pos ID:pos ...'\n";
-    //       break;
-    //     }
-    //     int id = std::stoi(pair.substr(0, pos));
-    //     int posValue = std::stoi(pair.substr(pos + 1));
-    //     positions[id] = posValue;
-    //   }
+      // Parse input format: "set ID:pos ID:pos ..."
+      while (iss >> pair) {
+          size_t pos = pair.find(':');
+          if (pos == std::string::npos) {
+              std::cout << "Invalid format. Expected 'set ID:pos ID:pos ...'\n";
+              break;
+          }
+          int id = std::stoi(pair.substr(0, pos));
+          int posValue = std::stoi(pair.substr(pos + 1));
+          positions[id] = posValue;
+      }
 
-    //   if (!positions.empty()) {
-    //     set_positions(positions);
-    //   }
-    // }
+      if (!positions.empty()) {
+        // Clear previous SyncWrite parameters
+        groupSyncWrite.clearParam();
+
+        for (const auto& [dxl_id, goal_position] : positions) {
+            std::cout << "Moving Dynamixel ID " << dxl_id << " to Position " << goal_position << "\n";
+
+            uint8_t param_goal_position[4];
+            param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+            param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+            param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+            param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+            // Add to SyncWrite buffer
+            if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
+                std::cerr << "[ID:" << dxl_id << "] groupSyncWrite addParam failed\n";
+                continue;
+            }
+        }
+
+        // Transmit goal positions to all motors at once
+        dxl_comm_result = groupSyncWrite.txPacket();
+        if (dxl_comm_result != COMM_SUCCESS) {
+            std::cout << "SyncWrite Error: " << packetHandler->getTxRxResult(dxl_comm_result) << "\n";
+        }
+
+        // Clear SyncWrite buffer
+        groupSyncWrite.clearParam();
+      }
+    }
     else {
       std::cout << "Unknown command: " << command << "\n";
     }
-
   }
+// Close port
+portHandler->closePort();
+
 return 0;
 
 }
