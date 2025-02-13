@@ -589,226 +589,6 @@ int set_motor_11_down[NUM_MOTORS + 1] = {0,
 
 
 
-// int main()
-// {
-//   // Initialize PortHandler instance
-//   // Set the port path
-//   // Get methods and members of PortHandlerLinux or PortHandlerWindows
-//   dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
-
-//   // Initialize PacketHandler instance
-//   // Set the protocol version
-//   // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
-//   dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
-
-//   // Initialize GroupSyncWrite instance
-//   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PRO_GOAL_POSITION, LEN_PRO_GOAL_POSITION);
-
-//   // Initialize Groupsyncread instance for Present Position
-//   dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-
-//   int dxl_comm_result = COMM_TX_FAIL;               // Communication result
-//   bool dxl_addparam_result = false;                 // addParam result
-
-//   uint8_t dxl_error = 0;                            // Dynamixel error
-
-//   // Open port
-//   if (portHandler->openPort())
-//   {
-//     printf("Succeeded to open the port!\n");
-//   }
-//   else
-//   {
-//     printf("Failed to open the port!\n");
-//     printf("Press any key to terminate...\n");
-//     getch();
-//     return 0;
-//   }
-
-//   // Set port baudrate
-//   if (portHandler->setBaudRate(BAUDRATE))
-//   {
-//     printf("Succeeded to change the baudrate!\n");
-//   }
-//   else
-//   {
-//     printf("Failed to change the baudrate!\n");
-//     printf("Press any key to terminate...\n");
-//     getch();
-//     return 0;
-//   }
-
-
-//   for (int i = 0; i < 20; i++) {
-//     DXL_ID = i;
-//     // Enable Dynamixel Torque
-//     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-//     if (dxl_comm_result != COMM_SUCCESS)
-//     {
-//       printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-//     }
-//     else if (dxl_error != 0)
-//     {
-//       printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-//     }
-//     else
-//     {
-//       printf("Dynamixel#%d has been successfully connected \n", DXL_ID);
-//     }
-
-//     // Add parameter storage for Dynamixel#1 present position value
-//     dxl_addparam_result = groupSyncRead.addParam(DXL_ID);
-//     if (dxl_addparam_result != true)
-//     {
-//       fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", DXL_ID);
-//       return 0;
-//     }
-//   }
-
-
-//   while (1)
-//   {
-//     update_present_positions(groupSyncRead, packetHandler, portHandler);
-//     char input[MAX_INPUT_SIZE];
-
-//     printf("Enter motor ID and position (e.g., '14:1000, 15:2000') type 'exit' to quit:\n");
-//     fgets(input, sizeof(input), stdin);   // Read user input
-//     input[strcspn(input, "\n")] = 0;  // Remove newline character
-
-//     // Exit condition
-//     if (strncmp(input, "exit", 4) == 0) break;
-
-//     // Parse first word
-//     char *command = strtok(input, " ");
-//     char *args = strtok(NULL, "");  // Get the rest of the input
-
-//     if (command == NULL) continue;  // Skip empty input
-
-//     // If user enters "get", scan all Dynamixel IDs
-//     if (strcmp(command, "get") == 0) {
-//       scan_motors(groupSyncRead, packetHandler, portHandler);
-//     }
-
-//     // UP
-//     // movement degree: leg_num(s)
-//     // up 15:1 2 3 4
-//     else if (strcmp(command, "up") == 0)
-//     {
-//       int degree;
-//       int ids[5];
-//       int id_count = 0;
-      
-//       if (args == NULL) {
-//         printf("Error: No motor IDs provides.\n");
-//       } else {
-        
-//         input = input.substr(3);  // Remove "up " from the start
-
-//         // Extract degree and first ID
-//         std::stringstream ss(input);
-//         char colon;
-//         ss >> degree >> colon;  // Read "15:" (degree and colon)
-
-//         if (colon != ':') {
-//             std::cout << "Invalid format, expected ':' after degree\n";
-//             return 1;
-//         }
-
-//         // Read IDs
-//         int id;
-//         while (ss >> id) {
-//             ids.push_back(id);
-//         }
-
-//       }
-//     }
-
-
-
-
-
-
-
-//     // handle "enable" or "disable" command
-//     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
-//     {
-//       if (args == NULL) {
-//         printf("Error: No motor IDs provides.\n");
-//       } else {
-//         set_torque(packetHandler, portHandler, command, args);
-//       }
-//     }
-//     // handle setting motor positions
-//     else
-//     {
-//       int dxl_id, goal_position;
-//       char *token = strtok(input, ", ");  // Split by comma and space
-
-//       // Clear previous SyncWrite parameters
-//       groupSyncWrite.clearParam();
-
-//       while (token != NULL) 
-//       {
-//           // Find the colon separator
-//           char *colon = strchr(token, ':');
-//           if (!colon) {
-//               printf("Invalid format. Expected: ID1:Position1, ID2:Position2\n");
-//               break;
-//           }
-
-//           // Extract ID and position
-//           *colon = '\0';    // Replace ':' with null to split key and value
-//           dxl_id = atoi(token);   // Convert ID
-//           goal_position = atoi(colon + 1);   // Convert position
-
-//           printf("Moving Dynamixel ID %d to Position %d\n", dxl_id, goal_position);
-
-//           // Send goal position to the motor
-//           uint8_t param_goal_position[4];
-//           param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-//           param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-//           param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-//           param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
-
-//           // Add to SyncWrite buffer
-//           if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
-//               fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", dxl_id);
-//               continue;
-//           }
-
-//           token = strtok(NULL, ", ");  // Move to next pair
-//       }
-
-//       // Transmit goal positions to all motors at once
-//       dxl_comm_result = groupSyncWrite.txPacket();
-//       if (dxl_comm_result != COMM_SUCCESS) {
-//           printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-//       }
-
-//       // Clear SyncWrite buffer
-//       groupSyncWrite.clearParam();
-//     } 
-//   }
-
-//   // for (int i = 0; i < 20; i++) {
-//   //   // Disable Dynamixel# Torque
-//   //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
-//   //   if (dxl_comm_result != COMM_SUCCESS)
-//   //   {
-//   //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-//   //   }
-//   //   else if (dxl_error != 0)
-//   //   {
-//   //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-//   //   }
-//   // }
-
-//   // Close port
-//   portHandler->closePort();
-
-//   return 0;
-// }
-
 int main() 
 {
   // Initialize PortHandler instance
@@ -1007,6 +787,20 @@ int main()
       std::cout << "Unknown command: " << command << "\n";
     }
   }
+  
+  // for (int i = 0; i < 20; i++) {
+  //   // Disable Dynamixel# Torque
+  //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
+  //   if (dxl_comm_result != COMM_SUCCESS)
+  //   {
+  //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+  //   }
+  //   else if (dxl_error != 0)
+  //   {
+  //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+  //   }
+  // }
+
 // Close port
 portHandler->closePort();
 
