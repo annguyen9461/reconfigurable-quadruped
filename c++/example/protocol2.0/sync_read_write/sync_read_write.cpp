@@ -90,73 +90,65 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
                 const char *command, char *ids_str); 
 
 int present_positions[NUM_MOTORS + 1] = {0, 
-    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
+  2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
 };
 
 int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
-    2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
+  2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
 };
 
+// Up and Down movement (2, 5, 8, 11) (ROLL)
+#define DOWN_MOTOR2  2048  // Down (flat no under)
+#define UP_MOTOR2  3074  // Up
+
+#define DOWN_MOTOR5  2042  // Down (flat no under)
+#define UP_MOTOR5  1039  // Up
+
+#define DOWN_MOTOR8  2051  // Down (flat no under)
+#define UP_MOTOR8  3204  // Up
+
+#define DOWN_MOTOR11 2044  // Down (flat no under)
+#define UP_MOTOR11  957  // Up
 
 // Side to side movement (1,4,7,10) (YAW)
-#define PARA_MOTOR1  3064  // Parallel body along LONG side
-#define PERPEN_MOTOR1  2045  // Perpendicular to body
+#define PERPEN_MOTOR1  2046  // Perpendicular to body
+#define PARA_MOTOR1  3058  // Parallel body along LONG side
 
-#define PERPEN_MOTOR4  2066  // Perpendicular to body
-#define PARA_MOTOR4  1039  // Parallel body along LONG side
+#define PERPEN_MOTOR4  2054  // Perpendicular to body
+#define PARA_MOTOR4  1058  // Parallel body along LONG side
 
-#define PARA_MOTOR7  3063  // Parallel body along LONG side
-#define PERPEN_MOTOR7  2036  // Perpendicular to body
+#define PERPEN_MOTOR7  2044  // Perpendicular to body
+#define PARA_MOTOR7  3084  // Parallel body along LONG side
 
 #define PERPEN_MOTOR10 3051  // Perpendicular to body
-#define PARA_MOTOR10 2048  // Parallel body along LONG side
+#define PARA_MOTOR10 2042  // Parallel body along LONG side
 
-// Up and down movement (2,5,8,11) (ROLL)
-#define DOWN_MOTOR2  2055  // Down (neutral)
-#define UP_MOTOR2  3086  // Up
+// Up and Down movement (2, 5, 8, 11) (ROLL)
+#define MIN_ANGLE_MOTOR2  (2048.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
+#define MAX_ANGLE_MOTOR2  (3074.0 / 4095.0 * 360.0)  // ≈ 270.6 degrees
 
-#define DOWN_MOTOR5  2034  // Down (neutral)
-#define UP_MOTOR5  996   // Up
+#define MIN_ANGLE_MOTOR5  (2042.0 / 4095.0 * 360.0)  // ≈ 179.5 degrees
+#define MAX_ANGLE_MOTOR5  (1039.0 / 4095.0 * 360.0)  // ≈ 91.3 degrees
 
-#define DOWN_MOTOR8  2046  // Down (neutral)
-#define UP_MOTOR8  3132  // Up
+#define MIN_ANGLE_MOTOR8  (2051.0 / 4095.0 * 360.0)  // ≈ 180.3 degrees
+#define MAX_ANGLE_MOTOR8  (3204.0 / 4095.0 * 360.0)  // ≈ 281.5 degrees
 
-#define DOWN_MOTOR11 2042  // Down (neutral)
-#define UP_MOTOR11 1005  // Up
+#define MIN_ANGLE_MOTOR11 (2044.0 / 4095.0 * 360.0)  // ≈ 179.6 degrees
+#define MAX_ANGLE_MOTOR11 (957.0 / 4095.0 * 360.0)   // ≈ 84.0 degrees
 
+// Side to side movement (1,4,7,10) (YAW)
+#define MIN_ANGLE_MOTOR1  (2046.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
+#define MAX_ANGLE_MOTOR1  (3058.0 / 4095.0 * 360.0)  // ≈ 269.0 degrees
 
-// Perpendicular to body (1,4,7,10)
-#define MIN_ANGLE_MOTOR1  (2045.0 / 4095.0 * 360.0)  // ≈ 179.8 degrees
-#define MAX_ANGLE_MOTOR1  (3064.0 / 4095.0 * 360.0)  // ≈ 269.4 degrees
+#define MIN_ANGLE_MOTOR4  (2054.0 / 4095.0 * 360.0)  // ≈ 180.5 degrees
+#define MAX_ANGLE_MOTOR4  (1058.0 / 4095.0 * 360.0)  // ≈ 93.0 degrees
 
-#define MIN_ANGLE_MOTOR4  (1039.0 / 4095.0 * 360.0)  // ≈ 91.3 degrees
-#define MAX_ANGLE_MOTOR4  (2066.0 / 4095.0 * 360.0)  // ≈ 181.7 degrees
+#define MIN_ANGLE_MOTOR7  (2044.0 / 4095.0 * 360.0)  // ≈ 179.6 degrees
+#define MAX_ANGLE_MOTOR7  (3084.0 / 4095.0 * 360.0)  // ≈ 271.1 degrees
 
-#define MIN_ANGLE_MOTOR7  (2036.0 / 4095.0 * 360.0)  // ≈ 179.0 degrees
-#define MAX_ANGLE_MOTOR7  (3063.0 / 4095.0 * 360.0)  // ≈ 269.3 degrees
+#define MIN_ANGLE_MOTOR10 (3051.0 / 4095.0 * 360.0)  // ≈ 268.5 degrees
+#define MAX_ANGLE_MOTOR10 (2042.0 / 4095.0 * 360.0)  // ≈ 179.5 degrees
 
-#define MIN_ANGLE_MOTOR10 (2048.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
-#define MAX_ANGLE_MOTOR10 (3051.0 / 4095.0 * 360.0)  // ≈ 268.2 degrees
-
-// Up and down movement (2,5,8,11)
-#define MIN_ANGLE_MOTOR2  180.66  // Down (neutral)
-#define MAX_ANGLE_MOTOR2  271.30  // Up
-
-#define MIN_ANGLE_MOTOR5  178.81  // Down (neutral)
-#define MAX_ANGLE_MOTOR5  87.56   // Up
-
-#define MIN_ANGLE_MOTOR8  179.87  // Down (neutral)
-#define MAX_ANGLE_MOTOR8  275.34  // Up
-
-#define MIN_ANGLE_MOTOR11 179.52  // Down (neutral)
-#define MAX_ANGLE_MOTOR11 88.35   // Up
-
-// std::map<int, std::pair<int, int>> updown_map = {
-//   {1, {DOWN_MOTOR2, UP_MOTOR2}},
-//   {2, {DOWN_MOTOR5, UP_MOTOR5}},
-//   {3, {DOWN_MOTOR8, UP_MOTOR8}},
-//   {4, {DOWN_MOTOR11, UP_MOTOR11}}
-// };
 
 // Struct to store both motors per leg (roll and yaw)
 struct LegMotors {
@@ -168,7 +160,7 @@ struct LegMotors {
     int yaw_para;        // Max position for yaw (parallel body along LONG side)
 };
 
-// Map each leg number to its corresponding motors (using defines)
+// Map each leg number to its corresponding motors
 std::unordered_map<int, LegMotors> leg_motor_map = {
     {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, PERPEN_MOTOR1, PARA_MOTOR1}},  // Leg 1: Roll (Motor 2), Yaw (Motor 1)
     {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, PERPEN_MOTOR4, PARA_MOTOR4}},  // Leg 2: Roll (Motor 5), Yaw (Motor 4)
@@ -176,28 +168,12 @@ std::unordered_map<int, LegMotors> leg_motor_map = {
     {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, PERPEN_MOTOR10, PARA_MOTOR10}} // Leg 4: Roll (Motor 11), Yaw (Motor 10)
 };
 
-// // Example usage
-// int main() {
-//     int leg = 1; // Select Leg 1
-//     LegMotors motors = leg_motor_map[leg];
-
-//     std::cout << "Leg " << leg << " has:\n";
-//     std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
-//     std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
-//     std::cout << "  Roll Down Position: " << motors.roll_down << "\n";
-//     std::cout << "  Roll Up Position: " << motors.roll_up << "\n";
-//     std::cout << "  Yaw Perpendicular Position: " << motors.yaw_perpen << "\n";
-//     std::cout << "  Yaw Parallel Position: " << motors.yaw_para << "\n";
-
-//     return 0;
-// }
-
 int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
 }
 
-// Moves the motor up by a given degree amount
-int go_up(int leg_num, int degree) {
+// Moves the motor LEFT by a given degree amount
+int go_left(int leg_num, int degree) {
   LegMotors motors = leg_motor_map[leg_num];
   int motor_down = motors.roll_down;
   int motor_up = motors.roll_up;
@@ -210,22 +186,6 @@ int go_up(int leg_num, int degree) {
       return std::max(curr_pos_motor - diff, motor_up);
   }
 }
-
-// Moves the motor down by a given degree amount
-int go_down(int leg_num, int degree) {
-    LegMotors motors = leg_motor_map[leg_num];
-    int motor_down = motors.roll_down;
-    int motor_up = motors.roll_up;
-    int diff = degree_to_pos_diff(degree);
-    int curr_pos_motor = present_positions[motors.roll_motor_id];
-    // Ensure position stays within limits
-    if (motor_down > motor_up) {
-        return std::max(curr_pos_motor - diff, motor_down);
-    } else {
-        return std::min(curr_pos_motor + diff, motor_down);
-    }
-}
-
 
 int getch()
 {
@@ -447,7 +407,7 @@ void move_to(
   // Clear SyncWrite buffer after sending data
   groupSyncWrite.clearParam();
 
-  printf("All motors moved to home position.\n");
+  printf("All motors moved to goal position.\n");
   update_present_positions(groupSyncRead, packetHandler, portHandler);
 }
 
@@ -688,7 +648,7 @@ int main()
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
   
-    else if (command == "up") {
+    else if (command == "left") {
       int degree;
       char colon;
       std::vector<int> ids;
@@ -706,9 +666,19 @@ int main()
       if (ids.empty()) {
         std::cout << "Error: No motor IDs provided.\n";
       } else {
-        std::cout << "Moving up " << degree << " degrees for IDs: ";
+        std::cout << "Moving left " << degree << " degrees for IDs: ";
         for (int i : ids) std::cout << i << " ";
         std::cout << std::endl;
+
+        for (int leg_num : ids) {
+          present_positions[leg_num] = go_left(leg_num, degree);
+          move_to(
+          present_positions,
+          groupSyncWrite, 
+          packetHandler,
+          groupSyncRead,
+          portHandler); 
+        }
       }
     }
 
@@ -783,11 +753,19 @@ int main()
         groupSyncWrite.clearParam();
       }
     }
+    else if (command == "ali") {
+      move_to(
+        aligned_before_rolling,
+        groupSyncWrite, 
+        packetHandler,
+        groupSyncRead,
+        portHandler); 
+    }
     else {
       std::cout << "Unknown command: " << command << "\n";
     }
   }
-  
+
   // for (int i = 0; i < 20; i++) {
   //   // Disable Dynamixel# Torque
   //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
