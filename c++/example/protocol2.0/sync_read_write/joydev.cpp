@@ -79,6 +79,7 @@ int main()
 				}
 				printf("Buttons: ");
 				for (char buttonIndex=0; buttonIndex<joysticks[i].buttonCount; ++buttonIndex) {
+					// if pressed
 					if (joysticks[i].buttonStates[buttonIndex]) printf("%d ", buttonIndex);
 				}
 				printf("\n");

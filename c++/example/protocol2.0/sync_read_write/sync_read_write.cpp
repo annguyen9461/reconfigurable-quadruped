@@ -238,9 +238,9 @@ int go_up(int leg_num, int degree) {
 
   // Ensure position stays within limits when moving UP
   if (roll_up > roll_down) {
-      return std::max(curr_pos_motor + diff, roll_up);
+      return std::min(curr_pos_motor + diff, roll_up);
   } else {
-      return std::min(curr_pos_motor - diff, roll_up);
+      return std::max(curr_pos_motor - diff, roll_up);
   }
 }
 
