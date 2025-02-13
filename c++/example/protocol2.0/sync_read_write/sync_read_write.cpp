@@ -42,7 +42,10 @@
 #include <chrono>
 #include <thread>
 
-#include <map>
+#include <unordered_map>
+#include <vector>
+#include <sstream>
+#include <iostream>
 
 #define MAX_INPUT_SIZE 100      // define max input buffer size
 
@@ -74,21 +77,41 @@
 #define NUM_MOTORS                      12                  // IDs from 1 to 12
 
 
+int DXL_ID;
+bool toggle_position = false;  // Toggles between the two positions
+bool forward_running = false;
 
-// Perpendicular to body (1,4,7,10)
-#define MAX_MOTOR1  3064  // Parallel body along LONG side
-#define MIN_MOTOR1  2045  // Perpendicular to body
+void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
+                 dynamixel::PacketHandler *packetHandler, 
+                 dynamixel::PortHandler *portHandler);
 
-#define MAX_MOTOR4  2066  // Perpendicular to body
-#define MIN_MOTOR4  1039  // Parallel body along LONG side
+void set_torque(dynamixel::PacketHandler *packetHandler, 
+                dynamixel::PortHandler *portHandler, 
+                const char *command, char *ids_str); 
 
-#define MAX_MOTOR7  3063  // Parallel body along LONG side
-#define MIN_MOTOR7  2036  // Perpendicular to body
+int present_positions[NUM_MOTORS + 1] = {0, 
+    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
+};
 
-#define MAX_MOTOR10 3051  // Perpendicular to body
-#define MIN_MOTOR10 2048  // Parallel body along LONG side
+int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
+    2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
+};
 
-// Up and down movement (2,5,8,11)
+
+// Side to side movement (1,4,7,10) (YAW)
+#define PARA_MOTOR1  3064  // Parallel body along LONG side
+#define PERPEN_MOTOR1  2045  // Perpendicular to body
+
+#define PERPEN_MOTOR4  2066  // Perpendicular to body
+#define PARA_MOTOR4  1039  // Parallel body along LONG side
+
+#define PARA_MOTOR7  3063  // Parallel body along LONG side
+#define PERPEN_MOTOR7  2036  // Perpendicular to body
+
+#define PERPEN_MOTOR10 3051  // Perpendicular to body
+#define PARA_MOTOR10 2048  // Parallel body along LONG side
+
+// Up and down movement (2,5,8,11) (ROLL)
 #define DOWN_MOTOR2  2055  // Down (neutral)
 #define UP_MOTOR2  3086  // Up
 
@@ -128,40 +151,73 @@
 #define MIN_ANGLE_MOTOR11 179.52  // Down (neutral)
 #define MAX_ANGLE_MOTOR11 88.35   // Up
 
-std::map<int, std::pair<int, int>> updown_map = {
-  {1, {DOWN_MOTOR2, UP_MOTOR2}},
-  {2, {DOWN_MOTOR5, UP_MOTOR5}},
-  {3, {DOWN_MOTOR8, UP_MOTOR8}},
-  {4, {DOWN_MOTOR11, UP_MOTOR11}}
+// std::map<int, std::pair<int, int>> updown_map = {
+//   {1, {DOWN_MOTOR2, UP_MOTOR2}},
+//   {2, {DOWN_MOTOR5, UP_MOTOR5}},
+//   {3, {DOWN_MOTOR8, UP_MOTOR8}},
+//   {4, {DOWN_MOTOR11, UP_MOTOR11}}
+// };
+
+// Struct to store both motors per leg (roll and yaw)
+struct LegMotors {
+    int roll_motor_id;   // Motor responsible for up/down
+    int yaw_motor_id;    // Motor responsible for side-to-side
+    int roll_down;       // Min position for roll movement
+    int roll_up;         // Max position for roll movement
+    int yaw_perpen;      // Min position for yaw (perpendicular to body)
+    int yaw_para;        // Max position for yaw (parallel body along LONG side)
 };
 
-// int motor2_down = updown_map[2].first;
-// int motor2_up = updown_map[2].second;
+// Map each leg number to its corresponding motors (using defines)
+std::unordered_map<int, LegMotors> leg_motor_map = {
+    {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, PERPEN_MOTOR1, PARA_MOTOR1}},  // Leg 1: Roll (Motor 2), Yaw (Motor 1)
+    {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, PERPEN_MOTOR4, PARA_MOTOR4}},  // Leg 2: Roll (Motor 5), Yaw (Motor 4)
+    {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, PERPEN_MOTOR7, PARA_MOTOR7}},  // Leg 3: Roll (Motor 8), Yaw (Motor 7)
+    {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, PERPEN_MOTOR10, PARA_MOTOR10}} // Leg 4: Roll (Motor 11), Yaw (Motor 10)
+};
+
+// // Example usage
+// int main() {
+//     int leg = 1; // Select Leg 1
+//     LegMotors motors = leg_motor_map[leg];
+
+//     std::cout << "Leg " << leg << " has:\n";
+//     std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
+//     std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
+//     std::cout << "  Roll Down Position: " << motors.roll_down << "\n";
+//     std::cout << "  Roll Up Position: " << motors.roll_up << "\n";
+//     std::cout << "  Yaw Perpendicular Position: " << motors.yaw_perpen << "\n";
+//     std::cout << "  Yaw Parallel Position: " << motors.yaw_para << "\n";
+
+//     return 0;
+// }
 
 int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
 }
 
 // Moves the motor up by a given degree amount
-int go_up(int degree, int leg_num, int curr_pos_motor) {
-    int motor_down = updown_map[leg_num].first;
-    int motor_up = updown_map[leg_num].second;
-    int diff = degree_to_pos_diff(degree);
-
-    // Ensure position stays within limits
-    if (motor_up > motor_down) {
-        return std::min(curr_pos_motor + diff, motor_up);
-    } else {
-        return std::max(curr_pos_motor - diff, motor_up);
-    }
+int go_up(int leg_num, int degree) {
+  LegMotors motors = leg_motor_map[leg_num];
+  int motor_down = motors.roll_down;
+  int motor_up = motors.roll_up;
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.roll_motor_id];
+  // Ensure position stays within limits
+  if (motor_up > motor_down) {
+      return std::min(curr_pos_motor + diff, motor_up);
+  } else {
+      return std::max(curr_pos_motor - diff, motor_up);
+  }
 }
 
 // Moves the motor down by a given degree amount
-int go_down(int degree, int leg_num, int curr_pos_motor) {
-    int motor_down = updown_map[leg_num].first;
-    int motor_up = updown_map[leg_num].second;
+int go_down(int leg_num, int degree) {
+    LegMotors motors = leg_motor_map[leg_num];
+    int motor_down = motors.roll_down;
+    int motor_up = motors.roll_up;
     int diff = degree_to_pos_diff(degree);
-
+    int curr_pos_motor = present_positions[motors.roll_motor_id];
     // Ensure position stays within limits
     if (motor_down > motor_up) {
         return std::max(curr_pos_motor - diff, motor_down);
@@ -169,26 +225,6 @@ int go_down(int degree, int leg_num, int curr_pos_motor) {
         return std::min(curr_pos_motor + diff, motor_down);
     }
 }
-
-int DXL_ID;
-bool toggle_position = false;  // Toggles between the two positions
-bool forward_running = false;
-
-void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
-                 dynamixel::PacketHandler *packetHandler, 
-                 dynamixel::PortHandler *portHandler);
-
-void set_torque(dynamixel::PacketHandler *packetHandler, 
-                dynamixel::PortHandler *portHandler, 
-                const char *command, char *ids_str); 
-
-int present_positions[NUM_MOTORS + 1] = {0, 
-    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
-};
-
-int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
-    2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
-};
 
 
 int getch()
@@ -552,7 +588,228 @@ int set_motor_11_down[NUM_MOTORS + 1] = {0,
 };
 
 
-int main()
+
+// int main()
+// {
+//   // Initialize PortHandler instance
+//   // Set the port path
+//   // Get methods and members of PortHandlerLinux or PortHandlerWindows
+//   dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
+
+//   // Initialize PacketHandler instance
+//   // Set the protocol version
+//   // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
+//   dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+//   // Initialize GroupSyncWrite instance
+//   dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PRO_GOAL_POSITION, LEN_PRO_GOAL_POSITION);
+
+//   // Initialize Groupsyncread instance for Present Position
+//   dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
+
+//   int dxl_comm_result = COMM_TX_FAIL;               // Communication result
+//   bool dxl_addparam_result = false;                 // addParam result
+
+//   uint8_t dxl_error = 0;                            // Dynamixel error
+
+//   // Open port
+//   if (portHandler->openPort())
+//   {
+//     printf("Succeeded to open the port!\n");
+//   }
+//   else
+//   {
+//     printf("Failed to open the port!\n");
+//     printf("Press any key to terminate...\n");
+//     getch();
+//     return 0;
+//   }
+
+//   // Set port baudrate
+//   if (portHandler->setBaudRate(BAUDRATE))
+//   {
+//     printf("Succeeded to change the baudrate!\n");
+//   }
+//   else
+//   {
+//     printf("Failed to change the baudrate!\n");
+//     printf("Press any key to terminate...\n");
+//     getch();
+//     return 0;
+//   }
+
+
+//   for (int i = 0; i < 20; i++) {
+//     DXL_ID = i;
+//     // Enable Dynamixel Torque
+//     dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
+//     if (dxl_comm_result != COMM_SUCCESS)
+//     {
+//       printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+//     }
+//     else if (dxl_error != 0)
+//     {
+//       printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+//     }
+//     else
+//     {
+//       printf("Dynamixel#%d has been successfully connected \n", DXL_ID);
+//     }
+
+//     // Add parameter storage for Dynamixel#1 present position value
+//     dxl_addparam_result = groupSyncRead.addParam(DXL_ID);
+//     if (dxl_addparam_result != true)
+//     {
+//       fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", DXL_ID);
+//       return 0;
+//     }
+//   }
+
+
+//   while (1)
+//   {
+//     update_present_positions(groupSyncRead, packetHandler, portHandler);
+//     char input[MAX_INPUT_SIZE];
+
+//     printf("Enter motor ID and position (e.g., '14:1000, 15:2000') type 'exit' to quit:\n");
+//     fgets(input, sizeof(input), stdin);   // Read user input
+//     input[strcspn(input, "\n")] = 0;  // Remove newline character
+
+//     // Exit condition
+//     if (strncmp(input, "exit", 4) == 0) break;
+
+//     // Parse first word
+//     char *command = strtok(input, " ");
+//     char *args = strtok(NULL, "");  // Get the rest of the input
+
+//     if (command == NULL) continue;  // Skip empty input
+
+//     // If user enters "get", scan all Dynamixel IDs
+//     if (strcmp(command, "get") == 0) {
+//       scan_motors(groupSyncRead, packetHandler, portHandler);
+//     }
+
+//     // UP
+//     // movement degree: leg_num(s)
+//     // up 15:1 2 3 4
+//     else if (strcmp(command, "up") == 0)
+//     {
+//       int degree;
+//       int ids[5];
+//       int id_count = 0;
+      
+//       if (args == NULL) {
+//         printf("Error: No motor IDs provides.\n");
+//       } else {
+        
+//         input = input.substr(3);  // Remove "up " from the start
+
+//         // Extract degree and first ID
+//         std::stringstream ss(input);
+//         char colon;
+//         ss >> degree >> colon;  // Read "15:" (degree and colon)
+
+//         if (colon != ':') {
+//             std::cout << "Invalid format, expected ':' after degree\n";
+//             return 1;
+//         }
+
+//         // Read IDs
+//         int id;
+//         while (ss >> id) {
+//             ids.push_back(id);
+//         }
+
+//       }
+//     }
+
+
+
+
+
+
+
+//     // handle "enable" or "disable" command
+//     else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
+//     {
+//       if (args == NULL) {
+//         printf("Error: No motor IDs provides.\n");
+//       } else {
+//         set_torque(packetHandler, portHandler, command, args);
+//       }
+//     }
+//     // handle setting motor positions
+//     else
+//     {
+//       int dxl_id, goal_position;
+//       char *token = strtok(input, ", ");  // Split by comma and space
+
+//       // Clear previous SyncWrite parameters
+//       groupSyncWrite.clearParam();
+
+//       while (token != NULL) 
+//       {
+//           // Find the colon separator
+//           char *colon = strchr(token, ':');
+//           if (!colon) {
+//               printf("Invalid format. Expected: ID1:Position1, ID2:Position2\n");
+//               break;
+//           }
+
+//           // Extract ID and position
+//           *colon = '\0';    // Replace ':' with null to split key and value
+//           dxl_id = atoi(token);   // Convert ID
+//           goal_position = atoi(colon + 1);   // Convert position
+
+//           printf("Moving Dynamixel ID %d to Position %d\n", dxl_id, goal_position);
+
+//           // Send goal position to the motor
+//           uint8_t param_goal_position[4];
+//           param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+//           param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+//           param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+//           param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+//           // Add to SyncWrite buffer
+//           if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
+//               fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", dxl_id);
+//               continue;
+//           }
+
+//           token = strtok(NULL, ", ");  // Move to next pair
+//       }
+
+//       // Transmit goal positions to all motors at once
+//       dxl_comm_result = groupSyncWrite.txPacket();
+//       if (dxl_comm_result != COMM_SUCCESS) {
+//           printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+//       }
+
+//       // Clear SyncWrite buffer
+//       groupSyncWrite.clearParam();
+//     } 
+//   }
+
+//   // for (int i = 0; i < 20; i++) {
+//   //   // Disable Dynamixel# Torque
+//   //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
+//   //   if (dxl_comm_result != COMM_SUCCESS)
+//   //   {
+//   //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+//   //   }
+//   //   else if (dxl_error != 0)
+//   //   {
+//   //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+//   //   }
+//   // }
+
+//   // Close port
+//   portHandler->closePort();
+
+//   return 0;
+// }
+
+int main() 
 {
   // Initialize PortHandler instance
   // Set the port path
@@ -629,216 +886,53 @@ int main()
   }
 
 
-  while (1)
-  {
-    update_present_positions(groupSyncRead, packetHandler, portHandler);
-    char input[MAX_INPUT_SIZE];
+  std::string input;
 
-    printf("Enter motor ID and position (e.g., '14:1000, 15:2000') type 'exit' to quit:\n");
-    fgets(input, sizeof(input), stdin);   // Read user input
-    input[strcspn(input, "\n")] = 0;  // Remove newline character
+  while (true) {
+    // Get user input
+    std::cout << "Enter command: ";
+    std::getline(std::cin, input);
 
-    // Exit condition
-    if (strncmp(input, "exit", 4) == 0) break;
+    // Trim leading/trailing spaces
+    if (input.empty()) continue;
 
-    // Parse first word
-    char *command = strtok(input, " ");
-    char *args = strtok(NULL, "");  // Get the rest of the input
+    // Handle exit condition
+    if (input == "exit") break;
 
-    if (command == NULL) continue;  // Skip empty input
+    // Extract first word as command
+    std::istringstream iss(input);
+    std::string command;
+    iss >> command;
 
-    // If user enters "get", scan all Dynamixel IDs
-    if (strcmp(command, "get") == 0) {
+    if (command == "get") {
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
+  
+  else if (command == "up") {
+    int degree;
+    char colon;
+    std::vector<int> ids;
 
-
-
-
-
-
-
-
-
-    // // If user enters "ho", move all motors to home positions
-    // else if (strcmp(command, "ho") == 0) {
-    //   // move_to(home2_perpen, groupSyncWrite, packetHandler);
-    //   // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   // move_to(home_positions, groupSyncWrite, packetHandler);
-    //   gradual_transition(present_positions, home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    // }
-
-    // // If user enters "ho2", move all motors to home positions where body is horizontal
-    // else if (strcmp(command, "ho2") == 0) {
-    //   // move_to(home2_positions, groupSyncWrite, packetHandler);
-    //   gradual_transition(present_positions, home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    // }
-
-    // // HOME TO CIRCLE
-    // else if (strcmp(command, "ci") == 0) {
-    //   // move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler);
-    //   // std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   // move_to(yellow_folded_above_cir2, groupSyncWrite, packetHandler);
-    //   gradual_transition(present_positions, blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   gradual_transition(present_positions, yellow_folded_above_cir2, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    // }
-    // // CIRCLE TO HOME
-    // else if (strcmp(command, "cho") == 0) {
-    //   move_to(blue_folded_under_cir1, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(home_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    // }
-
-    // // WALK FORWARD
-    // else if (strcmp(command, "fw") == 0) {
-    //   if (!forward_running) {
-    //     move_forward(groupSyncWrite, packetHandler);
-    //   } else {
-    //     printf("Already moving forward! Type 'stop' to halt.\n");
-    //   }
-    // }
-    // // WALK FORWARD CONTINUOUSLY
-    // else if (strcmp(command, "fwc") == 0) {
-    //   if (!forward_running) {
-    //     while (1) {
-    //       move_forward(groupSyncWrite, packetHandler);
-    //     }
-    //   } else {
-    //     printf("Already moving forward! Type 'stop' to halt.\n");
-    //   }
-    // }
-    // // WALK FORWARD
-    // else if (strcmp(command, "fwbl") == 0) {
-    //   move_to(lift_top_left_blue_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(move_top_left_blue_fw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(set_motor_11_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(home2_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    // }
-
-    // // ROLL FORWARD CONTINUOUSLY
-    // else if (strcmp(command, "rf") == 0) {
-    //   while (1) {
-    //     move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //     move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
-
-    //     move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //     move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   }
-    // }
-    // // ROLL FORWARD BLUE
-    // else if (strcmp(command, "rfb") == 0) {
-    //   move_to(roll_fw_open_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(roll_fw_close_blue, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Delay for stability
-    // }
-    // // ROLL FORWARD YELLOW
-    // else if (strcmp(command, "rfy") == 0) {
-    //   move_to(roll_fw_open_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    //   move_to(roll_fw_close_yellow, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // handle "enable" or "disable" command
-    else if (strcmp(command, "en") == 0 || strcmp(command, "d") == 0)
-    {
-      if (args == NULL) {
-        printf("Error: No motor IDs provides.\n");
-      } else {
-        set_torque(packetHandler, portHandler, command, args);
-      }
+    if (!(iss >> degree >> colon) || colon != ':') {
+      std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+      continue;
     }
-    // handle setting motor positions
-    else
-    {
-      int dxl_id, goal_position;
-      char *token = strtok(input, ", ");  // Split by comma and space
 
-      // Clear previous SyncWrite parameters
-      groupSyncWrite.clearParam();
+    int id;
+    while (iss >> id) {
+      ids.push_back(id);
+    }
 
-      while (token != NULL) 
-      {
-          // Find the colon separator
-          char *colon = strchr(token, ':');
-          if (!colon) {
-              printf("Invalid format. Expected: ID1:Position1, ID2:Position2\n");
-              break;
-          }
-
-          // Extract ID and position
-          *colon = '\0';    // Replace ':' with null to split key and value
-          dxl_id = atoi(token);   // Convert ID
-          goal_position = atoi(colon + 1);   // Convert position
-
-          printf("Moving Dynamixel ID %d to Position %d\n", dxl_id, goal_position);
-
-          // Send goal position to the motor
-          uint8_t param_goal_position[4];
-          param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-          param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-          param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-          param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
-
-          // Add to SyncWrite buffer
-          if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
-              fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", dxl_id);
-              continue;
-          }
-
-          token = strtok(NULL, ", ");  // Move to next pair
-      }
-
-      // Transmit goal positions to all motors at once
-      dxl_comm_result = groupSyncWrite.txPacket();
-      if (dxl_comm_result != COMM_SUCCESS) {
-          printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-      }
-
-      // Clear SyncWrite buffer
-      groupSyncWrite.clearParam();
-    } 
+    if (ids.empty()) {
+      std::cout << "Error: No motor IDs provided.\n";
+    } else {
+      std::cout << "Moving up " << degree << " degrees for IDs: ";
+      for (int i : ids) std::cout << i << " ";
+      std::cout << std::endl;
+    }
   }
 
-  // for (int i = 0; i < 20; i++) {
-  //   // Disable Dynamixel# Torque
-  //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
-  //   if (dxl_comm_result != COMM_SUCCESS)
-  //   {
-  //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-  //   }
-  //   else if (dxl_error != 0)
-  //   {
-  //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-  //   }
-  // }
+}
+return 0;
 
-  // Close port
-  portHandler->closePort();
-
-  return 0;
 }
