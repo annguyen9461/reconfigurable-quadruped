@@ -745,7 +745,7 @@ int main()
 
         for (int leg_num : leg_ids) {
           LegMotors motors = leg_motor_map[leg_num];
-          present_positions[motors.roll_motor_id] = go_clockwise(leg_num, degree);
+          present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
         }
         move_to(
           present_positions,
@@ -756,6 +756,40 @@ int main()
       }
     }
 
+    else if (command == "down") {
+      int degree;
+      char colon;
+      std::vector<int> leg_ids;
+
+      if (!(iss >> degree >> colon) || colon != ':') {
+        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+        continue;
+      }
+
+      int leg_id;
+      while (iss >> leg_id) {
+        leg_ids.push_back(leg_id);
+      }
+
+      if (leg_ids.empty()) {
+        std::cout << "Error: No leg IDs provided.\n";
+      } else {
+        std::cout << "Moving down " << degree << " degrees for IDs: ";
+        for (int i : leg_ids) std::cout << i << " ";
+        std::cout << std::endl;
+
+        for (int leg_num : leg_ids) {
+          LegMotors motors = leg_motor_map[leg_num];
+          present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+        }
+        move_to(
+          present_positions,
+          groupSyncWrite, 
+          packetHandler,
+          groupSyncRead,
+          portHandler); 
+      }
+    }
 
     else if (command == "cw") {
       int degree;
