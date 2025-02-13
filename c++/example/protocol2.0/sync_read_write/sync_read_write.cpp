@@ -481,7 +481,15 @@ void move_to(
   groupSyncWrite.clearParam();
 
   printf("All motors moved to goal position.\n");
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Allow TIME for motors to reach the position
   update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+  // ✅ Print the updated positions for debugging
+  std::cout << "Updated Present Positions:\n";
+  for (int id = 1; id <= NUM_MOTORS; id++) {
+      std::cout << "[ID:" << id << "] Position: " << present_positions[id] << "\n";
+  }
+  std::cout << "\n";
 }
 
 void move_to_target_positions(
