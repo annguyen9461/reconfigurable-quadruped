@@ -186,7 +186,7 @@ int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
 }
 
-// Moves the motor CLOCKWISE by a given degree amount (Yaw motor)
+// Moves the motor CLOCKWISE by a given degree amount (YAW motor)
 int go_clockwise(int leg_num, int degree) {
     LegMotors motors = leg_motor_map[leg_num];
     int yaw_cw = motors.yaw_cw;     // Clockwise position
@@ -212,7 +212,7 @@ int go_clockwise(int leg_num, int degree) {
     }
 }
 
-// Moves the motor COUNTER-CLOCKWISE by a given degree amount (Yaw motor)
+// Moves the motor COUNTER-CLOCKWISE by a given degree amount (YAW motor)
 int go_counter_clockwise(int leg_num, int degree) {
     LegMotors motors = leg_motor_map[leg_num];
     int yaw_cw = motors.yaw_cw;
@@ -225,6 +225,22 @@ int go_counter_clockwise(int leg_num, int degree) {
         return std::min(curr_pos_motor - diff, yaw_ccw);
     } else {
         return std::max(curr_pos_motor + diff, yaw_ccw);
+    }
+}
+
+// Moves the motor UP by a given degree amount (ROLL motor)
+int go_up(int leg_num, int degree) {
+    LegMotors motors = leg_motor_map[leg_num];
+    int roll_up = motors.roll_up;
+    int roll_down = motors.yaw_ccw;
+    int diff = degree_to_pos_diff(degree);
+    int curr_pos_motor = present_positions[motors.roll_motor_id];
+
+    // Ensure position stays within limits when moving UP
+    if (roll_up > roll_down) {
+        return std::max(curr_pos_motor + diff, roll_up);
+    } else {
+        return std::min(curr_pos_motor - diff, roll_up);
     }
 }
 
@@ -688,7 +704,43 @@ int main()
     if (command == "get") {
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
-  
+
+    else if (command == "up") {
+      int degree;
+      char colon;
+      std::vector<int> leg_ids;
+
+      if (!(iss >> degree >> colon) || colon != ':') {
+        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+        continue;
+      }
+
+      int leg_id;
+      while (iss >> leg_id) {
+        leg_ids.push_back(leg_id);
+      }
+
+      if (leg_ids.empty()) {
+        std::cout << "Error: No leg IDs provided.\n";
+      } else {
+        std::cout << "Moving up " << degree << " degrees for IDs: ";
+        for (int i : leg_ids) std::cout << i << " ";
+        std::cout << std::endl;
+
+        for (int leg_num : leg_ids) {
+          LegMotors motors = leg_motor_map[leg_num];
+          present_positions[motors.roll_motor_id] = go_clockwise(leg_num, degree);
+        }
+        move_to(
+          present_positions,
+          groupSyncWrite, 
+          packetHandler,
+          groupSyncRead,
+          portHandler); 
+      }
+    }
+
+
     else if (command == "cw") {
       int degree;
       char colon;
