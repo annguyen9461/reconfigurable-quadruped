@@ -1,0 +1,4 @@
+https://github.com/MysteriousJ/Joystick-Input-Examples/blob/main/src/joydev.cpp
+- Author: Jacob Bell
+- Accessed: Feb 13, 2025
+- Use: Joystick I/o
