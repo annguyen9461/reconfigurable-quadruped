@@ -176,10 +176,10 @@ struct LegMotors {
 
 // Map each leg number to its corresponding motors (using defines)
 std::unordered_map<int, LegMotors> leg_motor_map = {
-    {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, CLOCKWISE_MOTOR1, COUNTER_CLOCKWISE_MOTOR1}},  
-    {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, CLOCKWISE_MOTOR4, COUNTER_CLOCKWISE_MOTOR4}},  
-    {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, CLOCKWISE_MOTOR7, COUNTER_CLOCKWISE_MOTOR7}},  
-    {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, CLOCKWISE_MOTOR10, COUNTER_CLOCKWISE_MOTOR10}}
+  {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, CLOCKWISE_MOTOR1, COUNTER_CLOCKWISE_MOTOR1}},  
+  {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, CLOCKWISE_MOTOR4, COUNTER_CLOCKWISE_MOTOR4}},  
+  {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, CLOCKWISE_MOTOR7, COUNTER_CLOCKWISE_MOTOR7}},  
+  {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, CLOCKWISE_MOTOR10, COUNTER_CLOCKWISE_MOTOR10}}
 };
 
 int degree_to_pos_diff(int degree) {
@@ -189,59 +189,75 @@ int degree_to_pos_diff(int degree) {
 // Moves the motor CLOCKWISE by a given degree amount (YAW motor)
 int go_clockwise(int leg_num, int degree) {
     LegMotors motors = leg_motor_map[leg_num];
-    int yaw_cw = motors.yaw_cw;     // Clockwise position
-    int yaw_ccw = motors.yaw_ccw;   // Counter-clockwise position
-    int diff = degree_to_pos_diff(degree);
-    int curr_pos_motor = present_positions[motors.yaw_motor_id];
+  int yaw_cw = motors.yaw_cw;     // Clockwise position
+  int yaw_ccw = motors.yaw_ccw;   // Counter-clockwise position
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.yaw_motor_id];
 
-    // Print debug information
-    std::cout << "Leg " << leg_num << ":\n";
-    std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
-    std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
-    std::cout << "  Current Yaw Position: " << curr_pos_motor << "\n";
-    std::cout << "  Clockwise Limit: " << yaw_cw << "\n";
-    std::cout << "  Counter-Clockwise Limit: " << yaw_ccw << "\n";
-    std::cout << "  Degree to Move: " << degree << "\n";
-    std::cout << "  Position Difference: " << diff << "\n";
+  // Print debug information
+  std::cout << "Leg " << leg_num << ":\n";
+  std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
+  std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
+  std::cout << "  Current Yaw Position: " << curr_pos_motor << "\n";
+  std::cout << "  Clockwise Limit: " << yaw_cw << "\n";
+  std::cout << "  Counter-Clockwise Limit: " << yaw_ccw << "\n";
+  std::cout << "  Degree to Move: " << degree << "\n";
+  std::cout << "  Position Difference: " << diff << "\n";
 
-    // Ensure position stays within limits when moving CLOCKWISE
-    if (yaw_ccw > yaw_cw) {
-        return std::max(curr_pos_motor + diff, yaw_cw);
-    } else {
-        return std::min(curr_pos_motor - diff, yaw_cw);
-    }
+  // Ensure position stays within limits when moving CLOCKWISE
+  if (yaw_ccw > yaw_cw) {
+      return std::max(curr_pos_motor + diff, yaw_cw);
+  } else {
+      return std::min(curr_pos_motor - diff, yaw_cw);
+  }
 }
 
 // Moves the motor COUNTER-CLOCKWISE by a given degree amount (YAW motor)
 int go_counter_clockwise(int leg_num, int degree) {
-    LegMotors motors = leg_motor_map[leg_num];
-    int yaw_cw = motors.yaw_cw;
-    int yaw_ccw = motors.yaw_ccw;
-    int diff = degree_to_pos_diff(degree);
-    int curr_pos_motor = present_positions[motors.yaw_motor_id];
+  LegMotors motors = leg_motor_map[leg_num];
+  int yaw_cw = motors.yaw_cw;
+  int yaw_ccw = motors.yaw_ccw;
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.yaw_motor_id];
 
-    // Ensure position stays within limits when moving COUNTER-CLOCKWISE
-    if (yaw_ccw > yaw_cw) {
-        return std::min(curr_pos_motor - diff, yaw_ccw);
-    } else {
-        return std::max(curr_pos_motor + diff, yaw_ccw);
-    }
+  // Ensure position stays within limits when moving COUNTER-CLOCKWISE
+  if (yaw_ccw > yaw_cw) {
+      return std::min(curr_pos_motor - diff, yaw_ccw);
+  } else {
+      return std::max(curr_pos_motor + diff, yaw_ccw);
+  }
 }
 
 // Moves the motor UP by a given degree amount (ROLL motor)
 int go_up(int leg_num, int degree) {
-    LegMotors motors = leg_motor_map[leg_num];
-    int roll_up = motors.roll_up;
-    int roll_down = motors.roll_down;
-    int diff = degree_to_pos_diff(degree);
-    int curr_pos_motor = present_positions[motors.roll_motor_id];
+  LegMotors motors = leg_motor_map[leg_num];
+  int roll_up = motors.roll_up;
+  int roll_down = motors.roll_down;
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.roll_motor_id];
 
-    // Ensure position stays within limits when moving UP
-    if (roll_up > roll_down) {
-        return std::max(curr_pos_motor + diff, roll_up);
-    } else {
-        return std::min(curr_pos_motor - diff, roll_up);
-    }
+  // Ensure position stays within limits when moving UP
+  if (roll_up > roll_down) {
+      return std::max(curr_pos_motor + diff, roll_up);
+  } else {
+      return std::min(curr_pos_motor - diff, roll_up);
+  }
+}
+
+// Moves the motor DOWN by a given degree amount (ROLL motor)
+int go_down(int leg_num, int degree) {
+  LegMotors motors = leg_motor_map[leg_num];
+  int roll_up = motors.roll_up;
+  int roll_down = motors.roll_down;
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.roll_motor_id];
+
+  // Ensure position stays within limits when moving UP
+  if (roll_up > roll_down) {
+      return std::max(curr_pos_motor - diff, roll_down);
+  } else {
+      return std::min(curr_pos_motor + diff, roll_down);
+  }
 }
 
 int getch()
