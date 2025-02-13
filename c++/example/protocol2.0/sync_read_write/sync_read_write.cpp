@@ -908,31 +908,79 @@ int main()
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
   
-  else if (command == "up") {
-    int degree;
-    char colon;
-    std::vector<int> ids;
+    else if (command == "up") {
+      int degree;
+      char colon;
+      std::vector<int> ids;
 
-    if (!(iss >> degree >> colon) || colon != ':') {
-      std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-      continue;
+      if (!(iss >> degree >> colon) || colon != ':') {
+        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+        continue;
+      }
+
+      int id;
+      while (iss >> id) {
+        ids.push_back(id);
+      }
+
+      if (ids.empty()) {
+        std::cout << "Error: No motor IDs provided.\n";
+      } else {
+        std::cout << "Moving up " << degree << " degrees for IDs: ";
+        for (int i : ids) std::cout << i << " ";
+        std::cout << std::endl;
+      }
     }
 
-    int id;
-    while (iss >> id) {
-      ids.push_back(id);
+    else if (command == "en" || command == "d") {
+      std::vector<int> ids;
+      int id;
+      while (iss >> id) {
+        ids.push_back(id);
+      }
+
+      if (ids.empty()) {
+        std::cout << "Error: No motor IDs provided.\n";
+      } else {
+        std::string ids_str;
+        for (int id : ids) {
+            ids_str += std::to_string(id) + " ";  // Convert vector to a space-separated string
+        }
+
+        // Create a mutable char array (dangerous but works)
+        char ids_cstr[ids_str.length() + 1];
+        strcpy(ids_cstr, ids_str.c_str());
+
+        set_torque(packetHandler, portHandler, command.c_str(), ids_cstr);
+
+      }
     }
 
-    if (ids.empty()) {
-      std::cout << "Error: No motor IDs provided.\n";
-    } else {
-      std::cout << "Moving up " << degree << " degrees for IDs: ";
-      for (int i : ids) std::cout << i << " ";
-      std::cout << std::endl;
+
+    // else if (command == "set") {
+    //   std::unordered_map<int, int> positions;
+    //   std::string pair;
+      
+    //   while (iss >> pair) {
+    //     size_t pos = pair.find(':');
+    //     if (pos == std::string::npos) {
+    //       std::cout << "Invalid format. Expected 'set ID:pos ID:pos ...'\n";
+    //       break;
+    //     }
+    //     int id = std::stoi(pair.substr(0, pos));
+    //     int posValue = std::stoi(pair.substr(pos + 1));
+    //     positions[id] = posValue;
+    //   }
+
+    //   if (!positions.empty()) {
+    //     set_positions(positions);
+    //   }
+    // }
+    else {
+      std::cout << "Unknown command: " << command << "\n";
     }
+
   }
-
-}
 return 0;
 
 }
