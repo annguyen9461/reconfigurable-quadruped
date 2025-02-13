@@ -232,7 +232,7 @@ int go_counter_clockwise(int leg_num, int degree) {
 int go_up(int leg_num, int degree) {
     LegMotors motors = leg_motor_map[leg_num];
     int roll_up = motors.roll_up;
-    int roll_down = motors.yaw_ccw;
+    int roll_down = motors.roll_down;
     int diff = degree_to_pos_diff(degree);
     int curr_pos_motor = present_positions[motors.roll_motor_id];
 
