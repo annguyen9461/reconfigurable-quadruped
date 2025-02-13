@@ -123,6 +123,20 @@ int aligned_before_rolling[NUM_MOTORS + 1] = {0,
 #define PERPEN_MOTOR10 3051  // Perpendicular to body
 #define PARA_MOTOR10 2042  // Parallel body along LONG side
 
+// Yaw movement (1, 4, 7, 10) (CLOCKWISE & COUNTER-CLOCKWISE)
+#define CLOCKWISE_MOTOR1       1858
+#define COUNTER_CLOCKWISE_MOTOR1 3010
+
+#define CLOCKWISE_MOTOR4       1063
+#define COUNTER_CLOCKWISE_MOTOR4 2236
+
+#define CLOCKWISE_MOTOR7       1877
+#define COUNTER_CLOCKWISE_MOTOR7 3092
+
+#define CLOCKWISE_MOTOR10      2004
+#define COUNTER_CLOCKWISE_MOTOR10 3215
+
+
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 #define MIN_ANGLE_MOTOR2  (2048.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
 #define MAX_ANGLE_MOTOR2  (3074.0 / 4095.0 * 360.0)  // ≈ 270.6 degrees
@@ -152,20 +166,20 @@ int aligned_before_rolling[NUM_MOTORS + 1] = {0,
 
 // Struct to store both motors per leg (roll and yaw)
 struct LegMotors {
-    int roll_motor_id;   // Motor responsible for up/down
-    int yaw_motor_id;    // Motor responsible for side-to-side
-    int roll_down;       // Min position for roll movement
-    int roll_up;         // Max position for roll movement
-    int yaw_perpen;      // Min position for yaw (perpendicular to body)
-    int yaw_para;        // Max position for yaw (parallel body along LONG side)
+  int roll_motor_id;     // Motor responsible for up/down
+  int yaw_motor_id;      // Motor responsible for side-to-side
+  int roll_down;         // Min position for roll movement
+  int roll_up;           // Max position for roll movement
+  int yaw_cw;            // Min position for yaw (CLOCKWISE)
+  int yaw_ccw;           // Max position for yaw (COUNTER-CLOCKWISE)
 };
 
-// Map each leg number to its corresponding motors
+// Map each leg number to its corresponding motors (using defines)
 std::unordered_map<int, LegMotors> leg_motor_map = {
-    {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, PERPEN_MOTOR1, PARA_MOTOR1}},  // Leg 1: Roll (Motor 2), Yaw (Motor 1)
-    {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, PERPEN_MOTOR4, PARA_MOTOR4}},  // Leg 2: Roll (Motor 5), Yaw (Motor 4)
-    {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, PERPEN_MOTOR7, PARA_MOTOR7}},  // Leg 3: Roll (Motor 8), Yaw (Motor 7)
-    {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, PERPEN_MOTOR10, PARA_MOTOR10}} // Leg 4: Roll (Motor 11), Yaw (Motor 10)
+    {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, CLOCKWISE_MOTOR1, COUNTER_CLOCKWISE_MOTOR1}},  
+    {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, CLOCKWISE_MOTOR4, COUNTER_CLOCKWISE_MOTOR4}},  
+    {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, CLOCKWISE_MOTOR7, COUNTER_CLOCKWISE_MOTOR7}},  
+    {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, CLOCKWISE_MOTOR10, COUNTER_CLOCKWISE_MOTOR10}}
 };
 
 int degree_to_pos_diff(int degree) {
@@ -185,6 +199,48 @@ int go_left(int leg_num, int degree) {
   } else {
       return std::max(curr_pos_motor - diff, motor_up);
   }
+}
+
+// Moves the motor CLOCKWISE by a given degree amount (Yaw motor)
+int go_clockwise(int leg_num, int degree) {
+    LegMotors motors = leg_motor_map[leg_num];
+    int yaw_cw = motors.yaw_cw;     // Clockwise position
+    int yaw_ccw = motors.yaw_ccw;   // Counter-clockwise position
+    int diff = degree_to_pos_diff(degree);
+    int curr_pos_motor = present_positions[motors.yaw_motor_id];
+
+    // Print debug information
+    std::cout << "Leg " << leg_num << ":\n";
+    std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
+    std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
+    std::cout << "  Current Yaw Position: " << curr_pos_motor << "\n";
+    std::cout << "  Clockwise Limit: " << yaw_cw << "\n";
+    std::cout << "  Counter-Clockwise Limit: " << yaw_ccw << "\n";
+    std::cout << "  Degree to Move: " << degree << "\n";
+    std::cout << "  Position Difference: " << diff << "\n";
+
+    // Ensure position stays within limits when moving CLOCKWISE
+    if (yaw_ccw > yaw_cw) {
+        return std::max(curr_pos_motor + diff, yaw_cw);
+    } else {
+        return std::min(curr_pos_motor - diff, yaw_cw);
+    }
+}
+
+// Moves the motor COUNTER-CLOCKWISE by a given degree amount (Yaw motor)
+int go_counter_clockwise(int leg_num, int degree) {
+    LegMotors motors = leg_motor_map[leg_num];
+    int yaw_cw = motors.yaw_cw;
+    int yaw_ccw = motors.yaw_ccw;
+    int diff = degree_to_pos_diff(degree);
+    int curr_pos_motor = present_positions[motors.yaw_motor_id];
+
+    // Ensure position stays within limits when moving COUNTER-CLOCKWISE
+    if (yaw_ccw > yaw_cw) {
+        return std::min(curr_pos_motor + diff, yaw_ccw);
+    } else {
+        return std::max(curr_pos_motor - diff, yaw_ccw);
+    }
 }
 
 int getch()
@@ -648,30 +704,32 @@ int main()
       scan_motors(groupSyncRead, packetHandler, portHandler);
     }
   
-    else if (command == "left") {
+    else if (command == "cw") {
       int degree;
       char colon;
-      std::vector<int> ids;
+      std::vector<int> leg_ids;
 
       if (!(iss >> degree >> colon) || colon != ':') {
         std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
         continue;
       }
 
-      int id;
-      while (iss >> id) {
-        ids.push_back(id);
+      int leg_id;
+      while (iss >> leg_id) {
+        leg_ids.push_back(leg_id);
       }
 
-      if (ids.empty()) {
-        std::cout << "Error: No motor IDs provided.\n";
+      if (leg_ids.empty()) {
+        std::cout << "Error: No leg IDs provided.\n";
       } else {
-        std::cout << "Moving left " << degree << " degrees for IDs: ";
-        for (int i : ids) std::cout << i << " ";
+        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+        for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
-        for (int leg_num : ids) {
-          present_positions[leg_num] = go_left(leg_num, degree);
+        for (int leg_num : leg_ids) {
+          LegMotors motors = leg_motor_map[leg_num];
+
+          present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, degree);
           move_to(
           present_positions,
           groupSyncWrite, 
@@ -681,6 +739,7 @@ int main()
         }
       }
     }
+    
 
     else if (command == "en" || command == "d") {
       std::vector<int> ids;
