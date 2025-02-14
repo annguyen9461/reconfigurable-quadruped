@@ -730,21 +730,30 @@ int main()
     }
 
     else if (command == "h1") {
-      int home_walking[NUM_MOTORS + 1] = {0, 
-          2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
+      // int home_walking[NUM_MOTORS + 1] = {0, 
+      //     2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
+      // };
+      // move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    
+      int home_walking2[NUM_MOTORS + 1] = {0, 
+          2879, 2032, 2059, 1440, 2066, 999, 2835, 2009, 1055, 2429, 2078, 1028
       };
-      move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
 
     else if (command == "fw") {
-      int home_walking[NUM_MOTORS + 1] = {0, 
-          2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
+      // int home_walking[NUM_MOTORS + 1] = {0, 
+      //     2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
+      // };
+      // move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      int home_walking2[NUM_MOTORS + 1] = {0, 
+          2879, 2032, 2059, 1440, 2066, 999, 2835, 2009, 1055, 2429, 2078, 1028
       };
-      move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       int leg_ids[4] = {4, 2, 3, 1};
-      int up_degree = 10;
-      int cw_degree = 10;
+      int up_degree = 15;
+      int cw_degree = 15;
 
       while (1) 
       {
