@@ -404,47 +404,6 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
   }
 }
 
-int home2_positions[NUM_MOTORS + 1] = {0, 
-    1632, 2255, 2060, 2449, 1860, 1023, 661, 2219, 1014, 2514, 1862, 1064
-};
-
-int home2_perpen[NUM_MOTORS + 1] = {0, 
-    1632, 2031, 2058, 2449, 2076, 1022, 661, 2008, 1015, 2513, 2062, 1060
-};
-
-int home_positions[NUM_MOTORS + 1] = {0, 
-  1313, 2030, 2060, 2818, 2076, 1021, 305, 2007, 1016, 2868, 2066, 1062
-};
-int circle_positions[NUM_MOTORS + 1] = {0, 
-  1062, 2947, 24, 3059, 1174, 3046, 22, 1096, 1004, 3089, 2943, 1055
-};
-int blue_folded_under_cir1[NUM_MOTORS + 1] = {0, 
-    1059, 2945, 1201, 3060, 1175, 1897, 23, 1047, 1007, 3089, 2994, 1052
-};
-int yellow_folded_above_cir2[NUM_MOTORS + 1] = {0, 
-    1062, 2957, 19, 3059, 1164, 3068, 23, 1057, 1010, 3088, 2986, 1051
-};
-
-// Roll Forward - Open Blue (Motors 8 and 11)
-int roll_fw_open_blue[NUM_MOTORS + 1] = {0, 
-    1062, 2996, 20, 3059, 1130, 3069, 23, 1685, 1010, 3088, 2381, 1050
-};
-
-// Roll Forward - Close Blue (Motors 8 and 11)
-int roll_fw_close_blue[NUM_MOTORS + 1] = {0, 
-    1062, 2996, 19, 3059, 1131, 3069, 23, 1026, 1010, 3088, 3084, 1047
-};
-
-// Roll Forward - Open Yellow (Motors 5 and 2)
-int roll_fw_open_yellow[NUM_MOTORS + 1] = {0, 
-    1062, 2505, 19, 3059, 1613, 3068, 25, 1085, 1015, 3089, 2986, 1056
-};
-
-// Roll Forward - Close Yellow (Motors 5 and 2)
-int roll_fw_close_yellow[NUM_MOTORS + 1] = {0, 
-    1062, 2969, 18, 3059, 1093, 3067, 23, 1101, 1010, 3088, 2978, 1051
-};
-
 void move_to(
           int* positions,
           dynamixel::GroupSyncWrite &groupSyncWrite, 
@@ -613,23 +572,6 @@ void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite,
   toggle_position = !toggle_position;  // Flip the toggle for next time
 }
 
-// Lift Top Left Blue UP (Motor 11)
-int lift_top_left_blue_up[NUM_MOTORS + 1] = {0, 
-    1632, 2253, 2060, 2490, 1920, 983, 693, 2133, 1013, 2324, 1675, 1061
-};
-
-// Move Top Left Blue Forward (Motor 10)
-int move_top_left_blue_fw[NUM_MOTORS + 1] = {0, 
-    1632, 2253, 2059, 2491, 1922, 983, 693, 2133, 1014, 2549, 1759, 1060
-};
-
-// Set Motor 11 Down
-int set_motor_11_down[NUM_MOTORS + 1] = {0, 
-    1632, 2253, 2060, 2490, 1919, 983, 693, 2133, 1014, 2549, 1863, 1064
-};
-
-
-
 int main() 
 {
   // Initialize PortHandler instance
@@ -750,6 +692,7 @@ int main()
       int home_walking2[NUM_MOTORS + 1] = {0, 
           2879, 2032, 2059, 1440, 2066, 999, 2835, 2009, 1055, 2429, 2078, 1028
       };
+      move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       int leg_ids[4] = {4, 2, 3, 1};
       int up_degree = 15;
@@ -809,45 +752,33 @@ int main()
       std::vector<int> leg_ids;
 
       if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
+          std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+          continue;
       }
 
       int leg_id;
       while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
+          leg_ids.push_back(leg_id);
       }
 
       if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
+          std::cout << "Error: No leg IDs provided.\n";
       } else {
         std::cout << "Moving up " << degree << " degrees for IDs: ";
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
-        // WEIRD UNISOLATED MOVEMENT 
-        // for (int leg_num : leg_ids) {
-        //   LegMotors motors = leg_motor_map[leg_num];
-        //   present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
-        // }
-        // move_to(
-        //   present_positions,
-        //   groupSyncWrite, 
-        //   packetHandler,
-        //   groupSyncRead,
-        //   portHandler);
-        // Create a local copy of present positions
-        int updated_positions[NUM_MOTORS + 1];
-        std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-        // Modify only roll motors
+        // modify only roll motors
         for (int leg_num : leg_ids) {
             LegMotors motors = leg_motor_map[leg_num];
-            updated_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+            present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
         }
 
-        // Move only the modified motors
-        move_to(updated_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        // move only the modified motors
+        move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
       }
     }
 
@@ -857,13 +788,13 @@ int main()
       std::vector<int> leg_ids;
 
       if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
+          std::cout << "Invalid format. Expected 'down X:Y Z ...'\n";
+          continue;
       }
 
       int leg_id;
       while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
+          leg_ids.push_back(leg_id);
       }
 
       if (leg_ids.empty()) {
@@ -873,30 +804,17 @@ int main()
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
-        // WEIRD UNISOLATED MOVEMENT 
-        // for (int leg_num : leg_ids) {
-        //   LegMotors motors = leg_motor_map[leg_num];
-        //   present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
-        // }
-        // move_to(
-        //   present_positions,
-        //   groupSyncWrite, 
-        //   packetHandler,
-        //   groupSyncRead,
-        //   portHandler); 
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-        // Create a local copy of present positions
-        int updated_positions[NUM_MOTORS + 1];
-        std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
-
-        // Modify only roll motors
+        // modify only roll motors
         for (int leg_num : leg_ids) {
             LegMotors motors = leg_motor_map[leg_num];
-            updated_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+            present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
         }
 
-        // Move only the modified motors
-        move_to(updated_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        // move only the modified motors
+        move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
       }
     }
 
