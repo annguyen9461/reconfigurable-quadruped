@@ -102,6 +102,12 @@ int home_walking2[NUM_MOTORS + 1] = {0,
   2879, 2032, 3049, 1440, 2066, 1014, 2835, 2009, 3071, 2429, 2078, 1056
 };
 
+int home_tiptoe[NUM_MOTORS + 1] = {0, 
+    2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2429, 1957, 1058
+};
+int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
+    2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
+};
 
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
@@ -534,7 +540,7 @@ void move_to_target_positions(
 void gradual_transition(int* next_positions, 
                         dynamixel::GroupSyncWrite &groupSyncWrite, 
                         dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 20;  // number of steps for smooth transition
+    const int step_size = 17;  // number of steps for smooth transition
     int step_arr[NUM_MOTORS + 1] = {0};
     int num_motors = NUM_MOTORS;
     // loop range to start from 1 (ignoring index 0)
@@ -657,19 +663,141 @@ int main()
     }
 
     else if (command == "h1") {
-      move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
     
-    else if (command == "fw") {
-      move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    // else if (command == "fw") {
+    //   move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      int up_degree = 30;
-      int cw_degree = 20;
+    //   int up_degree = 25;
+    //   int cw_degree = 12;
+
+    //   while (1) 
+    //   {
+    //     int leg_num = 4;
+    //     LegMotors motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler); 
+
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        
+    //     leg_num = 2;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+
+    //     leg_num = 3;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        
+    //     leg_num = 1;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //   }
+    // }
+
+    else if (command == "fw") {
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      int up_degree = 25;
+      int cw_degree = 12;
 
       while (1) 
       {
-        int leg_num = 4;
+        int leg_num = 1;
         LegMotors motors = leg_motor_map[leg_num];
+        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        leg_num = 3;
+        motors = leg_motor_map[leg_num];
+        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+  
+        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler); 
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        leg_num = 4;
+        motors = leg_motor_map[leg_num];
         present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
         gradual_transition(present_positions, groupSyncWrite, packetHandler);
         update_present_positions(groupSyncRead, packetHandler, portHandler); 
@@ -704,45 +832,6 @@ int main()
         present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
         gradual_transition(present_positions, groupSyncWrite, packetHandler);
         update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-
-        leg_num = 3;
-        motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        
-        leg_num = 1;
-        motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
       }
     }
     
