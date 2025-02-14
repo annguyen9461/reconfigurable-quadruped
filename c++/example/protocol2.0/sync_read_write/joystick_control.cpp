@@ -47,6 +47,8 @@
 #include <sstream>
 #include <iostream>
 
+#include "joystick.hpp"
+#include <unordered_set>
 
 #define MAX_INPUT_SIZE 100      // define max input buffer size
 
@@ -570,614 +572,436 @@ void gradual_transition(int* next_positions,
 
 int main() 
 {
-  // Initialize PortHandler instance
-  // Set the port path
-  // Get methods and members of PortHandlerLinux or PortHandlerWindows
-  dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
+    int num_legs = 4;
+    std::unordered_set<int> btn_set;
 
-  // Initialize PacketHandler instance
-  // Set the protocol version
-  // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
-  dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+    const unsigned int maxJoysticks = 32;
+    Joystick joysticks[maxJoysticks] = {0};
 
-  // Initialize GroupSyncWrite instance
-  dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PRO_GOAL_POSITION, LEN_PRO_GOAL_POSITION);
-
-  // Initialize Groupsyncread instance for Present Position
-  dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-
-  int dxl_comm_result = COMM_TX_FAIL;               // Communication result
-  bool dxl_addparam_result = false;                 // addParam result
-
-  uint8_t dxl_error = 0;                            // Dynamixel error
-
-  // Open port
-  if (portHandler->openPort())
-  {
-    printf("Succeeded to open the port!\n");
-  }
-  else
-  {
-    printf("Failed to open the port!\n");
-    printf("Press any key to terminate...\n");
-    getch();
-    return 0;
-  }
-
-  // Set port baudrate
-  if (portHandler->setBaudRate(BAUDRATE))
-  {
-    printf("Succeeded to change the baudrate!\n");
-  }
-  else
-  {
-    printf("Failed to change the baudrate!\n");
-    printf("Press any key to terminate...\n");
-    getch();
-    return 0;
-  }
-
-
-  for (int i = 0; i < 20; i++) {
-    DXL_ID = i;
-    // Enable Dynamixel Torque
-    dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
+    char fileName[32];
+    for (unsigned int i=0; i<maxJoysticks; ++i)
     {
-      printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        sprintf(fileName, "/dev/input/js%d", i);
+        joysticks[i] = openJoystick(fileName);
     }
-    else if (dxl_error != 0)
+
+    bool going_up = 0;
+    bool going_down = 0;
+    bool is_flat = 1;
+
+    // Initialize PortHandler instance
+    // Set the port path
+    // Get methods and members of PortHandlerLinux or PortHandlerWindows
+    dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(DEVICENAME);
+
+    // Initialize PacketHandler instance
+    // Set the protocol version
+    // Get methods and members of Protocol1PacketHandler or Protocol2PacketHandler
+    dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+    // Initialize GroupSyncWrite instance
+    dynamixel::GroupSyncWrite groupSyncWrite(portHandler, packetHandler, ADDR_PRO_GOAL_POSITION, LEN_PRO_GOAL_POSITION);
+
+    // Initialize Groupsyncread instance for Present Position
+    dynamixel::GroupSyncRead groupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
+
+    int dxl_comm_result = COMM_TX_FAIL;               // Communication result
+    bool dxl_addparam_result = false;                 // addParam result
+
+    uint8_t dxl_error = 0;                            // Dynamixel error
+
+    // Open port
+    if (portHandler->openPort())
     {
-      printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+        printf("Succeeded to open the port!\n");
     }
     else
     {
-      printf("Dynamixel#%d has been successfully connected \n", DXL_ID);
+        printf("Failed to open the port!\n");
+        printf("Press any key to terminate...\n");
+        getch();
+        return 0;
     }
 
-    // Add parameter storage for Dynamixel#1 present position value
-    dxl_addparam_result = groupSyncRead.addParam(DXL_ID);
-    if (dxl_addparam_result != true)
+    // Set port baudrate
+    if (portHandler->setBaudRate(BAUDRATE))
     {
-      fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", DXL_ID);
-      return 0;
+        printf("Succeeded to change the baudrate!\n");
     }
-  }
-
-
-  std::string input;
-
-  while (true) {
-    // Get user input
-    std::cout << "Enter command: ";
-    std::getline(std::cin, input);
-
-    // Trim leading/trailing spaces
-    if (input.empty()) continue;
-
-    // Handle exit condition
-    if (input == "exit") break;
-
-    // Extract first word as command
-    std::istringstream iss(input);
-    std::string command;
-    iss >> command;
-
-    if (command == "get") {
-      scan_motors(groupSyncRead, packetHandler, portHandler);
+    else
+    {
+        printf("Failed to change the baudrate!\n");
+        printf("Press any key to terminate...\n");
+        getch();
+        return 0;
     }
 
-    else if (command == "h1") {
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+
+    for (int i = 0; i < 20; i++) {
+        DXL_ID = i;
+        // Enable Dynamixel Torque
+        dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE, &dxl_error);
+        if (dxl_comm_result != COMM_SUCCESS)
+        {
+        printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        }
+        else if (dxl_error != 0)
+        {
+        printf("%s\n", packetHandler->getRxPacketError(dxl_error));
+        }
+        else
+        {
+        printf("Dynamixel#%d has been successfully connected \n", DXL_ID);
+        }
+
+        // Add parameter storage for Dynamixel#1 present position value
+        dxl_addparam_result = groupSyncRead.addParam(DXL_ID);
+        if (dxl_addparam_result != true)
+        {
+        fprintf(stderr, "[ID:%03d] groupSyncRead addparam failed", DXL_ID);
+        return 0;
+        }
     }
 
-    else if (command == "cir") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
-    
-    // else if (command == "fw") {
-    //   move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-    //   int up_degree = 25;
-    //   int cw_degree = 12;
+    std::string input;
+    int js_command = 99;
+    while (true) {
+        for (unsigned int i=0; i<maxJoysticks; ++i)
+        {
+        if (joysticks[i].connected)
+        {
+            readJoystickInput(&joysticks[i]);
 
-    //   while (1) 
-    //   {
-    //     int leg_num = 4;
-    //     LegMotors motors = leg_motor_map[leg_num];
-    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler); 
+            printf("Axes: ");
+                    int val_updown = joysticks[i].axisStates[RIGHT_JS_UP_DOWN];
+                    int val_left_right = joysticks[i].axisStates[RIGHT_JS_LEFT_RIGHT];
 
-    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+                    printf("%d:% 6d ", RIGHT_JS_LEFT_RIGHT, val_left_right);
+                    printf("%d:% 6d ", RIGHT_JS_UP_DOWN, val_updown);
+                    
+            printf("Button pressed: ");
+            for (char buttonIndex=0; buttonIndex<joysticks[i].buttonCount; ++buttonIndex) {
+            // if pressed
+            if (joysticks[i].buttonStates[buttonIndex]) {   
+                            printf("%d ", buttonIndex);
+                            if (btn_set.find(buttonIndex) == btn_set.end()) { // Add the button if not present
+                                btn_set.insert(buttonIndex);
+                            } else {
+                                btn_set.erase(buttonIndex);
+                            }
+                        }
+            }
+            printf("\n");
 
-    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+            printf("Button list: ");
+            for (auto btn : btn_set) {
+                printf("%d, ",btn);
+            }
+            printf("\n");
 
-    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        
-    //     leg_num = 2;
-    //     motors = leg_motor_map[leg_num];
-    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-
-    //     leg_num = 3;
-    //     motors = leg_motor_map[leg_num];
-    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        
-    //     leg_num = 1;
-    //     motors = leg_motor_map[leg_num];
-    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-    //     gradual_transition(present_positions, groupSyncWrite, packetHandler);
-    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-    //   }
-    // }
-
-    else if (command == "fw") {
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      int up_degree = 25;
-      int cw_degree = 12;
-
-      while (1) 
-      {
-        int leg_num = 1;
-        LegMotors motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        leg_num = 3;
-        motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        leg_num = 4;
-        motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler); 
-
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        
-        leg_num = 2;
-        motors = leg_motor_map[leg_num];
-        present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-  
-        present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler); 
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-
-        present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        gradual_transition(present_positions, groupSyncWrite, packetHandler);
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
-      }
+            if (val_updown == 0 && val_left_right == 0 ) {
+                going_up = 0;
+                going_down = 0;
+                is_flat = 1;
+            }
+                else {
+                if (abs(val_updown) > abs(val_left_right)) {
+                    if (val_updown < 0) 
+                    {
+                        printf("UP\n");
+                        going_up = 1;
+                        going_down = 0;
+                        is_flat = 0;
+                    } else if(val_updown > 0) 
+                    {
+                        printf("DOWN\n");
+                        going_up = 0;
+                        going_down = 1;
+                        is_flat = 0;
+                    }
+                } else {
+                    if (val_left_right < 0) {
+                        printf("LEFT\n");
+                    } 
+                    else if (val_left_right > 0)
+                    {
+                        printf("RIGHT\n");
+                    }
+                }
+            }
+        }
     }
     
-    else if (command == "up") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
+    
+    if (going_up) {
+        int degree = 5;
 
-      if (!(iss >> degree >> colon) || colon != ':') {
-          std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-          continue;
-      }
-
-      int leg_id;
-      while (iss >> leg_id) {
-          leg_ids.push_back(leg_id);
-      }
-
-      if (leg_ids.empty()) {
-          std::cout << "Error: No leg IDs provided.\n";
-      } else {
         std::cout << "Moving up " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
+        for (auto i : btn_set) std::cout << i << " ";
         std::cout << std::endl;
 
         // refresh present_positions with real motor values
         update_present_positions(groupSyncRead, packetHandler, portHandler);
 
         // modify only roll motors
-        for (int leg_num : leg_ids) {
+        for (auto leg_num : btn_set) {
             LegMotors motors = leg_motor_map[leg_num];
             present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
         }
 
         // move only the modified motors
         move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      }
     }
+    else if (going_down) {
+        int degree = 5;
 
-    else if (command == "down") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
-
-      if (!(iss >> degree >> colon) || colon != ':') {
-          std::cout << "Invalid format. Expected 'down X:Y Z ...'\n";
-          continue;
-      }
-
-      int leg_id;
-      while (iss >> leg_id) {
-          leg_ids.push_back(leg_id);
-      }
-
-      if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
-      } else {
         std::cout << "Moving down " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
+        for (auto i : btn_set) std::cout << i << " ";
         std::cout << std::endl;
 
         // refresh present_positions with real motor values
         update_present_positions(groupSyncRead, packetHandler, portHandler);
 
         // modify only roll motors
-        for (int leg_num : leg_ids) {
+        for (auto leg_num : btn_set) {
             LegMotors motors = leg_motor_map[leg_num];
             present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
         }
 
         // move only the modified motors
         move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      }
     }
 
-    else if (command == "fcw") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
+    // else if (command == "down") {
+    //   int degree;
+    //   char colon;
+    //   std::vector<int> leg_ids;
 
-      if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
-      }
+    //   if (!(iss >> degree >> colon) || colon != ':') {
+    //       std::cout << "Invalid format. Expected 'down X:Y Z ...'\n";
+    //       continue;
+    //   }
 
-      int leg_id;
-      while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
-      }
+    //   int leg_id;
+    //   while (iss >> leg_id) {
+    //       leg_ids.push_back(leg_id);
+    //   }
 
-      if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
-      } else {
-        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
-        std::cout << std::endl;
+    //   if (leg_ids.empty()) {
+    //     std::cout << "Error: No leg IDs provided.\n";
+    //   } else {
+    //     std::cout << "Moving down " << degree << " degrees for IDs: ";
+    //     for (int i : leg_ids) std::cout << i << " ";
+    //     std::cout << std::endl;
 
-        // refresh present_positions with real motor values
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
+    //     // refresh present_positions with real motor values
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-        for (int leg_num : leg_ids) {
-          LegMotorsFold motors = fold_map[leg_num];
-          present_positions[motors.fold_motor_id] = fold_cw(leg_num, degree);
-        }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
-      }
-    }
-    else if (command == "fccw") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
+    //     // modify only roll motors
+    //     for (int leg_num : leg_ids) {
+    //         LegMotors motors = leg_motor_map[leg_num];
+    //         present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+    //     }
 
-      if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
-      }
+    //     // move only the modified motors
+    //     move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+    //   }
+    // }
 
-      int leg_id;
-      while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
-      }
+    // else if (command == "fcw") {
+    //   int degree;
+    //   char colon;
+    //   std::vector<int> leg_ids;
 
-      if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
-      } else {
-        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
-        std::cout << std::endl;
+    //   if (!(iss >> degree >> colon) || colon != ':') {
+    //     std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+    //     continue;
+    //   }
 
-        // refresh present_positions with real motor values
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
+    //   int leg_id;
+    //   while (iss >> leg_id) {
+    //     leg_ids.push_back(leg_id);
+    //   }
 
-        for (int leg_num : leg_ids) {
-          LegMotorsFold motors = fold_map[leg_num];
-          present_positions[motors.fold_motor_id] = fold_ccw(leg_num, degree);
-        }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
-      }
-    }
+    //   if (leg_ids.empty()) {
+    //     std::cout << "Error: No leg IDs provided.\n";
+    //   } else {
+    //     std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+    //     for (int i : leg_ids) std::cout << i << " ";
+    //     std::cout << std::endl;
 
-    else if (command == "cw") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
+    //     // refresh present_positions with real motor values
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-      if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
-      }
+    //     for (int leg_num : leg_ids) {
+    //       LegMotorsFold motors = fold_map[leg_num];
+    //       present_positions[motors.fold_motor_id] = fold_cw(leg_num, degree);
+    //     }
+    //     move_to(
+    //       present_positions,
+    //       groupSyncWrite, 
+    //       packetHandler,
+    //       groupSyncRead,
+    //       portHandler); 
+    //   }
+    // }
+    // else if (command == "fccw") {
+    //   int degree;
+    //   char colon;
+    //   std::vector<int> leg_ids;
 
-      int leg_id;
-      while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
-      }
+    //   if (!(iss >> degree >> colon) || colon != ':') {
+    //     std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+    //     continue;
+    //   }
 
-      if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
-      } else {
-        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
-        std::cout << std::endl;
+    //   int leg_id;
+    //   while (iss >> leg_id) {
+    //     leg_ids.push_back(leg_id);
+    //   }
 
-        // refresh present_positions with real motor values
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
+    //   if (leg_ids.empty()) {
+    //     std::cout << "Error: No leg IDs provided.\n";
+    //   } else {
+    //     std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+    //     for (int i : leg_ids) std::cout << i << " ";
+    //     std::cout << std::endl;
 
-        for (int leg_num : leg_ids) {
-          LegMotors motors = leg_motor_map[leg_num];
-          present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, degree);
-        }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
-      }
-    }
+    //     // refresh present_positions with real motor values
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-    else if (command == "ccw") {
-      int degree;
-      char colon;
-      std::vector<int> leg_ids;
+    //     for (int leg_num : leg_ids) {
+    //       LegMotorsFold motors = fold_map[leg_num];
+    //       present_positions[motors.fold_motor_id] = fold_ccw(leg_num, degree);
+    //     }
+    //     move_to(
+    //       present_positions,
+    //       groupSyncWrite, 
+    //       packetHandler,
+    //       groupSyncRead,
+    //       portHandler); 
+    //   }
+    // }
 
-      if (!(iss >> degree >> colon) || colon != ':') {
-        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
-        continue;
-      }
+    // else if (command == "cw") {
+    //   int degree;
+    //   char colon;
+    //   std::vector<int> leg_ids;
 
-      int leg_id;
-      while (iss >> leg_id) {
-        leg_ids.push_back(leg_id);
-      }
+    //   if (!(iss >> degree >> colon) || colon != ':') {
+    //     std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+    //     continue;
+    //   }
 
-      if (leg_ids.empty()) {
-        std::cout << "Error: No leg IDs provided.\n";
-      } else {
-        std::cout << "Moving counter-clockwise " << degree << " degrees for IDs: ";
-        for (int i : leg_ids) std::cout << i << " ";
-        std::cout << std::endl;
+    //   int leg_id;
+    //   while (iss >> leg_id) {
+    //     leg_ids.push_back(leg_id);
+    //   }
 
-        // refresh present_positions with real motor values
-        update_present_positions(groupSyncRead, packetHandler, portHandler);
+    //   if (leg_ids.empty()) {
+    //     std::cout << "Error: No leg IDs provided.\n";
+    //   } else {
+    //     std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+    //     for (int i : leg_ids) std::cout << i << " ";
+    //     std::cout << std::endl;
 
-        // move legs 1 by 1
-        // for (int leg_num : leg_ids) {
-        //   LegMotors motors = leg_motor_map[leg_num];
+    //     // refresh present_positions with real motor values
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-        //   present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, degree);
-        //   move_to(
-        //   present_positions,
-        //   groupSyncWrite, 
-        //   packetHandler,
-        //   groupSyncRead,
-        //   portHandler); 
-        // }
+    //     for (int leg_num : leg_ids) {
+    //       LegMotors motors = leg_motor_map[leg_num];
+    //       present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, degree);
+    //     }
+    //     move_to(
+    //       present_positions,
+    //       groupSyncWrite, 
+    //       packetHandler,
+    //       groupSyncRead,
+    //       portHandler); 
+    //   }
+    // }
 
-        // move legs simul.
-        for (int leg_num : leg_ids) {
-          LegMotors motors = leg_motor_map[leg_num];
-          present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, degree);
-        }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
-      }
-    }
+    // else if (command == "ccw") {
+    //   int degree;
+    //   char colon;
+    //   std::vector<int> leg_ids;
+
+    //   if (!(iss >> degree >> colon) || colon != ':') {
+    //     std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+    //     continue;
+    //   }
+
+    //   int leg_id;
+    //   while (iss >> leg_id) {
+    //     leg_ids.push_back(leg_id);
+    //   }
+
+    //   if (leg_ids.empty()) {
+    //     std::cout << "Error: No leg IDs provided.\n";
+    //   } else {
+    //     std::cout << "Moving counter-clockwise " << degree << " degrees for IDs: ";
+    //     for (int i : leg_ids) std::cout << i << " ";
+    //     std::cout << std::endl;
+
+    //     // refresh present_positions with real motor values
+    //     update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+    //     // move legs 1 by 1
+    //     // for (int leg_num : leg_ids) {
+    //     //   LegMotors motors = leg_motor_map[leg_num];
+
+    //     //   present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, degree);
+    //     //   move_to(
+    //     //   present_positions,
+    //     //   groupSyncWrite, 
+    //     //   packetHandler,
+    //     //   groupSyncRead,
+    //     //   portHandler); 
+    //     // }
+
+    //     // move legs simul.
+    //     for (int leg_num : leg_ids) {
+    //       LegMotors motors = leg_motor_map[leg_num];
+    //       present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, degree);
+    //     }
+    //     move_to(
+    //       present_positions,
+    //       groupSyncWrite, 
+    //       packetHandler,
+    //       groupSyncRead,
+    //       portHandler); 
+    //   }
+    // }
     
 
-    else if (command == "en" || command == "d") {
-      std::vector<int> ids;
-      int id;
-      while (iss >> id) {
-        ids.push_back(id);
-      }
+    // else if (command == "en" || command == "d") {
+    //   std::vector<int> ids;
+    //   int id;
+    //   while (iss >> id) {
+    //     ids.push_back(id);
+    //   }
 
-      if (ids.empty()) {
-        std::cout << "Error: No motor IDs provided.\n";
-      } else {
-        std::string ids_str;
-        for (int id : ids) {
-            ids_str += std::to_string(id) + " ";  // Convert vector to a space-separated string
-        }
+    //   if (ids.empty()) {
+    //     std::cout << "Error: No motor IDs provided.\n";
+    //   } else {
+    //     std::string ids_str;
+    //     for (int id : ids) {
+    //         ids_str += std::to_string(id) + " ";  // Convert vector to a space-separated string
+    //     }
 
-        // Create a mutable char array (dangerous but works)
-        char ids_cstr[ids_str.length() + 1];
-        strcpy(ids_cstr, ids_str.c_str());
+    //     // Create a mutable char array (dangerous but works)
+    //     char ids_cstr[ids_str.length() + 1];
+    //     strcpy(ids_cstr, ids_str.c_str());
 
-        set_torque(packetHandler, portHandler, command.c_str(), ids_cstr);
+    //     set_torque(packetHandler, portHandler, command.c_str(), ids_cstr);
 
-      }
-    }
-
-
-    else if (command == "set") {
-      std::unordered_map<int, int> positions;
-      std::string pair;
-      
-      // Parse input format: "set ID:pos ID:pos ..."
-      while (iss >> pair) {
-          size_t pos = pair.find(':');
-          if (pos == std::string::npos) {
-              std::cout << "Invalid format. Expected 'set ID:pos ID:pos ...'\n";
-              break;
-          }
-          int id = std::stoi(pair.substr(0, pos));
-          int posValue = std::stoi(pair.substr(pos + 1));
-          positions[id] = posValue;
-      }
-
-      if (!positions.empty()) {
-        // Clear previous SyncWrite parameters
-        groupSyncWrite.clearParam();
-
-        for (const auto& [dxl_id, goal_position] : positions) {
-            std::cout << "Moving Dynamixel ID " << dxl_id << " to Position " << goal_position << "\n";
-
-            uint8_t param_goal_position[4];
-            param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-            param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-            param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-            param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
-
-            // Add to SyncWrite buffer
-            if (!groupSyncWrite.addParam(dxl_id, param_goal_position)) {
-                std::cerr << "[ID:" << dxl_id << "] groupSyncWrite addParam failed\n";
-                continue;
-            }
-        }
-
-        // Transmit goal positions to all motors at once
-        dxl_comm_result = groupSyncWrite.txPacket();
-        if (dxl_comm_result != COMM_SUCCESS) {
-            std::cout << "SyncWrite Error: " << packetHandler->getTxRxResult(dxl_comm_result) << "\n";
-        }
-
-        // Clear SyncWrite buffer
-        groupSyncWrite.clearParam();
-      }
-    }
-    else if (command == "ali") {
-      move_to(
-        aligned_before_rolling,
-        groupSyncWrite, 
-        packetHandler,
-        groupSyncRead,
-        portHandler); 
-    }
+    //   }
+    // }
     else {
-      std::cout << "Unknown command: " << command << "\n";
+      std::cout << "Unknown command: " << js_command << "\n";
     }
   }
-
-  // for (int i = 0; i < 20; i++) {
-  //   // Disable Dynamixel# Torque
-  //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
-  //   if (dxl_comm_result != COMM_SUCCESS)
-  //   {
-  //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-  //   }
-  //   else if (dxl_error != 0)
-  //   {
-  //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-  //   }
-  // }
 
 // Close port
 portHandler->closePort();

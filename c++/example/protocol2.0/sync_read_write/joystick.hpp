@@ -11,6 +11,15 @@
 #define RIGHT_JS_UP_DOWN 4
 #define RIGHT_JS_LEFT_RIGHT 3
 
+#define BTN_B 0
+#define BTN_A 1
+#define BTN_Y 2
+#define BTN_X 3
+
+#define CMD_GET 6
+#define CMD_HOME 7
+#define CMD_UP 10
+
 struct Joystick
 {
 	bool connected;

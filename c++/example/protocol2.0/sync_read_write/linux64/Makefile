@@ -48,6 +48,7 @@ LIBRARIES  += -lrt
 #---------------------------------------------------------------------
 # Files
 #---------------------------------------------------------------------
+# SOURCES = ../joystick_control.cpp
 SOURCES = ../sync_read_write.cpp \
     # *** OTHER SOURCES GO HERE ***
 
