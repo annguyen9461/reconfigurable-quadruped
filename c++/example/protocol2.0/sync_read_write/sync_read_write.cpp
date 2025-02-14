@@ -103,10 +103,14 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 };
 
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
-    2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2429, 1957, 1058
+  2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2429, 1957, 1058
 };
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
-    2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
+  2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
+};
+
+int perfect_cir[NUM_MOTORS + 1] = {0, 
+  2040, 999, 3065, 2055, 3075, 1010, 2085, 3074, 1058, 3043, 1118, 3099
 };
 
 // Up and Down movement (2, 5, 8, 11) (ROLL)
@@ -664,6 +668,10 @@ int main()
 
     else if (command == "h1") {
       move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    }
+
+    else if (command == "cir") {
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
     
     // else if (command == "fw") {
