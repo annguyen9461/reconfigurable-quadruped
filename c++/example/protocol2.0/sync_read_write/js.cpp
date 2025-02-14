@@ -1,63 +1,11 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <linux/joystick.h>
-#include <linux/input.h>
-
-#define RIGHT_JS_UP_DOWN 4
-#define RIGHT_JS_LEFT_RIGHT 3
-
-struct Joystick
-{
-	bool connected;
-	char buttonCount;
-	short* buttonStates;
-	char axisCount;
-	short* axisStates;
-	char name[128];
-	int file;
-};
-
-Joystick openJoystick(const char* fileName)
-{
-	Joystick j = {0};
-	int file = open(fileName, O_RDONLY | O_NONBLOCK);
-	if (file != -1)
-	{
-		ioctl(file, JSIOCGBUTTONS, &j.buttonCount);
-		j.buttonStates = (short*)calloc(j.buttonCount, sizeof(short));
-		ioctl(file, JSIOCGAXES, &j.axisCount);
-		j.axisStates = (short*)calloc(j.axisCount, sizeof(short));
-		ioctl(file, JSIOCGNAME(sizeof(j.name)), j.name);
-		j.file = file;
-		j.connected = true;
-	}
-	return j;
-}
-
-void readJoystickInput(Joystick* joystick)
-{
-	while (1)
-	{
-		js_event event;
-		int bytesRead = read(joystick->file, &event, sizeof(event));
-		if (bytesRead == 0 || bytesRead == -1) return;
-
-		if (event.type == JS_EVENT_BUTTON && event.number < joystick->buttonCount) {
-			joystick->buttonStates[event.number] = event.value;
-		}
-		if (event.type == JS_EVENT_AXIS && event.number < joystick->axisCount) {
-			joystick->axisStates[event.number] = event.value;
-		}
-	}
-}
+#include "js.hpp"
+#include <unordered_set>
 
 int main()
-{
+{   
+    int num_legs = 4;
+    std::unordered_set<int> btn_set;
+
 	const unsigned int maxJoysticks = 32;
 	Joystick joysticks[maxJoysticks] = {0};
 
@@ -83,13 +31,26 @@ int main()
                 printf("%d:% 6d ", RIGHT_JS_LEFT_RIGHT, val_left_right);
                 printf("%d:% 6d ", RIGHT_JS_UP_DOWN, val_updown);
                 
-				printf("Buttons: ");
+				printf("Button pressed: ");
 				for (char buttonIndex=0; buttonIndex<joysticks[i].buttonCount; ++buttonIndex) {
 					// if pressed
-					if (joysticks[i].buttonStates[buttonIndex]) printf("%d ", buttonIndex);
+					if (joysticks[i].buttonStates[buttonIndex]) {   
+                        printf("%d ", buttonIndex);
+                        if (btn_set.find(buttonIndex) == btn_set.end()) { // Add the button if not present
+                            btn_set.insert(buttonIndex);
+                        } else {
+                            btn_set.erase(buttonIndex);
+                        }
+                    }
 				}
 				printf("\n");
-                
+
+                printf("Button list: ");
+                for (auto btn : btn_set) {
+                    printf("%d, ",btn);
+                }
+                printf("\n");
+
                 if (val_updown == 0 && val_left_right == 0 ) {
                 }
                 else {
