@@ -825,16 +825,29 @@ int main()
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
+        // WEIRD UNISOLATED MOVEMENT 
+        // for (int leg_num : leg_ids) {
+        //   LegMotors motors = leg_motor_map[leg_num];
+        //   present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+        // }
+        // move_to(
+        //   present_positions,
+        //   groupSyncWrite, 
+        //   packetHandler,
+        //   groupSyncRead,
+        //   portHandler);
+        // Create a local copy of present positions
+        int updated_positions[NUM_MOTORS + 1];
+        std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
+
+        // Modify only roll motors
         for (int leg_num : leg_ids) {
-          LegMotors motors = leg_motor_map[leg_num];
-          present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+            LegMotors motors = leg_motor_map[leg_num];
+            updated_positions[motors.roll_motor_id] = go_up(leg_num, degree);
         }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
+
+        // Move only the modified motors
+        move_to(updated_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
       }
     }
 
@@ -860,16 +873,30 @@ int main()
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
+        // WEIRD UNISOLATED MOVEMENT 
+        // for (int leg_num : leg_ids) {
+        //   LegMotors motors = leg_motor_map[leg_num];
+        //   present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+        // }
+        // move_to(
+        //   present_positions,
+        //   groupSyncWrite, 
+        //   packetHandler,
+        //   groupSyncRead,
+        //   portHandler); 
+
+        // Create a local copy of present positions
+        int updated_positions[NUM_MOTORS + 1];
+        std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
+
+        // Modify only roll motors
         for (int leg_num : leg_ids) {
-          LegMotors motors = leg_motor_map[leg_num];
-          present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+            LegMotors motors = leg_motor_map[leg_num];
+            updated_positions[motors.roll_motor_id] = go_down(leg_num, degree);
         }
-        move_to(
-          present_positions,
-          groupSyncWrite, 
-          packetHandler,
-          groupSyncRead,
-          portHandler); 
+
+        // Move only the modified motors
+        move_to(updated_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
       }
     }
 
