@@ -89,20 +89,28 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
                 dynamixel::PortHandler *portHandler, 
                 const char *command, char *ids_str); 
 
+// 1 for WALKING, 2 for ROLLING
+int mode = 1;
 int present_positions[NUM_MOTORS + 1] = {0, 
-  2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
+  2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
 };
 
 int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
-  2045, 2053, 2057, 2054, 2035, 1014, 2044, 2047, 1027, 3051, 2043, 1056
+  2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
 };
 
 // Up and Down movement (2, 5, 8, 11) (ROLL)
-#define DOWN_MOTOR2  2048  // Down (flat no under)
+// WALKING
+// #define DOWN_MOTOR2  2048  // Down (flat no under)
 #define UP_MOTOR2  3074  // Up
+// ROLLING
+#define DOWN_MOTOR2  1020  // Down (for rolling)
 
-#define DOWN_MOTOR5  2042  // Down (flat no under)
+// WALKING
+// #define DOWN_MOTOR5  2042  // Down (flat no under)
 #define UP_MOTOR5  1039  // Up
+// ROLLING
+#define DOWN_MOTOR5  2919  // Down (for rolling)
 
 #define DOWN_MOTOR8  2051  // Down (flat no under)
 #define UP_MOTOR8  3204  // Up
@@ -136,34 +144,20 @@ int aligned_before_rolling[NUM_MOTORS + 1] = {0,
 #define CLOCKWISE_MOTOR10      2004
 #define COUNTER_CLOCKWISE_MOTOR10 3215
 
+// Fold movement (3, 6, 9, 12) (CLOCKWISE & COUNTER-CLOCKWISE)
+#define CLOCKWISE_MOTOR3       990
+#define COUNTER_CLOCKWISE_MOTOR3 3072
 
-// Up and Down movement (2, 5, 8, 11) (ROLL)
-#define MIN_ANGLE_MOTOR2  (2048.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
-#define MAX_ANGLE_MOTOR2  (3074.0 / 4095.0 * 360.0)  // ≈ 270.6 degrees
+#define CLOCKWISE_MOTOR6       1028
+#define COUNTER_CLOCKWISE_MOTOR6 3080
 
-#define MIN_ANGLE_MOTOR5  (2042.0 / 4095.0 * 360.0)  // ≈ 179.5 degrees
-#define MAX_ANGLE_MOTOR5  (1039.0 / 4095.0 * 360.0)  // ≈ 91.3 degrees
+#define CLOCKWISE_MOTOR9       3082
+#define COUNTER_CLOCKWISE_MOTOR9 1024
 
-#define MIN_ANGLE_MOTOR8  (2051.0 / 4095.0 * 360.0)  // ≈ 180.3 degrees
-#define MAX_ANGLE_MOTOR8  (3204.0 / 4095.0 * 360.0)  // ≈ 281.5 degrees
+#define CLOCKWISE_MOTOR12      3093 
+#define COUNTER_CLOCKWISE_MOTOR12 1041
 
-#define MIN_ANGLE_MOTOR11 (2044.0 / 4095.0 * 360.0)  // ≈ 179.6 degrees
-#define MAX_ANGLE_MOTOR11 (957.0 / 4095.0 * 360.0)   // ≈ 84.0 degrees
-
-// Side to side movement (1,4,7,10) (YAW)
-#define MIN_ANGLE_MOTOR1  (2046.0 / 4095.0 * 360.0)  // ≈ 180.0 degrees
-#define MAX_ANGLE_MOTOR1  (3058.0 / 4095.0 * 360.0)  // ≈ 269.0 degrees
-
-#define MIN_ANGLE_MOTOR4  (2054.0 / 4095.0 * 360.0)  // ≈ 180.5 degrees
-#define MAX_ANGLE_MOTOR4  (1058.0 / 4095.0 * 360.0)  // ≈ 93.0 degrees
-
-#define MIN_ANGLE_MOTOR7  (2044.0 / 4095.0 * 360.0)  // ≈ 179.6 degrees
-#define MAX_ANGLE_MOTOR7  (3084.0 / 4095.0 * 360.0)  // ≈ 271.1 degrees
-
-#define MIN_ANGLE_MOTOR10 (3051.0 / 4095.0 * 360.0)  // ≈ 268.5 degrees
-#define MAX_ANGLE_MOTOR10 (2042.0 / 4095.0 * 360.0)  // ≈ 179.5 degrees
-
-
+// WALKING
 // Struct to store both motors per leg (roll and yaw)
 struct LegMotors {
   int roll_motor_id;     // Motor responsible for up/down
@@ -182,9 +176,59 @@ std::unordered_map<int, LegMotors> leg_motor_map = {
   {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, CLOCKWISE_MOTOR10, COUNTER_CLOCKWISE_MOTOR10}}
 };
 
+// ROLLING
+// Struct to store motors for rolling
+struct LegMotorsFold {
+  int fold_motor_id;
+  int fold_cw;
+  int fold_ccw;
+};
+
+// Map each leg number to its corresponding motors (using defines)
+std::unordered_map<int, LegMotorsFold> fold_map = {
+  {1, {3, CLOCKWISE_MOTOR3, COUNTER_CLOCKWISE_MOTOR3}},  
+  {2, {6, CLOCKWISE_MOTOR6, COUNTER_CLOCKWISE_MOTOR6}},  
+  {3, {9, CLOCKWISE_MOTOR9, COUNTER_CLOCKWISE_MOTOR9}},  
+  {4, {12, CLOCKWISE_MOTOR12, COUNTER_CLOCKWISE_MOTOR12}}
+};
+
+
 int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
 }
+
+// Fold the motor CW by a given degree amount
+int fold_cw(int leg_num, int degree) {
+  LegMotorsFold motors = fold_map[leg_num];
+  int fold_cw = motors.fold_cw;     // Clockwise position
+  int fold_ccw = motors.fold_ccw;   // Counter-clockwise position
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.fold_motor_id];
+
+  // Ensure position stays within limits when moving CLOCKWISE
+  if (fold_ccw > fold_cw) {
+      return std::max(curr_pos_motor - diff, fold_cw);
+  } else {
+      return std::min(curr_pos_motor + diff, fold_cw);
+  }
+}
+
+// Fold the motor CCW by a given degree amount
+int fold_ccw(int leg_num, int degree) {
+  LegMotorsFold motors = fold_map[leg_num];
+  int fold_cw = motors.fold_cw;     // Clockwise position
+  int fold_ccw = motors.fold_ccw;   // Counter-clockwise position
+  int diff = degree_to_pos_diff(degree);
+  int curr_pos_motor = present_positions[motors.fold_motor_id];
+
+  // Ensure position stays within limits when moving CLOCKWISE
+  if (fold_ccw > fold_cw) {
+      return std::max(curr_pos_motor + diff, fold_cw);
+  } else {
+      return std::min(curr_pos_motor - diff, fold_cw);
+  }
+}
+
 
 // Moves the motor CLOCKWISE by a given degree amount (YAW motor)
 int go_clockwise(int leg_num, int degree) {
@@ -694,7 +738,6 @@ int main()
       };
       move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      int leg_ids[4] = {4, 2, 3, 1};
       int up_degree = 15;
       int cw_degree = 15;
 
@@ -815,6 +858,81 @@ int main()
 
         // move only the modified motors
         move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+      }
+    }
+
+    else if (command == "fcw") {
+      int degree;
+      char colon;
+      std::vector<int> leg_ids;
+
+      if (!(iss >> degree >> colon) || colon != ':') {
+        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+        continue;
+      }
+
+      int leg_id;
+      while (iss >> leg_id) {
+        leg_ids.push_back(leg_id);
+      }
+
+      if (leg_ids.empty()) {
+        std::cout << "Error: No leg IDs provided.\n";
+      } else {
+        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+        for (int i : leg_ids) std::cout << i << " ";
+        std::cout << std::endl;
+
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        for (int leg_num : leg_ids) {
+          LegMotorsFold motors = fold_map[leg_num];
+          present_positions[motors.fold_motor_id] = fold_cw(leg_num, degree);
+        }
+        move_to(
+          present_positions,
+          groupSyncWrite, 
+          packetHandler,
+          groupSyncRead,
+          portHandler); 
+      }
+    }
+    else if (command == "fccw") {
+      int degree;
+      char colon;
+      std::vector<int> leg_ids;
+
+      if (!(iss >> degree >> colon) || colon != ':') {
+        std::cout << "Invalid format. Expected 'up X:Y Z ...'\n";
+        continue;
+      }
+
+      int leg_id;
+      while (iss >> leg_id) {
+        leg_ids.push_back(leg_id);
+      }
+
+      if (leg_ids.empty()) {
+        std::cout << "Error: No leg IDs provided.\n";
+      } else {
+        std::cout << "Moving clockwise " << degree << " degrees for IDs: ";
+        for (int i : leg_ids) std::cout << i << " ";
+        std::cout << std::endl;
+
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
+        for (int leg_num : leg_ids) {
+          LegMotorsFold motors = fold_map[leg_num];
+          present_positions[motors.fold_motor_id] = fold_ccw(leg_num, degree);
+        }
+        move_to(
+          present_positions,
+          groupSyncWrite, 
+          packetHandler,
+          groupSyncRead,
+          portHandler); 
       }
     }
 
