@@ -98,7 +98,9 @@ int present_positions[NUM_MOTORS + 1] = {0,
 int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
   2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
 };
-
+int home_walking2[NUM_MOTORS + 1] = {0, 
+  2879, 2032, 3049, 1440, 2066, 1014, 2835, 2009, 3071, 2429, 2078, 1056
+};
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
 // #define DOWN_MOTOR2  2048  // Down (flat no under)
@@ -117,19 +119,6 @@ int aligned_before_rolling[NUM_MOTORS + 1] = {0,
 
 #define DOWN_MOTOR11 2044  // Down (flat no under)
 #define UP_MOTOR11  957  // Up
-
-// Side to side movement (1,4,7,10) (YAW)
-#define PERPEN_MOTOR1  2046  // Perpendicular to body
-#define PARA_MOTOR1  3058  // Parallel body along LONG side
-
-#define PERPEN_MOTOR4  2054  // Perpendicular to body
-#define PARA_MOTOR4  1058  // Parallel body along LONG side
-
-#define PERPEN_MOTOR7  2044  // Perpendicular to body
-#define PARA_MOTOR7  3084  // Parallel body along LONG side
-
-#define PERPEN_MOTOR10 3051  // Perpendicular to body
-#define PARA_MOTOR10 2042  // Parallel body along LONG side
 
 // Yaw movement (1, 4, 7, 10) (CLOCKWISE & COUNTER-CLOCKWISE)
 #define CLOCKWISE_MOTOR1       1858
@@ -484,10 +473,10 @@ void move_to(
   groupSyncWrite.clearParam();
 
   printf("All motors moved to goal position.\n");
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Allow TIME for motors to reach the position
+  std::this_thread::sleep_for(std::chrono::milliseconds(30));  // Allow TIME for motors to reach the position
   update_present_positions(groupSyncRead, packetHandler, portHandler);
 
-  // ✅ Print the updated positions for debugging
+  // Print the updated positions for debugging
   std::cout << "Updated Present Positions:\n";
   for (int id = 1; id <= NUM_MOTORS; id++) {
       std::cout << "[ID:" << id << "] Position: " << present_positions[id] << "\n";
@@ -495,48 +484,47 @@ void move_to(
   std::cout << "\n";
 }
 
-void move_to_target_positions(
-                      int* target_positions,
-                      dynamixel::GroupSyncWrite &groupSyncWrite, 
-                      dynamixel::PacketHandler *packetHandler 
-                      )
-{
-  printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
+// void move_to_target_positions(
+//                       int* target_positions,
+//                       dynamixel::GroupSyncWrite &groupSyncWrite, 
+//                       dynamixel::PacketHandler *packetHandler 
+//                       )
+// {
+//   printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 
-  // Clear previous SyncWrite parameters
-  groupSyncWrite.clearParam();
+//   // Clear previous SyncWrite parameters
+//   groupSyncWrite.clearParam();
 
-  for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
-  {
-      uint8_t param_goal_position[4];
-      int goal_position = target_positions[id];
+//   for (int id = 1; id <= 12; id++)  // Loop through motor IDs 1-12
+//   {
+//       uint8_t param_goal_position[4];
+//       int goal_position = target_positions[id];
 
-      param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-      param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-      param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-      param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+//       param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+//       param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+//       param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+//       param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
 
-      // Add goal position to SyncWrite buffer
-      if (!groupSyncWrite.addParam(id, param_goal_position)) {
-          fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
-          continue;
-      }
-  }
+//       // Add goal position to SyncWrite buffer
+//       if (!groupSyncWrite.addParam(id, param_goal_position)) {
+//           fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+//           continue;
+//       }
+//   }
 
-  // Transmit the target positions to all motors at once
-  int dxl_comm_result = groupSyncWrite.txPacket();
-  if (dxl_comm_result != COMM_SUCCESS) {
-      printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-  }
+//   // Transmit the target positions to all motors at once
+//   int dxl_comm_result = groupSyncWrite.txPacket();
+//   if (dxl_comm_result != COMM_SUCCESS) {
+//       printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+//   }
 
-  // Clear SyncWrite buffer after sending data
-  groupSyncWrite.clearParam();
+//   // Clear SyncWrite buffer after sending data
+//   groupSyncWrite.clearParam();
 
-  printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
-}
+//   printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
+// }
 
-void gradual_transition(int* cur_positions, 
-                         int* next_positions, 
+void gradual_transition(int* next_positions, 
                          dynamixel::GroupSyncWrite &groupSyncWrite, 
                          dynamixel::PacketHandler *packetHandler,
                          dynamixel::GroupSyncRead &groupSyncRead,
@@ -548,73 +536,55 @@ void gradual_transition(int* cur_positions,
 
     // loop range to start from 1 (ignoring index 0)
     for (int i = 1; i <= num_motors; i++) {
-        step_arr[i] = (next_positions[i] - cur_positions[i]) / step_size;
+        step_arr[i] = (next_positions[i] - present_positions[i]) / step_size;
     }
 
     // perform transitions for each step
     for (int step = 0; step < step_size; step++) {
         // update motor transition based on respective step size
         for (int i = 1; i <= num_motors; i++) {
-            cur_positions[i] += step_arr[i];
+            present_positions[i] += step_arr[i];
         }
-        move_to(cur_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
     }
-
-    // bool moving = true;
-    // while (moving) {
-    //   moving = false;
-
-    //   for (int i = 1; i <= NUM_MOTORS; i++) {
-    //     if (abs(next_positions[i] - cur_positions[i]) > abs(step_arr[i])) {
-    //         cur_positions[i] += step_arr[i];
-    //         moving = true;  // Keep moving if any motor hasn't reached its goal
-    //     } else {
-    //         cur_positions[i] = next_positions[i];  // Final correction
-    //     }
-    //   }
-
-    //   move_to(cur_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(50));  // Add delay for smooth transition
-    // }
-
     // ensure final position is accurate (due to integer division)
     move_to(next_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
 }
 
-void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite, 
-                  dynamixel::PacketHandler *packetHandler) 
-{
-  // Define the two alternating positions
-  int top_left_lift[NUM_MOTORS + 1] = {0, 
-      1779, 2283, 2048, 2398, 2105, 1056, 224, 2283, 1000, 2959, 2046, 1013
-  };
-  int top_left_fw[NUM_MOTORS + 1] = {0, 
-      1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 1000, 2959, 2046, 1013
-  };
+// void move_forward(dynamixel::GroupSyncWrite &groupSyncWrite, 
+//                   dynamixel::PacketHandler *packetHandler) 
+// {
+//   // Define the two alternating positions
+//   int top_left_lift[NUM_MOTORS + 1] = {0, 
+//       1779, 2283, 2048, 2398, 2105, 1056, 224, 2283, 1000, 2959, 2046, 1013
+//   };
+//   int top_left_fw[NUM_MOTORS + 1] = {0, 
+//       1779, 2010, 2048, 2398, 2105, 1056, 224, 2035, 1000, 2959, 2046, 1013
+//   };
 
-  int top_right_lift[NUM_MOTORS + 1] = {0, 
-      1060, 2015, 2045, 2940, 1788, 1057, 711, 2032, 1000, 2387, 1814, 1009
-  };
-  int top_right_fw[NUM_MOTORS + 1] = {0, 
-      1060, 2015, 2045, 2940, 2107, 1057, 711, 2032, 1000, 2387, 2101, 1009
-  };
+//   int top_right_lift[NUM_MOTORS + 1] = {0, 
+//       1060, 2015, 2045, 2940, 1788, 1057, 711, 2032, 1000, 2387, 1814, 1009
+//   };
+//   int top_right_fw[NUM_MOTORS + 1] = {0, 
+//       1060, 2015, 2045, 2940, 2107, 1057, 711, 2032, 1000, 2387, 2101, 1009
+//   };
 
-  int* positions[] = {top_left_lift, top_left_fw, top_right_lift, top_right_fw};
+//   int* positions[] = {top_left_lift, top_left_fw, top_right_lift, top_right_fw};
 
-  // Toggle between the two position sets
-  if (toggle_position) {
-    move_to_target_positions(top_left_lift, groupSyncWrite, packetHandler);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    move_to_target_positions(top_left_fw, groupSyncWrite, packetHandler);
-  } else {
-    move_to_target_positions(top_right_lift, groupSyncWrite, packetHandler);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
-    move_to_target_positions(top_right_fw, groupSyncWrite, packetHandler);
-  }
+//   // Toggle between the two position sets
+//   if (toggle_position) {
+//     move_to_target_positions(top_left_lift, groupSyncWrite, packetHandler);
+//     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+//     move_to_target_positions(top_left_fw, groupSyncWrite, packetHandler);
+//   } else {
+//     move_to_target_positions(top_right_lift, groupSyncWrite, packetHandler);
+//     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Delay for stability
+//     move_to_target_positions(top_right_fw, groupSyncWrite, packetHandler);
+//   }
   
-  // Toggle between the two position sets
-  toggle_position = !toggle_position;  // Flip the toggle for next time
-}
+//   // Toggle between the two position sets
+//   toggle_position = !toggle_position;  // Flip the toggle for next time
+// }
 
 int main() 
 {
@@ -716,79 +686,117 @@ int main()
     }
 
     else if (command == "h1") {
-      // int home_walking[NUM_MOTORS + 1] = {0, 
-      //     2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
-      // };
-      // move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    
-      int home_walking2[NUM_MOTORS + 1] = {0, 
-          2879, 2032, 2059, 1440, 2066, 999, 2835, 2009, 1055, 2429, 2078, 1028
-      };
       move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
 
-    else if (command == "fw") {
-      // int home_walking[NUM_MOTORS + 1] = {0, 
-      //     2716, 2284, 2051, 1358, 1809, 1020, 2721, 2277, 1023, 2328, 1774, 1056
-      // };
-      // move_to(home_walking, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    // else if (command == "fw") {
+    //   move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      int home_walking2[NUM_MOTORS + 1] = {0, 
-          2879, 2032, 2059, 1440, 2066, 999, 2835, 2009, 1055, 2429, 2078, 1028
-      };
+    //   int up_degree = 15;
+    //   int cw_degree = 15;
+
+    //   while (1) 
+    //   {
+    //     int leg_num = 4;
+    //     LegMotors motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        
+    //     leg_num = 2;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+
+    //     leg_num = 3;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        
+    //     leg_num = 1;
+    //     motors = leg_motor_map[leg_num];
+    //     present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+    //     present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    //     present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+    //     move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    //   }
+    // }
+    
+    else if (command == "fw") {
       move_to(home_walking2, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       int up_degree = 15;
       int cw_degree = 15;
 
-      while (1) 
-      {
+      // while (1) 
+      // {
         int leg_num = 4;
         LegMotors motors = leg_motor_map[leg_num];
         present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         
         leg_num = 2;
         motors = leg_motor_map[leg_num];
         present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
 
         leg_num = 3;
         motors = leg_motor_map[leg_num];
         present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         
         leg_num = 1;
         motors = leg_motor_map[leg_num];
         present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
         present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
         present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
-        move_to(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      }
+        gradual_transition(present_positions, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      // }
     }
-
+    
     else if (command == "up") {
       int degree;
       char colon;
