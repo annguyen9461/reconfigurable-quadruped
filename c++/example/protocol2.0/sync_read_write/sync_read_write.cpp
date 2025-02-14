@@ -840,6 +840,9 @@ int main()
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
 
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
+
         for (int leg_num : leg_ids) {
           LegMotors motors = leg_motor_map[leg_num];
           present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, degree);
@@ -874,6 +877,9 @@ int main()
         std::cout << "Moving counter-clockwise " << degree << " degrees for IDs: ";
         for (int i : leg_ids) std::cout << i << " ";
         std::cout << std::endl;
+
+        // refresh present_positions with real motor values
+        update_present_positions(groupSyncRead, packetHandler, portHandler);
 
         // move legs 1 by 1
         // for (int leg_num : leg_ids) {
