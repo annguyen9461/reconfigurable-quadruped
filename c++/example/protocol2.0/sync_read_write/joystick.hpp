@@ -16,9 +16,10 @@
 #define BTN_Y 2
 #define BTN_X 3
 
-#define CMD_GET 6
-#define CMD_HOME 7
-#define CMD_UP 10
+#define BTN_SELECT 6
+#define BTN_START 7
+#define BTN_JS_RIGHT 10
+#define BTN_JS_LEFT 9
 
 struct Joystick
 {
