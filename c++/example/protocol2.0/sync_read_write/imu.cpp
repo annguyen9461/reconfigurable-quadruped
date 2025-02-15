@@ -2,7 +2,7 @@
 #include <cstring>  // Needed for strerror()
 // #include <linux/i2c-dev.h>
 
-#include "i2c/i2c.c"
+#include "i2c.c"
 
 #define I2C_DEVICE "/dev/i2c-1"
 #define ISM330DLC_ADDR 0x6A
