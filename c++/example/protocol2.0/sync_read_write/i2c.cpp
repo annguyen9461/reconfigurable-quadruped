@@ -67,14 +67,17 @@ int main() {
         std::cout << "WHO_AM_I register: 0x" << std::hex << who_am_i << std::endl;
     }
 
+    // enable gyroscope data (CTRL1_XL = 0x10) ONCE
+    write_register(file, 0x10, 0x60);
+    // enable accelerometer data (CTRL2_G = 0x11) ONCE
+    write_register(file, 0x11, 0x60);
+    sleep(1); // wait for sensor to initialize
+
+    // bias offsets
+    float accel_z_offset = 0.2;  // adjust based on stationary readings
+    float gyro_z_offset = -0.37; // adjust based on stationary readings
+
     while (1) {
-        // enable gyroscope data (CTRL1_XL = 0x10)
-        write_register(file, 0x10, 0x60);
-        // enable accelerometer data (CTRL2_G = 0x11)
-        write_register(file, 0x11, 0x60);
-
-        sleep(1); // wait for sensor to initialize
-
         int16_t gyro_x = read_16bit_register(file, 0x22, 0x23);
         int16_t gyro_y = read_16bit_register(file, 0x24, 0x25);
         int16_t gyro_z = read_16bit_register(file, 0x26, 0x27);
@@ -83,13 +86,23 @@ int main() {
         int16_t accel_y = read_16bit_register(file, 0x2A, 0x2B);
         int16_t accel_z = read_16bit_register(file, 0x2C, 0x2D);
 
-        std::cout << "Gyro (dps) X: " << (int16_t)gyro_x * (250.0 / 32768.0)
-            << "  Y: " << (int16_t)gyro_y * (250.0 / 32768.0)
-            << "  Z: " << (int16_t)gyro_z * (250.0 / 32768.0) << std::endl;
+        float gyro_dps_x = gyro_x * (250.0 / 32768.0);
+        float gyro_dps_y = gyro_y * (250.0 / 32768.0);
+        float gyro_dps_z = (gyro_z * (250.0 / 32768.0)) - gyro_z_offset;
 
-        std::cout << "Accel (m/s²) X: " << (int16_t)accel_x * (2.0 / 32768.0) * 9.81
-            << "  Y: " << (int16_t)accel_y * (2.0 / 32768.0) * 9.81
-            << "  Z: " << (int16_t)accel_z * (2.0 / 32768.0) * 9.81 << std::endl;
+        float accel_mps2_x = accel_x * (2.0 / 32768.0) * 9.81;
+        float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
+        float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
+
+        std::cout << "Gyro (dps) X: " << gyro_dps_x
+                  << "  Y: " << gyro_dps_y
+                  << "  Z: " << gyro_dps_z << std::endl;
+
+        std::cout << "Accel (m/s²) X: " << accel_mps2_x
+                  << "  Y: " << accel_mps2_y
+                  << "  Z: " << accel_mps2_z << std::endl;
+
+        usleep(500000); // Read every 0.5 sec
     }
     
     close(file);
