@@ -547,7 +547,7 @@ void move_to_target_positions(
 void gradual_transition(int* next_positions, 
                         dynamixel::GroupSyncWrite &groupSyncWrite, 
                         dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 17;  // number of steps for smooth transition
+    const int step_size = 20;  // number of steps for smooth transition
     int step_arr[NUM_MOTORS + 1] = {0};
     int num_motors = NUM_MOTORS;
     // loop range to start from 1 (ignoring index 0)
@@ -574,6 +574,7 @@ int main()
 {
     int num_legs = 4;
     std::unordered_set<int> btn_set;
+    std::unordered_set<int> leg_set;
 
     const unsigned int maxJoysticks = 32;
     Joystick joysticks[maxJoysticks] = {0};
@@ -684,19 +685,28 @@ int main()
             for (char buttonIndex=0; buttonIndex<joysticks[i].buttonCount; ++buttonIndex) {
             // if pressed
             if (joysticks[i].buttonStates[buttonIndex]) {   
-                            printf("%d ", buttonIndex);
-                            if (btn_set.find(buttonIndex) == btn_set.end()) { // Add the button if not present
-                                btn_set.insert(buttonIndex);
-                            } else {
-                                btn_set.erase(buttonIndex);
-                            }
+                    printf("%d ", buttonIndex);
+                    if (buttonIndex <= 3) {
+                        if (btn_set.find(buttonIndex) == btn_set.end()) { // Add the button if not present
+                            btn_set.insert(buttonIndex);
+                            leg_set.insert(buttonIndex+1);
+                        } else {
+                            btn_set.erase(buttonIndex);
+                            leg_set.erase(buttonIndex+1);
                         }
+                    }
+                }
             }
             printf("\n");
 
             printf("Button list: ");
             for (auto btn : btn_set) {
                 printf("%d, ",btn);
+            }
+            printf("\n");
+            printf("Leg list: ");
+            for (auto leg : leg_set) {
+                printf("%d, ",leg);
             }
             printf("\n");
 
@@ -735,42 +745,54 @@ int main()
     
     
     if (going_up) {
-        int degree = 5;
+        int degree = 15;
 
         std::cout << "Moving up " << degree << " degrees for IDs: ";
-        for (auto i : btn_set) std::cout << i << " ";
+        for (auto i : leg_set) std::cout << i << " ";
         std::cout << std::endl;
 
         // refresh present_positions with real motor values
         update_present_positions(groupSyncRead, packetHandler, portHandler);
 
         // modify only roll motors
-        for (auto leg_num : btn_set) {
-            LegMotors motors = leg_motor_map[leg_num];
-            present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+        for (auto leg_num : leg_set) {
+            if (leg_num == 1 || leg_num == 2) {
+                LegMotors motors = leg_motor_map[leg_num];
+                present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+            }
+            else {
+                LegMotors motors = leg_motor_map[leg_num];
+                present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+            }
         }
 
         // move only the modified motors
-        move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
     }
     else if (going_down) {
-        int degree = 5;
+        int degree = 15;
 
         std::cout << "Moving down " << degree << " degrees for IDs: ";
-        for (auto i : btn_set) std::cout << i << " ";
+        for (auto i : leg_set) std::cout << i << " ";
         std::cout << std::endl;
 
         // refresh present_positions with real motor values
         update_present_positions(groupSyncRead, packetHandler, portHandler);
 
         // modify only roll motors
-        for (auto leg_num : btn_set) {
-            LegMotors motors = leg_motor_map[leg_num];
-            present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+        for (auto leg_num : leg_set) {
+            if (leg_num == 1 || leg_num == 2) {
+                LegMotors motors = leg_motor_map[leg_num];
+                present_positions[motors.roll_motor_id] = go_down(leg_num, degree);
+            }
+            else {
+                LegMotors motors = leg_motor_map[leg_num];
+                present_positions[motors.roll_motor_id] = go_up(leg_num, degree);
+            }
         }
 
         // move only the modified motors
-        move_to(present_positions, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        gradual_transition(present_positions, groupSyncWrite, packetHandler);
     }
 
     // else if (command == "down") {
