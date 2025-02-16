@@ -580,7 +580,7 @@ void move_to_target_positions(
 void gradual_transition(int* next_positions, 
                         dynamixel::GroupSyncWrite &groupSyncWrite, 
                         dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 20;  // number of steps for smooth transition
+    const int step_size = 50;  // number of steps for smooth transition
     int step_arr[NUM_MOTORS + 1] = {0};
     int num_motors = NUM_MOTORS;
     // loop range to start from 1 (ignoring index 0)
