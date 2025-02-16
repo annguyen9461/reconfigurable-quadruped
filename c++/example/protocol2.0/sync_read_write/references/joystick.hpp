@@ -8,6 +8,14 @@
 #include <linux/joystick.h>
 #include <linux/input.h>
 
+#define RIGHT_JS_UP_DOWN 4
+#define RIGHT_JS_LEFT_RIGHT 3
+
+#define BTN_SELECT 6
+#define BTN_START 7
+#define BTN_JS_RIGHT 10
+#define BTN_JS_LEFT 9
+
 struct Joystick
 {
 	bool connected;
@@ -50,42 +58,5 @@ void readJoystickInput(Joystick* joystick)
 		if (event.type == JS_EVENT_AXIS && event.number < joystick->axisCount) {
 			joystick->axisStates[event.number] = event.value;
 		}
-	}
-}
-
-int main()
-{
-	const unsigned int maxJoysticks = 32;
-	Joystick joysticks[maxJoysticks] = {0};
-
-	char fileName[32];
-	for (unsigned int i=0; i<maxJoysticks; ++i)
-	{
-		sprintf(fileName, "/dev/input/js%d", i);
-		joysticks[i] = openJoystick(fileName);
-	}
-
-	while (1)
-	{
-		for (unsigned int i=0; i<maxJoysticks; ++i)
-		{
-			if (joysticks[i].connected)
-			{
-				readJoystickInput(&joysticks[i]);
-
-				printf("%s - Axes: ", joysticks[i].name);
-				for (char axisIndex=0; axisIndex<joysticks[i].axisCount; ++axisIndex) {
-					printf("%d:% 6d ", axisIndex, joysticks[i].axisStates[axisIndex]);
-				}
-				printf("Buttons: ");
-				for (char buttonIndex=0; buttonIndex<joysticks[i].buttonCount; ++buttonIndex) {
-					// if pressed
-					if (joysticks[i].buttonStates[buttonIndex]) printf("%d ", buttonIndex);
-				}
-				printf("\n");
-			}
-		}
-		fflush(stdout);
-		usleep(16000);
 	}
 }
