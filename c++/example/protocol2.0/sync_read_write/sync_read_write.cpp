@@ -90,6 +90,7 @@ void set_torque(dynamixel::PacketHandler *packetHandler,
                 dynamixel::PortHandler *portHandler, 
                 const char *command, char *ids_str); 
 
+// ALL CONFIGS
 // 1 for WALKING, 2 for ROLLING
 int mode = 1;
 int present_positions[NUM_MOTORS + 1] = {0, 
@@ -114,19 +115,37 @@ int perfect_cir[NUM_MOTORS + 1] = {0,
   2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
 };
 
-int cir_to_walk_blue_out[NUM_MOTORS + 1] = {0, 
-    2039, 1134, 3080, 2053, 2950, 1006, 2087, 2995, 2056, 3049, 1089, 2066
-};
-
-int cir_to_walk_2[NUM_MOTORS + 1] = {0, 
-    2041, 1945, 3080, 2053, 2140, 1006, 2112, 3007, 2384, 3020, 1071, 1739
-};
-
-
-
+// WALK TO CIR
 int walk_to_cir1[NUM_MOTORS + 1] = {0, 
     2045, 1637, 3059, 2052, 2435, 1017, 2045, 1983, 2726, 3051, 2085, 1396
 };
+
+// CIR TO WALK
+int cir_to_blue3_180[NUM_MOTORS + 1] = {0, 
+    2047, 1041, 3089, 2050, 3043, 996, 2086, 2987, 3082, 3054, 1099, 3098
+};
+int cir_to_both_blues_180[NUM_MOTORS + 1] = {0, 
+    2047, 974, 3096, 2049, 3088, 993, 2086, 2979, 3082, 3054, 1101, 1052
+};
+
+// RECOVERY LEFT SIDE ON GROUND
+int s_shape_30_out[NUM_MOTORS + 1] = {0, 
+    2023, 1458, 3088, 2059, 2640, 977, 2081, 2642, 1018, 3085, 1459, 3099
+};
+int s_shape_full_90_out[NUM_MOTORS + 1] = {0, 
+    2023, 2140, 3071, 2091, 1958, 962, 2064, 2051, 1003, 3087, 2045, 3098
+};
+int blue3_180[NUM_MOTORS + 1] = {0, 
+    2020, 2140, 3069, 2140, 1958, 946, 1997, 2051, 3070, 3097, 2043, 3081
+};
+int cir_to_yellow_up60[NUM_MOTORS + 1] = {0, 
+    2045, 1281, 3096, 2045, 2829, 989, 2103, 2987, 3062, 3053, 1100, 1052
+};
+int cir_to_yellow_up90[NUM_MOTORS + 1] = {0, 
+    2046, 1631, 3097, 2042, 2485, 984, 2105, 2990, 3060, 3053, 1104, 1052
+};
+// RECOVERY LEFT SIDE ON GROUND
+
 
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
@@ -685,13 +704,21 @@ int main()
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
 
-    else if (command == "cir1") {
-      move_to(cir_to_walk_blue_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
+    
     else if (command == "cirh") {
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      move_to(walk_to_cir1, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(700));  // Allow TIME for motors to reach the position
+      move_to(cir_to_blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(cir_to_both_blues_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(cir_to_yellow_up60, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(cir_to_yellow_up90, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
 
     }
     else if (command == "hcir") {
@@ -702,6 +729,14 @@ int main()
 
     else if (command == "cir") {
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    }
+
+    // recover from LEFT side on the ground
+    else if (command == "recol") {
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(s_shape_30_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(s_shape_full_90_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
     
     // else if (command == "fw") {
