@@ -723,7 +723,9 @@ int main()
     }
     else if (command == "hcir") {
       move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
       move_to(walk_to_cir1, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(300));
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
 
