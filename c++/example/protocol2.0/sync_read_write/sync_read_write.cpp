@@ -114,6 +114,20 @@ int perfect_cir[NUM_MOTORS + 1] = {0,
   2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
 };
 
+int cir_to_walk_blue_out[NUM_MOTORS + 1] = {0, 
+    2039, 1134, 3080, 2053, 2950, 1006, 2087, 2995, 2056, 3049, 1089, 2066
+};
+
+int cir_to_walk_2[NUM_MOTORS + 1] = {0, 
+    2041, 1945, 3080, 2053, 2140, 1006, 2112, 3007, 2384, 3020, 1071, 1739
+};
+
+
+
+int walk_to_cir1[NUM_MOTORS + 1] = {0, 
+    2045, 1637, 3059, 2052, 2435, 1017, 2045, 1983, 2726, 3051, 2085, 1396
+};
+
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
 // #define DOWN_MOTOR2  2048  // Down (flat no under)
@@ -668,7 +682,22 @@ int main()
     }
 
     else if (command == "h1") {
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    }
+
+    else if (command == "cir1") {
+      move_to(cir_to_walk_blue_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    }
+    else if (command == "cirh") {
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(walk_to_cir1, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+
+    }
+    else if (command == "hcir") {
+      move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(walk_to_cir1, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
 
     else if (command == "cir") {
