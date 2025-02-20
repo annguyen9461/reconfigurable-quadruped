@@ -802,9 +802,9 @@ int main()
       int leg4_down[NUM_MOTORS + 1] = {0, 
         2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2565, 2000, 1058
       };
-      // [ID:10] Position: 2430
+      // ID 10: 2430
       int leg4_back[NUM_MOTORS + 1] = {0, 
-        2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2565, 2000, 1058
+        2882, 2127, 3046, 1438, 1951, 1015, 2836, 2134, 3069, 2430, 2000, 1058
       };
 
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
@@ -814,34 +814,85 @@ int main()
 
       int leg_num = 4;
       LegMotors motors = leg_motor_map[leg_num];
+
+      // Move roll motor up
+      move_to(leg4_up, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+      print_present(groupSyncRead, packetHandler, portHandler); 
       
+      // Move yaw motor clockwise
+      move_to(leg4_cw, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+      print_present(groupSyncRead, packetHandler, portHandler); 
+      
+      // Move roll motor down
+      move_to(leg4_down, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+      print_present(groupSyncRead, packetHandler, portHandler); 
+      print_present(groupSyncRead, packetHandler, portHandler); 
+      
+
+      leg_num = 2;
+      motors = leg_motor_map[leg_num];
+
+      // using leg 4 3rd position (no back)
+      // [ID:5] Position: 1702
+      int leg2_up[NUM_MOTORS + 1] = {0, 
+        2882, 2127, 3046, 1438, 1702, 1015, 2836, 2134, 3069, 2565, 2000, 1058
+      };
+      // [ID:4] Position: 1304
+      // FORWARD
+      // CCW
+      int leg2_ccw[NUM_MOTORS + 1] = {0, 
+        2882, 2127, 3046, 1304, 1702, 1015, 2836, 2134, 3069, 2565, 2000, 1058
+      };
+
+      // DOWN
+      // [ID:5] Position: 1980
+      int leg2_ccw[NUM_MOTORS + 1] = {0, 
+        2882, 2127, 3046, 1304, 1980, 1015, 2836, 2134, 3069, 2565, 2000, 1058
+      };
+
+      // BACK
+      // CW
+      // [ID:4] Position: 1437
+      int leg2_back[NUM_MOTORS + 1] = {0, 
+        2882, 2127, 3046, 1437, 1980, 1015, 2836, 2134, 3069, 2565, 2000, 1058
+      };
+
       // Move roll motor up
       present_positions[motors.roll_motor_id] = go_up(leg_num, up_degree);
       gradual_transition(present_positions, groupSyncWrite, packetHandler);
       update_one_motor_pos(groupSyncRead, packetHandler, portHandler, motors.roll_motor_id);
       std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
       print_present(groupSyncRead, packetHandler, portHandler); 
-      
+
       // Move yaw motor clockwise
-      present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
+      present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
       gradual_transition(present_positions, groupSyncWrite, packetHandler);
       update_one_motor_pos(groupSyncRead, packetHandler, portHandler, motors.yaw_motor_id);
       std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
       print_present(groupSyncRead, packetHandler, portHandler); 
-      
+
       // Move roll motor down
       present_positions[motors.roll_motor_id] = go_down(leg_num, up_degree);
       gradual_transition(present_positions, groupSyncWrite, packetHandler);
       update_one_motor_pos(groupSyncRead, packetHandler, portHandler, motors.roll_motor_id);
       std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
       print_present(groupSyncRead, packetHandler, portHandler); 
-      
+
       // Move yaw motor counter-clockwise
-      present_positions[motors.yaw_motor_id] = go_counter_clockwise(leg_num, cw_degree);
+      present_positions[motors.yaw_motor_id] = go_clockwise(leg_num, cw_degree);
       gradual_transition(present_positions, groupSyncWrite, packetHandler);
       update_one_motor_pos(groupSyncRead, packetHandler, portHandler, motors.yaw_motor_id);
       std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
       print_present(groupSyncRead, packetHandler, portHandler); 
+
+      // MOVE BACK COMMENTED OUT FOR NOW
+      // Move yaw motor counter-clockwise
+      // move_to(leg4_back, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      // std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+      // print_present(groupSyncRead, packetHandler, portHandler); 
       
       // while (1) 
       // {
