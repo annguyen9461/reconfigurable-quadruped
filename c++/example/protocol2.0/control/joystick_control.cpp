@@ -580,7 +580,7 @@ void move_to_target_positions(
 void gradual_transition(int* next_positions, 
                         dynamixel::GroupSyncWrite &groupSyncWrite, 
                         dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 60;  // number of steps for smooth transition
+    const int step_size = 30;  // number of steps for smooth transition
     int step_arr[NUM_MOTORS + 1] = {0};
     int num_motors = NUM_MOTORS;
     // loop range to start from 1 (ignoring index 0)
@@ -780,7 +780,7 @@ int main()
             }
 
             if (going_up) {
-                int degree = 1;
+                int degree = 10;
 
                 std::cout << "Moving up " << degree << " degrees for IDs: ";
                 for (auto i : leg_set) std::cout << i << " ";
@@ -805,7 +805,7 @@ int main()
                 gradual_transition(present_positions, groupSyncWrite, packetHandler);
             }
             else if (going_down) {
-                int degree = 1;
+                int degree = 10;
 
                 std::cout << "Moving down " << degree << " degrees for IDs: ";
                 for (auto i : leg_set) std::cout << i << " ";
