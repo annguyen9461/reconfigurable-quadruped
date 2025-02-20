@@ -873,72 +873,73 @@ int main()
       while (1) {
         std::cout << "LEG 4 START\n";
         // Move roll motor up
-        gradual_transition(leg4_up, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move yaw motor clockwise
-        gradual_transition(leg4_cw, groupSyncWrite, packetHandler);  
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);  
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move roll motor down
-        gradual_transition(leg4_down, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 4 DONE\n";
 
 
         std::cout << "LEG 3 START\n";
         // Move roll motor up
-        gradual_transition(leg3_up, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move yaw motor counter-clockwise
-        gradual_transition(leg3_ccw, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move roll motor down
-        gradual_transition(leg3_down, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 3 DONE\n";
 
         // Move to home position to move both legs 4 and 3 back
-        gradual_transition(home_tiptoe, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 3 and 4 BACK\n";
 
 
         std::cout << "STARTING LEG 1\n";
         // Move roll motor up
-        gradual_transition(leg1_up, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move yaw motor counter-clockwise
-        gradual_transition(leg1_ccw, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move roll motor down
-        gradual_transition(leg1_down, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 1 DONE\n";
 
 
         std::cout << "STARTING LEG 2\n";
         // Move roll motor up
-        gradual_transition(leg2_up, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move yaw motor counter-clockwise
-        gradual_transition(leg2_ccw, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
 
         // Move roll motor down
-        gradual_transition(leg2_down, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 2 DONE\n";
 
         // Move back to home position for legs 1 and 2
-        gradual_transition(home_tiptoe, groupSyncWrite, packetHandler); 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+        move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "MOVE LEG 1 and 2 BACK\n";
+
 
       }
 
@@ -1451,3 +1452,7 @@ portHandler->closePort();
 return 0;
 
 }
+
+
+// rescrewing
+// [ID:11] Position: 2036
