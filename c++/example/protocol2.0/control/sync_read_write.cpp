@@ -108,6 +108,8 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
 const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 const int CW_CCW_TICKS = static_cast<int>(20 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
+const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE); 
+const int CW_CCW_TICKS_BACKLEG = static_cast<int>(30 * TICKS_PER_DEGREE);
 
 // Home Tiptoe Positions
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
@@ -188,19 +190,19 @@ void generate_movement_arrays() {
   leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
 
   // --- Leg 1 Movements ---
-  leg1_up[2] += UP_DOWN_TICKS;       // Up (ID:2)
+  leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
   copy_array(leg1_ccw, leg1_up);
-  leg1_ccw[1] += CW_CCW_TICKS;       // Forward CCW (ID:1)
+  leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
   copy_array(leg1_down, leg1_ccw);
-  leg1_down[2] -= UP_DOWN_TICKS;     // Down (ID:2)
+  leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
 
   // --- Leg 2 Movements ---
   copy_array(leg2_up, leg1_down);
-  leg2_up[5] -= UP_DOWN_TICKS;       // Up (ID:5)
+  leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
   copy_array(leg2_ccw, leg2_up);
-  leg2_ccw[4] -= CW_CCW_TICKS;       // Forward CCW (ID:4)
+  leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
   copy_array(leg2_down, leg2_ccw);
-  leg2_down[5] += UP_DOWN_TICKS;     // Down (ID:5)
+  leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
 }
 
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
@@ -865,7 +867,7 @@ int main()
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
       move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
 
     }
     else if (command == "hcir") {
@@ -1311,7 +1313,3 @@ portHandler->closePort();
 return 0;
 
 }
-
-
-// rescrewing
-// [ID:11] Position: 2036
