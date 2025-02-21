@@ -294,19 +294,19 @@ void generate_movement_arrays_roll_fw() {
   
   std::cout << "GENERATING FOR BLUE LEGS\n";
   // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
-  blue_up_cir[11] -= UP_DOWN_TICKS;      // Up LEG 4
+  blue_up_cir[11] += UP_DOWN_TICKS;      // Up LEG 4
   blue_up_cir[8] -= UP_DOWN_TICKS;      // Up LEG 3
 
-  blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
-  blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
+  // blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
+  // blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
 
 
   std::cout << "GENERATING FOR YELLOW LEGS\n";
-  yellow_up_cir[5] += UP_DOWN_TICKS;      // Up LEG 2
+  yellow_up_cir[5] -= UP_DOWN_TICKS;      // Up LEG 2
   yellow_up_cir[2] += UP_DOWN_TICKS;      // Up LEG 1
 
-  yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
-  yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
+  // yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
+  // yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
 
 }
 
@@ -1002,20 +1002,20 @@ int main()
 
       generate_movement_arrays_roll_fw();
 
-      const int NUM_MOVEMENTS = 6;
+      const int NUM_MOVEMENTS = 4;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
-        yellow_up_cir, yellow_down_cir,
+        yellow_up_cir,
         perfect_cir,
-        blue_up_cir, blue_down_cir,
+        blue_up_cir,
         perfect_cir
       };
       
-      while (1) {
+      // while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
           move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+          std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
         }
-      }
+      // }
     }
 
     // WALK TURNING RIGHT
