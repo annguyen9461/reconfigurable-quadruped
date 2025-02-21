@@ -105,11 +105,19 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 };
 
 // Constants
+// TURNING RIGHT
+// const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
+// const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+// const int CW_CCW_TICKS = static_cast<int>(25 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
+// const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
+// const int CW_CCW_TICKS_BACKLEG = static_cast<int>(35 * TICKS_PER_DEGREE);
+
+// TURNING RIGHT
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
 const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-const int CW_CCW_TICKS = static_cast<int>(20 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
-const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE); 
-const int CW_CCW_TICKS_BACKLEG = static_cast<int>(30 * TICKS_PER_DEGREE);
+const int CW_CCW_TICKS = static_cast<int>(10 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
+const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
+const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
 
 // Home Tiptoe Positions
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
@@ -156,7 +164,7 @@ void copy_array(int* dest, int* src) {
 
 
 // Function to populate movement arrays based on sequence
-void generate_movement_arrays() {
+void generate_movement_arrays_walk_fw(bool turning_right) {
   // Start with home_tiptoe for all movements
   copy_array(leg4_up, home_tiptoe);
   copy_array(leg4_cw, home_tiptoe);
@@ -173,36 +181,80 @@ void generate_movement_arrays() {
   copy_array(leg2_up, home_tiptoe);
   copy_array(leg2_ccw, home_tiptoe);
   copy_array(leg2_down, home_tiptoe);
+  
+  if (turning_right == 1) {
+    std::cout << "GENERATING FOR TURNING RIGHT\n";
+    // --- Leg 4 Movements ---
+    leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
+    copy_array(leg4_cw, leg4_up);
+    leg4_cw[10] += CW_CCW_TICKS;       // Forward CW (ID:10)
+    copy_array(leg4_down, leg4_cw);
+    leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
 
-  // --- Leg 4 Movements ---
-  leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
-  copy_array(leg4_cw, leg4_up);
-  leg4_cw[10] += CW_CCW_TICKS;       // Forward CW (ID:10)
-  copy_array(leg4_down, leg4_cw);
-  leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
+    // --- Leg 3 Movements ---
+    copy_array(leg3_up, leg4_down);
+    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
+    copy_array(leg3_ccw, leg3_up);
+    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
+    copy_array(leg3_down, leg3_ccw);
+    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
 
-  // --- Leg 3 Movements ---
-  copy_array(leg3_up, leg4_down);
-  leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
-  copy_array(leg3_ccw, leg3_up);
-  leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
-  copy_array(leg3_down, leg3_ccw);
-  leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
+    // --- Leg 1 Movements ---
+    leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
+    copy_array(leg1_ccw, leg1_up);
+    leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
+    copy_array(leg1_down, leg1_ccw);
+    leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
 
-  // --- Leg 1 Movements ---
-  leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
-  copy_array(leg1_ccw, leg1_up);
-  leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
-  copy_array(leg1_down, leg1_ccw);
-  leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
+    // --- Leg 2 Movements ---
+    copy_array(leg2_up, leg1_down);
+    leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
+    copy_array(leg2_ccw, leg2_up);
+    leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
+    copy_array(leg2_down, leg2_ccw);
+    leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
+  } 
+  else if (turning_right == 0) {
+    std::cout << "GENERATING FOR TURNING LEFT\n";
+    // TURNING LEFT
+    // --- Leg 3 Movements ---
+    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
+    copy_array(leg3_ccw, leg3_up);
+    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
+    copy_array(leg3_down, leg3_ccw);
+    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
 
-  // --- Leg 2 Movements ---
-  copy_array(leg2_up, leg1_down);
-  leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
-  copy_array(leg2_ccw, leg2_up);
-  leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
-  copy_array(leg2_down, leg2_ccw);
-  leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
+    // --- Leg 4 Movements ---
+    copy_array(leg4_up, leg3_down);
+    leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
+    copy_array(leg4_cw, leg4_up);
+    leg4_cw[10] += CW_CCW_TICKS;       // Forward CW (ID:10)
+    copy_array(leg4_down, leg4_cw);
+    leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
+
+    // --- Leg 3 Movements ---
+    copy_array(leg3_up, leg4_down);
+    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
+    copy_array(leg3_ccw, leg3_up);
+    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
+    copy_array(leg3_down, leg3_ccw);
+    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
+
+     // --- Leg 2 Movements ---
+    leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
+    copy_array(leg2_ccw, leg2_up);
+    leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
+    copy_array(leg2_down, leg2_ccw);
+    leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
+  
+    // --- Leg 1 Movements ---
+    copy_array(leg1_up, leg2_down);
+    leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
+    copy_array(leg1_ccw, leg1_up);
+    leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
+    copy_array(leg1_down, leg1_ccw);
+    leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
+  }
 }
 
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
@@ -890,13 +942,12 @@ int main()
       move_to(blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
     
-    // up/down: 30 degrees
-    // cw/ccw: 20 degrees
-    else if (command == "fw") {
+    // WALK TURNING RIGHT
+    else if (command == "fwr") {
       
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays();
+      generate_movement_arrays_walk_fw(1);
 
       while (1) {
         std::cout << "LEG 4 START\n";
@@ -963,6 +1014,83 @@ int main()
         std::this_thread::sleep_for(std::chrono::milliseconds(500));  
         std::cout << "LEG 2 DONE\n";
 
+        // Move back to home position for legs 1 and 2
+        move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "MOVE LEG 1 and 2 BACK\n";
+
+
+      }
+    }
+
+    // WALK TURNING LEFT
+    else if (command == "fwl") {
+      
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_walk_fw(0);
+
+      while (1) {
+        std::cout << "LEG 3 START\n";
+        // Move roll motor up
+        move_to(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move yaw motor counter-clockwise
+        move_to(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move roll motor down
+        move_to(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "LEG 3 DONE\n";
+
+        std::cout << "LEG 4 START\n";
+        // Move roll motor up
+        move_to(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move yaw motor clockwise
+        move_to(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);  
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move roll motor down
+        move_to(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "LEG 4 DONE\n";
+
+        // Move to home position to move both legs 4 and 3 back
+        move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "LEG 3 and 4 BACK\n";
+
+        std::cout << "STARTING LEG 2\n";
+        // Move roll motor up
+        move_to(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move yaw motor counter-clockwise
+        move_to(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move roll motor down
+        move_to(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "LEG 2 DONE\n";
+
+        std::cout << "STARTING LEG 1\n";
+        // Move roll motor up
+        move_to(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move yaw motor counter-clockwise
+        move_to(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+
+        // Move roll motor down
+        move_to(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        std::cout << "LEG 1 DONE\n";
         // Move back to home position for legs 1 and 2
         move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));  
