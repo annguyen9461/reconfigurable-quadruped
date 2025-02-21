@@ -162,6 +162,10 @@ int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// ROLLING START /////////////////////////////////
 const int UP_DOWN_TICKS_ROLL = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 
+const int UP_TICKS_ROLL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+const int UP_TICKS_ROLL_BIG = static_cast<int>(50 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+const int DOWN_TICKS_ROLL = static_cast<int>(10 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
   2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
@@ -280,7 +284,7 @@ void generate_movement_arrays_walk_fw(bool turning_right) {
 }
 
 // Function to populate movement arrays based on sequence
-void generate_movement_arrays_roll_fw(bool turning_right) {
+void generate_movement_arrays_roll_fw() {
   // Start with perfect_cir for all movements
   copy_array(blue_up_cir, perfect_cir);
   copy_array(blue_down_cir, perfect_cir);
@@ -996,28 +1000,26 @@ int main()
   
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_walk_fw(1);
+      generate_movement_arrays_roll_fw();
 
-      // const int NUM_MOVEMENTS = 14;
-      // int* walk_fw_r_movements[NUM_MOVEMENTS] = {
-      //   leg4_up, leg4_cw, leg4_down,
-      //   leg3_up, leg3_ccw, leg3_down, 
-      //   home_tiptoe,
-      //   leg1_up, leg1_ccw, leg1_down,
-      //   leg2_up, leg2_ccw, leg2_down,
-      //   home_tiptoe,
-      // };
+      const int NUM_MOVEMENTS = 6;
+      int* roll_fw_movements[NUM_MOVEMENTS] = {
+        yellow_up_cir, yellow_down_cir,
+        perfect_cir,
+        blue_up_cir, blue_down_cir,
+        perfect_cir
+      };
       
-      // while (1) {
-      //   for (int i = 0; i < NUM_MOVEMENTS; i++) {
-      //     move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-      //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  
-      //   }
-      // }
+      while (1) {
+        for (int i = 0; i < NUM_MOVEMENTS; i++) {
+          move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+        }
+      }
     }
 
     // WALK TURNING RIGHT
-    else if (command == "fwr") {
+    else if (command == "wfwr") {
       
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
@@ -1036,13 +1038,13 @@ int main()
       while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
           move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+          std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
         }
       }
     }
 
     // WALK TURNING LEFT
-    else if (command == "fwl") {
+    else if (command == "wfwl") {
       
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
