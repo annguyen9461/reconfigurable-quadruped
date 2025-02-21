@@ -104,6 +104,8 @@ int home_walking2[NUM_MOTORS + 1] = {0,
   2879, 2032, 3049, 1440, 2066, 1014, 2835, 2009, 3071, 2429, 2078, 1056
 };
 
+///////////////////////////////// WALKING START /////////////////////////////////
+
 // Constants
 // TURNING RIGHT
 // const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
@@ -118,6 +120,7 @@ const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degree
 const int CW_CCW_TICKS = static_cast<int>(10 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
 const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
 const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
+
 
 // Home Tiptoe Positions
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
@@ -154,6 +157,26 @@ int leg1_down[NUM_MOTORS + 1] = {0};
 int leg2_up[NUM_MOTORS + 1] = {0}; 
 int leg2_ccw[NUM_MOTORS + 1] = {0};
 int leg2_down[NUM_MOTORS + 1] = {0};
+///////////////////////////////// WALKING END /////////////////////////////////
+
+///////////////////////////////// ROLLING START /////////////////////////////////
+const int UP_DOWN_TICKS_ROLL = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+
+// Circle Positions
+int perfect_cir[NUM_MOTORS + 1] = {0, 
+  2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+};
+
+// BLUE
+// Leg 3 and 4 Movements
+int blue_up_cir[NUM_MOTORS + 1] = {0}; 
+int blue_down_cir[NUM_MOTORS + 1] = {0};
+
+// YELLOW
+// Leg 1 and 2 Movements
+int yellow_up_cir[NUM_MOTORS + 1] = {0}; 
+int yellow_down_cir[NUM_MOTORS + 1] = {0};
+///////////////////////////////// ROLLING END /////////////////////////////////
 
 // Function to copy array
 void copy_array(int* dest, int* src) {
@@ -161,7 +184,6 @@ void copy_array(int* dest, int* src) {
         dest[i] = src[i];
     }
 }
-
 
 // Function to populate movement arrays based on sequence
 void generate_movement_arrays_walk_fw(bool turning_right) {
@@ -257,12 +279,35 @@ void generate_movement_arrays_walk_fw(bool turning_right) {
   }
 }
 
+// Function to populate movement arrays based on sequence
+void generate_movement_arrays_roll_fw(bool turning_right) {
+  // Start with perfect_cir for all movements
+  copy_array(blue_up_cir, perfect_cir);
+  copy_array(blue_down_cir, perfect_cir);
+
+  copy_array(yellow_up_cir, perfect_cir);
+  copy_array(yellow_down_cir, perfect_cir);
+  
+  std::cout << "GENERATING FOR BLUE LEGS\n";
+  // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
+  blue_up_cir[11] -= UP_DOWN_TICKS;      // Up LEG 4
+  blue_up_cir[8] -= UP_DOWN_TICKS;      // Up LEG 3
+
+  blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
+  blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
+
+
+  std::cout << "GENERATING FOR YELLOW LEGS\n";
+  yellow_up_cir[5] += UP_DOWN_TICKS;      // Up LEG 2
+  yellow_up_cir[2] += UP_DOWN_TICKS;      // Up LEG 1
+
+  yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
+  yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
+
+}
+
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
   2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
-};
-
-int perfect_cir[NUM_MOTORS + 1] = {0, 
-  2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
 };
 
 // WALK TO CIR
@@ -941,7 +986,36 @@ int main()
       move_to(s_shape_full_90_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
       move_to(blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
+   
     
+    // ROLL FW
+    else if (command == "rfw") {
+      int perfect_cir[NUM_MOTORS + 1] = {0, 
+        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+      };
+  
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_walk_fw(1);
+
+      // const int NUM_MOVEMENTS = 14;
+      // int* walk_fw_r_movements[NUM_MOVEMENTS] = {
+      //   leg4_up, leg4_cw, leg4_down,
+      //   leg3_up, leg3_ccw, leg3_down, 
+      //   home_tiptoe,
+      //   leg1_up, leg1_ccw, leg1_down,
+      //   leg2_up, leg2_ccw, leg2_down,
+      //   home_tiptoe,
+      // };
+      
+      // while (1) {
+      //   for (int i = 0; i < NUM_MOVEMENTS; i++) {
+      //     move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+      //     std::this_thread::sleep_for(std::chrono::milliseconds(500));  
+      //   }
+      // }
+    }
+
     // WALK TURNING RIGHT
     else if (command == "fwr") {
       
