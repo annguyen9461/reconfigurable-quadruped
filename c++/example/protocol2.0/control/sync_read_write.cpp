@@ -180,6 +180,7 @@ void generate_movement_arrays() {
   leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
 
   // --- Leg 3 Movements ---
+  copy_array(leg3_up, leg4_down);
   leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
   copy_array(leg3_ccw, leg3_up);
   leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
@@ -194,6 +195,7 @@ void generate_movement_arrays() {
   leg1_down[2] -= UP_DOWN_TICKS;     // Down (ID:2)
 
   // --- Leg 2 Movements ---
+  copy_array(leg2_up, leg1_down);
   leg2_up[5] -= UP_DOWN_TICKS;       // Up (ID:5)
   copy_array(leg2_ccw, leg2_up);
   leg2_ccw[4] -= CW_CCW_TICKS;       // Forward CCW (ID:4)
