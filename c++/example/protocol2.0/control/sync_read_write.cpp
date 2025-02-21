@@ -125,18 +125,19 @@ const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
 // Home Tiptoe Positions
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
   2747,  // [ID:1]
-  2107,  // [ID:2]
-  3072,  // [ID:3]
+  2275,  // [ID:2]
+  3061,  // [ID:3]
   1344,  // [ID:4]
-  1976,  // [ID:5]
-  1012,  // [ID:6]
+  1795,  // [ID:5]
+  1015,  // [ID:6]
   2752,  // [ID:7]
-  2103,  // [ID:8]
-  3069,  // [ID:9]
+  2290,  // [ID:8]
+  3072,  // [ID:9]
   2429,  // [ID:10]
-  1969,  // [ID:11]
-  1057   // [ID:12]
+  1771,  // [ID:11]
+  1053   // [ID:12]
 };
+
 
 // Leg 4 Movements
 int leg4_up[NUM_MOTORS + 1] = {0}; 
@@ -967,6 +968,8 @@ int main()
       move_to(cir_to_yellow_up90, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
       move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
 
