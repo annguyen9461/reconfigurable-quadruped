@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['bowling-ball', 'bowling-pins', 'sweep board']
+
+roboflow:
+  workspace: lsc-kik8c
+  project: bowling-pin-detection
+  version: 4
+  license: Public Domain
+  url: https://universe.roboflow.com/lsc-kik8c/bowling-pin-detection/dataset/4
