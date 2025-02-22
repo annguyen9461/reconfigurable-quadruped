@@ -124,18 +124,18 @@ const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
 
 // Home Tiptoe Positions
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
-  2747,  // [ID:1]
-  2275,  // [ID:2]
-  3061,  // [ID:3]
-  1344,  // [ID:4]
-  1795,  // [ID:5]
-  1015,  // [ID:6]
+  2745,  // [ID:1]
+  2187,  // [ID:2]
+  3062,  // [ID:3]
+  1343,  // [ID:4]
+  1890,  // [ID:5]
+  1025,  // [ID:6]
   2752,  // [ID:7]
-  2290,  // [ID:8]
+  2190,  // [ID:8]
   3072,  // [ID:9]
   2429,  // [ID:10]
-  1771,  // [ID:11]
-  1053   // [ID:12]
+  1864,  // [ID:11]
+  1050   // [ID:12]
 };
 
 
@@ -161,7 +161,7 @@ int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// WALKING END /////////////////////////////////
 
 ///////////////////////////////// ROLLING START /////////////////////////////////
-const int UP_DOWN_TICKS_ROLL = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 
 const int UP_TICKS_ROLL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 const int UP_TICKS_ROLL_BIG = static_cast<int>(50 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
@@ -295,16 +295,16 @@ void generate_movement_arrays_roll_fw() {
   
   std::cout << "GENERATING FOR BLUE LEGS\n";
   // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
-  blue_up_cir[11] += UP_DOWN_TICKS;      // Up LEG 4
-  blue_up_cir[8] -= UP_DOWN_TICKS;      // Up LEG 3
+  blue_up_cir[11] += UP_DOWN_TICKS_ROLL;      // Up LEG 4
+  blue_up_cir[8] -= UP_DOWN_TICKS_ROLL;      // Up LEG 3
 
   // blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
   // blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
 
 
   std::cout << "GENERATING FOR YELLOW LEGS\n";
-  yellow_up_cir[5] -= UP_DOWN_TICKS;      // Up LEG 2
-  yellow_up_cir[2] += UP_DOWN_TICKS;      // Up LEG 1
+  yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;      // Up LEG 2
+  yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;      // Up LEG 1
 
   // yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
   // yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
@@ -1013,12 +1013,56 @@ int main()
         perfect_cir
       };
       
-      // while (1) {
+      while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
           move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(2000));  
+          std::this_thread::sleep_for(std::chrono::milliseconds(100));  
         }
-      // }
+      }
+    }
+
+    // ROLL FW
+    else if (command == "rfy") {
+      int perfect_cir[NUM_MOTORS + 1] = {0, 
+        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+      };
+  
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_roll_fw();
+
+      const int NUM_MOVEMENTS = 2;
+      int* roll_fw_movements[NUM_MOVEMENTS] = {
+        yellow_up_cir,
+        perfect_cir
+      };
+      
+      for (int i = 0; i < NUM_MOVEMENTS; i++) {
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  
+      }
+    }
+
+    // ROLL FW
+    else if (command == "rfb") {
+      int perfect_cir[NUM_MOTORS + 1] = {0, 
+        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+      };
+  
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_roll_fw();
+
+      const int NUM_MOVEMENTS = 2;
+      int* roll_fw_movements[NUM_MOVEMENTS] = {
+        blue_up_cir,
+        perfect_cir
+      };
+      
+      for (int i = 0; i < NUM_MOVEMENTS; i++) {
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  
+      }
     }
 
     // WALK TURNING RIGHT
