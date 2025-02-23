@@ -48,7 +48,7 @@ LIBRARIES  += -lrt
 #---------------------------------------------------------------------
 # Files
 #---------------------------------------------------------------------
-SOURCES = ../i2c.cpp
+SOURCES = ../i2c_propel.cpp
     # *** OTHER SOURCES GO HERE ***
 
 OBJECTS  = $(addsuffix .o,$(addprefix $(DIR_OBJS)/,$(basename $(notdir $(SOURCES)))))
