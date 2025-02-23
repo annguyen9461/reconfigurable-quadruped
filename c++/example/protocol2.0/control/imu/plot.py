@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 
 # Load CSV
-df = pd.read_csv("imu_high_res_data.csv")
+df = pd.read_csv("blue point to ground/imu_high_res_data1.csv")
 
 # Plot Gyroscope Data
 fig = px.line(df, x='Timestamp', y=['Gyro_X_dps', 'Gyro_Y_dps', 'Gyro_Z_dps'], title='Gyroscope Data Over Time')

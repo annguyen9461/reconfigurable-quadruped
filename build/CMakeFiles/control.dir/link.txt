@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/control.dir/src/control.cpp.o -o control 

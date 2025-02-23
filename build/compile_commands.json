@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/annguyen/classes/winter/reconfigurable_quadruped/build",
+  "command": "/usr/bin/g++  -I/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/src/quad_control/include -g -Wall -Wextra -Wpedantic -o CMakeFiles/control.dir/src/control.cpp.o -c /home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/src/quad_control/src/control.cpp",
+  "file": "/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/src/quad_control/src/control.cpp",
+  "output": "CMakeFiles/control.dir/src/control.cpp.o"
+}
+]
