@@ -1093,7 +1093,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
@@ -1113,7 +1113,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
