@@ -67,15 +67,15 @@ int main() {
     float gyro_z_offset = -0.37;
 
     // Open CSV file for writing
-    std::ofstream csvFile("imu_high_res_data.csv");
-    if (!csvFile.is_open()) {
-        std::cerr << "Failed to open CSV file\n";
-        close(file);
-        return 1;
-    }
+    // std::ofstream csvFile("imu_high_res_data.csv");
+    // if (!csvFile.is_open()) {
+    //     std::cerr << "Failed to open CSV file\n";
+    //     close(file);
+    //     return 1;
+    // }
 
-    // Write CSV headers
-    csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
+    // // Write CSV headers
+    // csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -110,18 +110,18 @@ int main() {
                   << "Accel (m/s²) X: " << accel_mps2_x << " Y: " << accel_mps2_y << " Z: " << accel_mps2_z << std::endl;
 
         // Write to CSV
-        csvFile << std::fixed << std::setprecision(6)
-                << timestamp << ","
-                << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
-                << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
+        // csvFile << std::fixed << std::setprecision(6)
+        //         << timestamp << ","
+        //         << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
+        //         << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
 
-        csvFile.flush(); // Ensure data is written in real-time
+        // csvFile.flush(); // Ensure data is written in real-time
 
         // Adjust sampling rate (lower value for higher frequency)
         usleep(10000); // 10ms delay => ~100Hz sampling rate
     }
 
-    csvFile.close();
+    // csvFile.close();
     close(file);
     return 0;
 }

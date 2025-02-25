@@ -120,15 +120,19 @@ int main() {
         // auto current_time = std::chrono::high_resolution_clock::now();
         // double timestamp = std::chrono::duration<double>(current_time - start_time).count();
 
-        // // Print to console
+        // Print to console
         // std::cout << "Time: " << std::fixed << std::setprecision(6) << timestamp << "s | "
         //           << "Gyro (dps) X: " << gyro_dps_x << " Y: " << gyro_dps_y << " Z: " << gyro_dps_z << " | "
         //           << "Accel (m/s²) X: " << accel_mps2_x << " Y: " << accel_mps2_y << " Z: " << accel_mps2_z << std::endl;
+
+        // std::cout << "Gyro Raw - X: " << gyro_x << " Y: " << gyro_y << " Z: " << gyro_z << " | "
+        // << "Accel Raw - X: " << accel_x << " Y: " << accel_y << " Z: " << accel_z << std::endl;
 
         // Accumulate data for smoothing
         accumulated_accel_z += accel_mps2_z;
         accumulated_gyro_y += gyro_dps_y;
         sample_count++;
+        // std::cout << "Sample Count: " << sample_count << std::endl;
 
         // Check if enough samples have been collected
         if (sample_count >= window_size) {
@@ -141,6 +145,7 @@ int main() {
 
             // Check propulsion conditions
             if (avg_accel_z >= accel_z_threshold) {
+                std::cout << "Avg Accel Z: " << avg_accel_z << " exceeds threshold " << accel_z_threshold << "\n";
                 if (blue_under) {
                     propel_blue();
                 } else if (yellow_under) {
@@ -148,10 +153,11 @@ int main() {
                 }
             }
             else {
+                std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
                 // If acceleration isn't enough, try increasing momentum
-                if (blue_under) {
+                if (yellow_under) {
                     incre_momentum_for_blue_propel();
-                } else if (yellow_under) {
+                } else if (blue_under) {
                     incre_momentum_for_yellow_propel();
                 }
             }

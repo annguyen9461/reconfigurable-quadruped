@@ -161,11 +161,9 @@ int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// WALKING END /////////////////////////////////
 
 ///////////////////////////////// ROLLING START /////////////////////////////////
-const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE); 
 
-const int UP_TICKS_ROLL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-const int UP_TICKS_ROLL_BIG = static_cast<int>(50 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-const int DOWN_TICKS_ROLL = static_cast<int>(10 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+const int UP_TICKS_PROPEL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);
 
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
@@ -177,10 +175,14 @@ int perfect_cir[NUM_MOTORS + 1] = {0,
 int blue_up_cir[NUM_MOTORS + 1] = {0}; 
 int blue_down_cir[NUM_MOTORS + 1] = {0};
 
+int blue_up_propel[NUM_MOTORS + 1] = {0}; 
+
 // YELLOW
 // Leg 1 and 2 Movements
 int yellow_up_cir[NUM_MOTORS + 1] = {0}; 
 int yellow_down_cir[NUM_MOTORS + 1] = {0};
+
+int yellow_up_propel[NUM_MOTORS + 1] = {0}; 
 ///////////////////////////////// ROLLING END /////////////////////////////////
 
 // Function to copy array
@@ -298,13 +300,18 @@ void generate_movement_arrays_roll_fw() {
   blue_up_cir[11] += UP_DOWN_TICKS_ROLL;      // Up LEG 4
   blue_up_cir[8] -= UP_DOWN_TICKS_ROLL;      // Up LEG 3
 
+  blue_up_propel[11] += UP_TICKS_PROPEL_SMALL;      // Up LEG 4
+  blue_up_propel[8] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 3
+
   // blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
   // blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
-
 
   std::cout << "GENERATING FOR YELLOW LEGS\n";
   yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;      // Up LEG 2
   yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;      // Up LEG 1
+
+  yellow_up_propel[11] += UP_TICKS_PROPEL_SMALL;      // Up LEG 4
+  yellow_up_propel[8] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 3
 
   // yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
   // yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
@@ -1056,6 +1063,50 @@ int main()
       const int NUM_MOVEMENTS = 2;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
         blue_up_cir,
+        perfect_cir
+      };
+      
+      for (int i = 0; i < NUM_MOVEMENTS; i++) {
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(700));  
+      }
+    }
+
+    // ROLL PROPEL FW
+    else if (command == "rpy") {
+      int perfect_cir[NUM_MOTORS + 1] = {0, 
+        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+      };
+  
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_roll_fw();
+
+      const int NUM_MOVEMENTS = 2;
+      int* roll_fw_movements[NUM_MOVEMENTS] = {
+        yellow_up_propel,
+        perfect_cir
+      };
+      
+      for (int i = 0; i < NUM_MOVEMENTS; i++) {
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(700));  
+      }
+    }
+
+    // ROLL FW
+    else if (command == "rpb") {
+      int perfect_cir[NUM_MOTORS + 1] = {0, 
+        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+      };
+  
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_roll_fw();
+
+      const int NUM_MOVEMENTS = 2;
+      int* roll_fw_movements[NUM_MOVEMENTS] = {
+        blue_up_propel,
         perfect_cir
       };
       
