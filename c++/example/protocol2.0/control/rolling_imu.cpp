@@ -996,7 +996,7 @@ int main()
     int sample_count = 0;
     
   while (true) {
-    std::string command;
+    std::string command = "cir";
 
     // Read gyroscope data
     int16_t gyro_x = read_16bit_register(file, 0x22, 0x23);
@@ -1041,8 +1041,11 @@ int main()
         float avg_gyro_y = accumulated_gyro_y / sample_count;
 
         // Determine if BLUE or YELLOW is under based on orientation
-        bool blue_under = avg_gyro_y > 0;
-        bool yellow_under = avg_accel_z <= 0;
+        // bool blue_under = avg_gyro_y > 0;
+        // bool yellow_under = avg_accel_z <= 0;
+
+        bool blue_under = (avg_gyro_y > 0) && (avg_accel_z < accel_z_threshold);
+        bool yellow_under = (avg_gyro_y < 0) && (avg_accel_z < accel_z_threshold);
 
         // Check propulsion conditions
         if (avg_accel_z >= accel_z_threshold) {
@@ -1057,9 +1060,11 @@ int main()
             std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
             // If acceleration isn't enough, try increasing momentum
             if (yellow_under) {
-                command = "rpb";
+              command = "rpb";
             } else if (blue_under) {
-                command = "rpy";
+              command = "rpy";
+            } else {
+              command = "cir";
             }
         }
         // Reset accuculators
@@ -1068,7 +1073,6 @@ int main()
         accumulated_gyro_y = 0;
         sample_count = 0;
     }
-    
 
     if (command == "get") {
       scan_motors(groupSyncRead, packetHandler, portHandler);
