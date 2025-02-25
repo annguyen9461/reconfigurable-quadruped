@@ -290,10 +290,14 @@ void generate_movement_arrays_walk_fw(bool turning_right) {
 void generate_movement_arrays_roll_fw() {
   // Start with perfect_cir for all movements
   copy_array(blue_up_cir, perfect_cir);
-  copy_array(blue_down_cir, perfect_cir);
+  copy_array(blue_up_propel, perfect_cir);
+
+  // copy_array(blue_down_cir, perfect_cir)
 
   copy_array(yellow_up_cir, perfect_cir);
-  copy_array(yellow_down_cir, perfect_cir);
+  copy_array(yellow_up_propel, perfect_cir);
+
+  // copy_array(yellow_down_cir, perfect_cir);
   
   std::cout << "GENERATING FOR BLUE LEGS\n";
   // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
@@ -310,8 +314,8 @@ void generate_movement_arrays_roll_fw() {
   yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;      // Up LEG 2
   yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;      // Up LEG 1
 
-  yellow_up_propel[11] += UP_TICKS_PROPEL_SMALL;      // Up LEG 4
-  yellow_up_propel[8] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 3
+  yellow_up_propel[5] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 4
+  yellow_up_propel[2] += UP_TICKS_PROPEL_SMALL;      // Up LEG 3
 
   // yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
   // yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
@@ -1093,8 +1097,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
-
-    // ROLL FW
     else if (command == "rpb") {
       int perfect_cir[NUM_MOTORS + 1] = {0, 
         2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
