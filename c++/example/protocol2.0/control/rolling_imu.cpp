@@ -178,7 +178,7 @@ int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// ROLLING START /////////////////////////////////
 const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE); 
 
-const int UP_TICKS_PROPEL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);
+const int UP_TICKS_PROPEL_SMALL = static_cast<int>(30 * TICKS_PER_DEGREE);
 
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
@@ -799,16 +799,15 @@ void move_to(
   // Clear SyncWrite buffer after sending data
   groupSyncWrite.clearParam();
 
-  printf("All motors moved to goal position.\n");
   std::this_thread::sleep_for(std::chrono::milliseconds(10));  // Allow TIME for motors to reach the position
   update_present_positions(groupSyncRead, packetHandler, portHandler);
 
   // Print the updated positions for debugging
-  std::cout << "Updated Present Positions:\n";
-  for (int id = 1; id <= NUM_MOTORS; id++) {
-      std::cout << "[ID:" << id << "] Position: " << present_positions[id] << "\n";
-  }
-  std::cout << "\n";
+  // std::cout << "Updated Present Positions:\n";
+  // for (int id = 1; id <= NUM_MOTORS; id++) {
+  //     std::cout << "[ID:" << id << "] Position: " << present_positions[id] << "\n";
+  // }
+  // std::cout << "\n";
 }
 
 void move_to_target_positions(
@@ -817,8 +816,6 @@ void move_to_target_positions(
                       dynamixel::PacketHandler *packetHandler 
                       )
 {
-  printf("Moving motors to %s...\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
-
   // Clear previous SyncWrite parameters
   groupSyncWrite.clearParam();
 
@@ -847,8 +844,6 @@ void move_to_target_positions(
 
   // Clear SyncWrite buffer after sending data
   groupSyncWrite.clearParam();
-
-  printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 }
 
 
@@ -880,6 +875,11 @@ void gradual_transition(int* next_positions,
 
 int main() 
 {
+  int perfect_cir[NUM_MOTORS + 1] = {0, 
+    2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+  };
+  generate_movement_arrays_roll_fw();
+
   // Initialize PortHandler instance
   // Set the port path
   // Get methods and members of PortHandlerLinux or PortHandlerWindows
@@ -988,7 +988,7 @@ int main()
     // Thresholds based on data analysis
     const float accel_z_threshold = 9.5;    // m/s² for a successful propel
     const float gyro_y_stability = 6.5;     // rad/s threshold for orientation stability
-    const int window_size = 100;            // Number of samples to average (for smoothing)
+    const int window_size = 2;            // Number of samples to average (for smoothing)
     
     // Variables for data accumulation
     float accumulated_accel_z = 0;
@@ -996,7 +996,9 @@ int main()
     int sample_count = 0;
     
   while (true) {
-    std::string command = "cir";
+    std::cout << "ENTERING while loop\n";
+
+    std::string command = "rpy";
 
     // Read gyroscope data
     int16_t gyro_x = read_16bit_register(file, 0x22, 0x23);
@@ -1009,22 +1011,8 @@ int main()
     int16_t accel_z = read_16bit_register(file, 0x2C, 0x2D);
 
     // Apply scale factors
-    // float gyro_dps_x = gyro_x * (250.0 / 32768.0);
     float gyro_dps_y = gyro_y * (250.0 / 32768.0);
-    // float gyro_dps_z = (gyro_z * (250.0 / 32768.0)) - gyro_z_offset;
-
-    // float accel_mps2_x = accel_x * (2.0 / 32768.0) * 9.81;
-    // float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
     float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
-
-    // // Timestamp for each reading
-    // auto current_time = std::chrono::high_resolution_clock::now();
-    // double timestamp = std::chrono::duration<double>(current_time - start_time).count();
-
-    // Print to console
-    // std::cout << "Time: " << std::fixed << std::setprecision(6) << timestamp << "s | "
-    //           << "Gyro (dps) X: " << gyro_dps_x << " Y: " << gyro_dps_y << " Z: " << gyro_dps_z << " | "
-    //           << "Accel (m/s²) X: " << accel_mps2_x << " Y: " << accel_mps2_y << " Z: " << accel_mps2_z << std::endl;
 
     // std::cout << "Gyro Raw - X: " << gyro_x << " Y: " << gyro_y << " Z: " << gyro_z << " | "
     // << "Accel Raw - X: " << accel_x << " Y: " << accel_y << " Z: " << accel_z << std::endl;
@@ -1037,34 +1025,38 @@ int main()
 
     // Check if enough samples have been collected
     if (sample_count >= window_size) {
+        std::cout << "COLLECTED enough samples while loop\n";
         float avg_accel_z = accumulated_accel_z / sample_count;
         float avg_gyro_y = accumulated_gyro_y / sample_count;
 
-        // Determine if BLUE or YELLOW is under based on orientation
-        // bool blue_under = avg_gyro_y > 0;
-        // bool yellow_under = avg_accel_z <= 0;
-
-        bool blue_under = (avg_gyro_y > 0) && (avg_accel_z < accel_z_threshold);
-        bool yellow_under = (avg_gyro_y < 0) && (avg_accel_z < accel_z_threshold);
+        // Use gyro_y to determine which side is under
+        bool blue_under = accumulated_accel_z < 0.0;     // Positive rotation → blue under
+        bool yellow_under = accumulated_accel_z > 0.0;  // Negative rotation → yellow under
 
         // Check propulsion conditions
         if (avg_accel_z >= accel_z_threshold) {
             std::cout << "Avg Accel Z: " << avg_accel_z << " exceeds threshold " << accel_z_threshold << "\n";
-            if (blue_under) {
-                command = "rfb";
-            } else if (yellow_under) {
-                command = "rfy";
+            // TODO: TESTING wehn is yellow or blue under
+            if (yellow_under) {
+              std::cout << "yellow under. push yellow" <<"\n";
+              command = "rfy";
+            } else if (blue_under) {
+              std::cout << "blue under. push blue" <<"\n";
+              command = "rfb";
             }
         }
         else {
             std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
             // If acceleration isn't enough, try increasing momentum
             if (yellow_under) {
-              command = "rpb";
-            } else if (blue_under) {
+              std::cout << "yellow under. propel yellow" <<"\n";
               command = "rpy";
+            } else if (blue_under) {
+              std::cout << "blue under. propel blue" <<"\n";
+              command = "rpb";
             } else {
-              command = "cir";
+              std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
+              command = "rpy";
             }
         }
         // Reset accuculators
@@ -1123,14 +1115,10 @@ int main()
    
     
     // ROLL FW
-    else if (command == "rfw") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
+    else if (command == "rfw") {  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_roll_fw();
+      
 
       const int NUM_MOVEMENTS = 4;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
@@ -1156,7 +1144,6 @@ int main()
   
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_roll_fw();
 
       const int NUM_MOVEMENTS = 2;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
@@ -1172,13 +1159,8 @@ int main()
 
     // ROLL FW
     else if (command == "rfb") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_roll_fw();
+      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       const int NUM_MOVEMENTS = 2;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
@@ -1194,15 +1176,10 @@ int main()
 
     // ROLL PROPEL FW
     else if (command == "rpy") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
   
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      generate_movement_arrays_roll_fw();
-
       const int NUM_MOVEMENTS = 2;
+
       int* roll_fw_movements[NUM_MOVEMENTS] = {
         yellow_up_propel,
         perfect_cir
@@ -1219,8 +1196,6 @@ int main()
       };
   
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      generate_movement_arrays_roll_fw();
 
       const int NUM_MOVEMENTS = 2;
       int* roll_fw_movements[NUM_MOVEMENTS] = {
