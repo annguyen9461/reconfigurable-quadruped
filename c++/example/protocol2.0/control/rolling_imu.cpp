@@ -182,7 +182,18 @@ const int UP_TICKS_PROPEL_SMALL = static_cast<int>(30 * TICKS_PER_DEGREE);
 
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
-  2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+  2040,  // [ID:1]
+  1098,  // [ID:2]
+  3081,  // [ID:3]
+  2054,  // [ID:4]
+  2997,  // [ID:5]
+  1007,  // [ID:6]
+  2041,  // [ID:7]
+  2993,  // [ID:8]
+  1045,  // [ID:9]
+  3054,  // [ID:10]
+  1095,  // [ID:11]
+  3091   // [ID:12]
 };
 
 // BLUE
@@ -988,7 +999,7 @@ int main()
     // Thresholds based on data analysis
     const float accel_z_threshold = 9.5;    // m/s² for a successful propel
     const float gyro_y_stability = 6.5;     // rad/s threshold for orientation stability
-    const int window_size = 2;            // Number of samples to average (for smoothing)
+    const int window_size = 10;            // Number of samples to average (for smoothing)
     
     // Variables for data accumulation
     float accumulated_accel_z = 0;
@@ -1138,10 +1149,6 @@ int main()
 
     // ROLL FW
     else if (command == "rfy") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
 
@@ -1159,7 +1166,6 @@ int main()
 
     // ROLL FW
     else if (command == "rfb") {
-
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       const int NUM_MOVEMENTS = 2;
@@ -1176,7 +1182,6 @@ int main()
 
     // ROLL PROPEL FW
     else if (command == "rpy") {
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
       const int NUM_MOVEMENTS = 2;
 
@@ -1191,10 +1196,6 @@ int main()
       }
     }
     else if (command == "rpb") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       const int NUM_MOVEMENTS = 2;

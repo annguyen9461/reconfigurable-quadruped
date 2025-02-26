@@ -167,7 +167,18 @@ const int UP_TICKS_PROPEL_SMALL = static_cast<int>(20 * TICKS_PER_DEGREE);
 
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
-  2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
+  2040,  // [ID:1]
+  1098,  // [ID:2]
+  3081,  // [ID:3]
+  2054,  // [ID:4]
+  2997,  // [ID:5]
+  1007,  // [ID:6]
+  2041,  // [ID:7]
+  2993,  // [ID:8]
+  1045,  // [ID:9]
+  3054,  // [ID:10]
+  1095,  // [ID:11]
+  3091   // [ID:12]
 };
 
 // BLUE
@@ -1008,10 +1019,6 @@ int main()
     
     // ROLL FW
     else if (command == "rfw") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       generate_movement_arrays_roll_fw();
@@ -1034,10 +1041,6 @@ int main()
 
     // ROLL FW
     else if (command == "rfy") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       generate_movement_arrays_roll_fw();
@@ -1056,10 +1059,6 @@ int main()
 
     // ROLL FW
     else if (command == "rfb") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       generate_movement_arrays_roll_fw();
@@ -1078,9 +1077,7 @@ int main()
 
     // ROLL PROPEL FW
     else if (command == "rpy") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
+
   
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
@@ -1098,10 +1095,6 @@ int main()
       }
     }
     else if (command == "rpb") {
-      int perfect_cir[NUM_MOTORS + 1] = {0, 
-        2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-      };
-  
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       generate_movement_arrays_roll_fw();
