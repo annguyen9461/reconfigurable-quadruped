@@ -76,6 +76,50 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
             }
         }
         );
+    
+    set_config_subscriber_ =
+        this->create_subscription<SetConfig>(
+        "set_config", // topic
+        QOS_RKL10V,
+        [this](const SetConfig::SharedPtr msg) -> void
+        {   
+            int config_id = msg->config_id;
+            int* target_positions = home_tiptoe;
+
+            switch (config_id) {
+                case 1: target_positions = home_tiptoe; break;
+                case 2: target_positions = perfect_cir; break;
+            }
+            // Clear previous SyncWrite parameters
+            groupSyncWrite->clearParam();
+            
+            for (int id = 1; id <= NUM_MOTORS; id++)  // Loop through motor IDs 1-12
+            {
+                uint8_t param_goal_position[4];
+                int goal_position = target_positions[id];
+
+                param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+                param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+                param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+                param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+
+                // Add goal position to SyncWrite buffer
+                if (!groupSyncWrite->addParam(id, param_goal_position)) {
+                    fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+                    continue;
+                }
+            }
+
+            // Transmit the target positions to all motors at once
+            int dxl_comm_result = groupSyncWrite->txPacket();
+            if (dxl_comm_result != COMM_SUCCESS) {
+                printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+            }
+
+            // Clear SyncWrite buffer after sending data
+            groupSyncWrite->clearParam();
+        }
+        );
 
     auto get_present_position =
         [this](
@@ -143,7 +187,7 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
                 case 10: response->motor10_position = motor_position; break;
                 case 11: response->motor11_position = motor_position; break;
                 case 12: response->motor12_position = motor_position; break;
-            }
+                }
             }
         };
 

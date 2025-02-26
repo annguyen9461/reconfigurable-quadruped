@@ -17,9 +17,10 @@ find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/SetPosition.msg"
+  "msg/SetConfig.msg"
   "srv/GetPosition.srv"
   "srv/GetAllPositions.srv"
-  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
+  DEPENDENCIES builtin_interfaces std_msgs 
 )
 
 if(BUILD_TESTING)
