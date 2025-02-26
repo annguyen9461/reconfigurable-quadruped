@@ -37,7 +37,7 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
 
     set_position_subscriber_ =
         this->create_subscription<SetPosition>(
-        "set_position",
+        "set_position", // topic
         QOS_RKL10V,
         [this](const SetPosition::SharedPtr msg) -> void
         {

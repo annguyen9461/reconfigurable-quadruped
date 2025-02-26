@@ -12,21 +12,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
-
-set(msg_files
-  "msg/SetPosition.msg"
-)
-
-set(srv_files
-  "srv/GetPosition.srv"
-)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  # ${msg_files}
-  # ${srv_files}
   "msg/SetPosition.msg"
   "srv/GetPosition.srv"
-  DEPENDENCIES builtin_interfaces
+  "srv/GetAllPositions.srv"
+  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
 )
 
 if(BUILD_TESTING)
