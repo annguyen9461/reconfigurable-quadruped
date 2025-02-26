@@ -3,7 +3,7 @@
 <package format="3">
   <name>quad_motor_control</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Dynamixel Motor Control</description>
   <maintainer email="annguyen2025@u.northwestern.edu">annguyen</maintainer>
   <license>Apache-2.0</license>
 
