@@ -1,9 +1,0 @@
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/uninstall.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/quad_interfaces_uninstall.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/test.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/edit_cache.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/rebuild_cache.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/list_install_components.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/install.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/install/local.dir
-/home/annguyen/classes/winter/reconfigurable_quadruped/ros2_ws/build/quad_interfaces/CMakeFiles/install/strip.dir
