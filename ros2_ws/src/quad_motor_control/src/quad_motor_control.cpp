@@ -13,8 +13,6 @@
 #define BAUDRATE 57600  // Default Baudrate of DYNAMIXEL X series
 #define DEVICE_NAME "/dev/ttyUSB0"  // [Linux]: "/dev/ttyUSB*", [Windows]: "COM*"
 
-dynamixel::PortHandler * portHandler;
-dynamixel::PacketHandler * packetHandler;
 
 uint8_t dxl_error = 0;
 uint32_t goal_position = 0;
@@ -23,7 +21,7 @@ int dxl_comm_result = COMM_TX_FAIL;
 
 QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
 {
-    RCLCPP_INFO(this->get_logger(), "Run quad motor control node");
+    RCLCPP_INFO(this->get_logger(), "Run quad_motor_control node");
 
     this->declare_parameter("qos_depth", 10);
     int8_t qos_depth = 0;
@@ -31,6 +29,11 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
 
     // const auto QOS_RKL10V =
     //     rclcpp::QoS(rclcpp::KeepLast(qos_depth)).reliable().durability_volatile();
+
+    this->portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
+    this->packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+
+    this->initDynamixels();
 
     // set_position_subscriber_ =
     //     this->create_subscription<SetPosition>(
@@ -97,16 +100,32 @@ QuadMotorControl::~QuadMotorControl()
 {
 }
 
-void setupDynamixel(uint8_t dxl_id)
+void QuadMotorControl::initDynamixels()
 {
-  // Use Position Control Mode
-  dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler,
-    dxl_id,
-    ADDR_OPERATING_MODE,
-    3,
-    &dxl_error
-  );
+    // Open Serial Port
+    dxl_comm_result = this->portHandler->openPort();
+    if (dxl_comm_result == false) {
+        RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to open the port!");
+    } else {
+        RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to open the port.");
+    }
+
+    // Set the baudrate of the serial port (use DYNAMIXEL Baudrate)
+    dxl_comm_result = portHandler->setBaudRate(BAUDRATE);
+    if (dxl_comm_result == false) {
+        RCLCPP_ERROR(rclcpp::get_logger("read_write_node"), "Failed to set the baudrate!");
+    } else {
+        RCLCPP_INFO(rclcpp::get_logger("read_write_node"), "Succeeded to set the baudrate.");
+    }
+
+    // Use Position Control Mode
+    dxl_comm_result = packetHandler->write1ByteTxRx(
+        this->portHandler,
+        BROADCAST_ID,
+        ADDR_OPERATING_MODE,
+        3,
+        &dxl_error
+    );
 
   if (dxl_comm_result != COMM_SUCCESS) {
     RCLCPP_ERROR(rclcpp::get_logger("quad_motor_control"), "Failed to set Position Control Mode.");
@@ -116,8 +135,8 @@ void setupDynamixel(uint8_t dxl_id)
 
   // Enable Torque of DYNAMIXEL
   dxl_comm_result = packetHandler->write1ByteTxRx(
-    portHandler,
-    dxl_id,
+    this->portHandler,
+    BROADCAST_ID,
     ADDR_TORQUE_ENABLE,
     1,
     &dxl_error

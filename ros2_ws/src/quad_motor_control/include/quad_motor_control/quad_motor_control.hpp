@@ -14,6 +14,12 @@ class QuadMotorControl : public rclcpp::Node
 public:
     QuadMotorControl();
     virtual ~QuadMotorControl();
+private:
+    dynamixel::PortHandler * portHandler;
+    dynamixel::PacketHandler * packetHandler;
+    dynamixel::GroupSyncWrite* groupSyncWrite;
+
+    void initDynamixels();
 };
 
 #endif  // QUAD_MOTOR_CONTROL_HPP_
