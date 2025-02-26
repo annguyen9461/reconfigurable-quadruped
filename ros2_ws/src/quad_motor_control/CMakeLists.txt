@@ -11,7 +11,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(dynamixel_sdk REQUIRED)
-# find_package(quad_interfaces REQUIRED)
+find_package(quad_interfaces REQUIRED)
 find_package(rclcpp REQUIRED)
 
 include_directories(
@@ -20,7 +20,7 @@ include_directories(
 
 add_executable(quad_motor_control src/quad_motor_control.cpp)
 ament_target_dependencies(quad_motor_control
-  # quad_interfaces
+  quad_interfaces
   dynamixel_sdk
   rclcpp
 )
