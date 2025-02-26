@@ -1,6 +1,6 @@
 set(_AMENT_PACKAGE_NAME "quad_interfaces")
 set(quad_interfaces_VERSION "0.0.0")
-set(quad_interfaces_MAINTAINER "an <annguyen946100@gmail.com>")
+set(quad_interfaces_MAINTAINER "annguyen <annguyen2025@u.northwestern.edu>")
 set(quad_interfaces_BUILD_DEPENDS )
 set(quad_interfaces_BUILDTOOL_DEPENDS "ament_cmake")
 set(quad_interfaces_BUILD_EXPORT_DEPENDS )

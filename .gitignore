@@ -4,3 +4,6 @@ dynamixelSDK/c++/build/linux64/.objects/
 dynamixelSDK/c++/build/linux64/libdxl_x64_cpp.so
 c++/build/linux64/libdxl_x64_cpp.so
 c++/example/protocol2.0/control/env/
+ros2_ws/build/*
+ros2_ws/install/*
+ros2_ws/log/*
