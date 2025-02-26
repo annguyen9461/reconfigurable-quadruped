@@ -9,9 +9,14 @@
 // Protocol version
 #define PROTOCOL_VERSION 2.0  // Default Protocol version of DYNAMIXEL X series.
 
+// Data Byte Length
+#define LEN_PRESENT_POSITION            4
+
 // Default setting
 #define BAUDRATE 57600  // Default Baudrate of DYNAMIXEL X series
 #define DEVICE_NAME "/dev/ttyUSB0"  // [Linux]: "/dev/ttyUSB*", [Windows]: "COM*"
+
+#define NUM_MOTORS 12
 
 
 uint8_t dxl_error = 0;
@@ -32,6 +37,10 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
 
     this->portHandler = dynamixel::PortHandler::getPortHandler(DEVICE_NAME);
     this->packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+    // Initialize GroupSyncWrite instance
+    this->groupSyncWrite = new dynamixel::GroupSyncWrite(portHandler, packetHandler, ADDR_GOAL_POSITION, LEN_PRESENT_POSITION);
+    // Initialize GroupsyncRead instance for Present Position
+    // this->groupSyncRead = new dynamixel::GroupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
 
     this->initDynamixels();
 
@@ -94,6 +103,52 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
         };
 
     get_position_server_ = create_service<GetPosition>("get_position", get_present_position);
+
+
+    auto get_all_id_positions =
+        [this](
+        [[maybe_unused]] 
+        const std::shared_ptr<GetAllPositions::Request> request,
+        std::shared_ptr<GetAllPositions::Response> response) -> void
+        {
+            for (int id = 1; id <= NUM_MOTORS; id++) {
+                uint32_t motor_position = 0;
+                // Read Present Position (length : 4 bytes) and Convert uint32 -> int32
+                // When reading 2 byte data from AX / MX(1.0), use read2ByteTxRx() instead.
+                dxl_comm_result = packetHandler->read4ByteTxRx(
+                    portHandler,
+                    (uint8_t) id,
+                    ADDR_PRESENT_POSITION,
+                    &motor_position,
+                    &dxl_error
+                );
+
+                RCLCPP_INFO(
+                    this->get_logger(),
+                    "Get [ID: %d] [Present Position: %d]",
+                    id,
+                    motor_position
+                );
+
+                switch (id) {
+                case 1: response->motor1_position = motor_position; break;
+                case 2: response->motor2_position = motor_position; break;
+                case 3: response->motor3_position = motor_position; break;
+                case 4: response->motor4_position = motor_position; break;
+                case 5: response->motor5_position = motor_position; break;
+                case 6: response->motor6_position = motor_position; break;
+                case 7: response->motor7_position = motor_position; break;
+                case 8: response->motor8_position = motor_position; break;
+                case 9: response->motor9_position = motor_position; break;
+                case 10: response->motor10_position = motor_position; break;
+                case 11: response->motor11_position = motor_position; break;
+                case 12: response->motor12_position = motor_position; break;
+            }
+            }
+        };
+
+    get_all_positions_server_ = create_service<GetAllPositions>("get_all_positions", get_all_id_positions);
+
 }
 
 QuadMotorControl::~QuadMotorControl()
