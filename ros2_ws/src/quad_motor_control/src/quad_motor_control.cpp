@@ -99,11 +99,11 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
                     sleep_durations = {0};  
                     break;
                 case 3:
-                    config_sequence = {perfect_cir, walk_to_cir1, perfect_cir};
+                    config_sequence = {aligned_before_rolling, walk_to_cir1, perfect_cir};
                     sleep_durations = {500, 300, 0}; // Time delays between steps
                     break;
                 case 4:
-                    config_sequence = {aligned_before_rolling, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
+                    config_sequence = {perfect_cir, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
                     sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
                     break;
             }
