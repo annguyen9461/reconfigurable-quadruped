@@ -57,4 +57,11 @@ private:
     // };
 };
 
+// Function to move motors to a target position
+void moveto(
+    int* target_positions,
+    dynamixel::GroupSyncWrite* groupSyncWrite,
+    dynamixel::PacketHandler* packetHandler
+);
+
 #endif  // QUAD_MOTOR_CONTROL_HPP_

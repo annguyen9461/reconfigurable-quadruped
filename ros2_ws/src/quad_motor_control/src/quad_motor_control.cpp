@@ -84,40 +84,64 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
         [this](const SetConfig::SharedPtr msg) -> void
         {   
             int config_id = msg->config_id;
+
+            // Define multi-step configurations
+            std::vector<int*> config_sequence;
+            std::vector<int> sleep_durations;      // Sleep times between moves (milliseconds)
             int* target_positions = home_tiptoe;
-
             switch (config_id) {
-                case 1: target_positions = home_tiptoe; break;
-                case 2: target_positions = perfect_cir; break;
+                case 1: 
+                    config_sequence = {home_tiptoe};
+                    sleep_durations = {0}; 
+                    break;
+                case 2: 
+                    config_sequence = {perfect_cir};
+                    sleep_durations = {0};  
+                    break;
+                case 3:
+                    config_sequence = {perfect_cir, walk_to_cir1, perfect_cir};
+                    sleep_durations = {500, 300, 0}; // Time delays between steps
+                    break;
+                case 4:
+                    config_sequence = {aligned_before_rolling, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
+                    sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
+                    break;
             }
-            // Clear previous SyncWrite parameters
-            groupSyncWrite->clearParam();
-            
-            for (int id = 1; id <= NUM_MOTORS; id++)  // Loop through motor IDs 1-12
-            {
-                uint8_t param_goal_position[4];
-                int goal_position = target_positions[id];
+            // Execute each step in the sequence
+            for (size_t i = 0; i < config_sequence.size(); i++) {
+                target_positions = config_sequence[i];
+                // Clear previous SyncWrite parameters
+                groupSyncWrite->clearParam();
+                
+                for (int id = 1; id <= NUM_MOTORS; id++)  // Loop through motor IDs 1-12
+                {
+                    uint8_t param_goal_position[4];
+                    int goal_position = target_positions[id];
 
-                param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-                param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-                param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-                param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
+                    param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
+                    param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
+                    param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
+                    param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
 
-                // Add goal position to SyncWrite buffer
-                if (!groupSyncWrite->addParam(id, param_goal_position)) {
-                    fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
-                    continue;
+                    // Add goal position to SyncWrite buffer
+                    if (!groupSyncWrite->addParam(id, param_goal_position)) {
+                        fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
+                        continue;
+                    }
                 }
-            }
 
-            // Transmit the target positions to all motors at once
-            int dxl_comm_result = groupSyncWrite->txPacket();
-            if (dxl_comm_result != COMM_SUCCESS) {
-                printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-            }
+                // Transmit the target positions to all motors at once
+                int dxl_comm_result = groupSyncWrite->txPacket();
+                if (dxl_comm_result != COMM_SUCCESS) {
+                    printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+                }
 
-            // Clear SyncWrite buffer after sending data
-            groupSyncWrite->clearParam();
+                // Clear SyncWrite buffer after sending data
+                groupSyncWrite->clearParam();
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
+            }
+           
         }
         );
 
