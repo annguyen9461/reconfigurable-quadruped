@@ -357,7 +357,7 @@ void generate_movement_arrays_turning(bool turning_right) {
   copy_array(leg3_down, home_tiptoe);
 
   copy_array(leg1_up, home_tiptoe);
-  copy_array(leg1_ccw, home_tiptoe);
+  copy_array(leg1_cw, home_tiptoe);
   copy_array(leg1_down, home_tiptoe);
 
   copy_array(leg2_up, home_tiptoe);
@@ -392,9 +392,9 @@ void generate_movement_arrays_turning(bool turning_right) {
     // --- Leg 1 Movements ---
     copy_array(leg1_up, leg2_down);
     leg1_up[2] += UP_DOWN_TICKS_TURNING;       // Up (ID:2)
-    copy_array(leg1_ccw, leg1_up);
-    leg1_ccw[1] -= CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
-    copy_array(leg1_down, leg1_ccw);
+    copy_array(leg1_cw, leg1_up);
+    leg1_cw[1] -= CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
+    copy_array(leg1_down, leg1_cw);
     leg1_down[2] -= UP_DOWN_TICKS_TURNING;     // Down (ID:2)
 
   }
@@ -1275,13 +1275,13 @@ int main()
 
       generate_movement_arrays_turning(1);
 
-      const int NUM_MOVEMENTS = 13;
+      const int NUM_MOVEMENTS = 6;
       int* movements[NUM_MOVEMENTS] = {
         leg4_up, leg4_cw, leg4_down,
         leg3_up, leg3_cw, leg3_down, 
-        leg2_up, leg2_cw, leg2_down,
-        leg1_up, leg1_cw, leg1_down,
-        home_tiptoe,
+        // leg2_up, leg2_cw, leg2_down,
+        // leg1_up, leg1_cw, leg1_down,
+        // home_tiptoe,
       };
       
       // while (1) {
