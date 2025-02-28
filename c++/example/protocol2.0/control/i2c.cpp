@@ -121,7 +121,7 @@ int main() {
         usleep(10000); // 10ms delay => ~100Hz sampling rate
     }
 
-    // csvFile.close();
+    csvFile.close();
     close(file);
     return 0;
 }
