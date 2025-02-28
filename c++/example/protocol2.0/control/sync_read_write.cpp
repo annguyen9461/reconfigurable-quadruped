@@ -1275,9 +1275,9 @@ int main()
     // TURNING RIGHT
     else if (command == "ri") {
       
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_turning(1, home_tiptoe_thin);
+      generate_movement_arrays_turning(1, home_tiptoe);
 
       const int NUM_MOVEMENTS = 13;
       int* movements[NUM_MOVEMENTS] = {
@@ -1285,15 +1285,15 @@ int main()
         leg3_up, leg3_cw, leg3_down, 
         leg2_up, leg2_cw, leg2_down,
         leg1_up, leg1_cw, leg1_down,
-        home_tiptoe_thin,
+        home_tiptoe,
       };
       
-      // while (1) {
+      while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
           move_to(movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
           std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
         }
-      // }
+      }
     }
 
     else if (command == "up") {
