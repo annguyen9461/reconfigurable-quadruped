@@ -1286,7 +1286,7 @@ int main()
       
       // while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          gradual_transition(movements[i], groupSyncWrite, packetHandler);
+          move_to(movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
           std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
         }
       // }
