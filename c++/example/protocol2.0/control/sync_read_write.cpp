@@ -1275,7 +1275,7 @@ int main()
       generate_movement_arrays_turning(1);
 
       const int NUM_MOVEMENTS = 13;
-      int* walk_fw_r_movements[NUM_MOVEMENTS] = {
+      int* movements[NUM_MOVEMENTS] = {
         leg4_up, leg4_cw, leg4_down,
         leg3_up, leg3_cw, leg3_down, 
         leg2_up, leg2_cw, leg2_down,
@@ -1283,12 +1283,12 @@ int main()
         home_tiptoe,
       };
       
-      while (1) {
+      // while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          gradual_transition(walk_fw_r_movements[i], groupSyncWrite, packetHandler);
+          gradual_transition(movements[i], groupSyncWrite, packetHandler);
           std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
         }
-      }
+      // }
     }
 
     else if (command == "up") {
