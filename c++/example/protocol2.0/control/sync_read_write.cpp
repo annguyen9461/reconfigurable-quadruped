@@ -346,23 +346,23 @@ void generate_movement_arrays_roll_fw() {
 }
 
 // Function to populate movement arrays based on sequence
-void generate_movement_arrays_turning(bool turning_right) {
-  // Start with home_tiptoe for all movements
-  copy_array(leg4_up, home_tiptoe);
-  copy_array(leg4_cw, home_tiptoe);
-  copy_array(leg4_down, home_tiptoe);
+void generate_movement_arrays_turning(bool turning_right, *homebase) {
+  // Start with homebase for all movements
+  copy_array(leg4_up, homebase);
+  copy_array(leg4_cw, homebase);
+  copy_array(leg4_down, homebase);
   
-  copy_array(leg3_up, home_tiptoe);
-  copy_array(leg3_cw, home_tiptoe);
-  copy_array(leg3_down, home_tiptoe);
+  copy_array(leg3_up, homebase);
+  copy_array(leg3_cw, homebase);
+  copy_array(leg3_down, homebase);
 
-  copy_array(leg1_up, home_tiptoe);
-  copy_array(leg1_cw, home_tiptoe);
-  copy_array(leg1_down, home_tiptoe);
+  copy_array(leg1_up, homebase);
+  copy_array(leg1_cw, homebase);
+  copy_array(leg1_down, homebase);
 
-  copy_array(leg2_up, home_tiptoe);
-  copy_array(leg2_cw, home_tiptoe);
-  copy_array(leg2_down, home_tiptoe);
+  copy_array(leg2_up, homebase);
+  copy_array(leg2_cw, homebase);
+  copy_array(leg2_down, homebase);
   
   if (turning_right == 1) {
     std::cout << "GENERATING FOR TURNING RIGHT\n";
@@ -1276,7 +1276,7 @@ int main()
       
       move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
-      generate_movement_arrays_turning(1);
+      generate_movement_arrays_turning(1, home_tiptoe_thin);
 
       const int NUM_MOVEMENTS = 13;
       int* movements[NUM_MOVEMENTS] = {
