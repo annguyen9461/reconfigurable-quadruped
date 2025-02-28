@@ -356,14 +356,15 @@ void generate_movement_arrays_turning(bool turning_right, int* homebase) {
   copy_array(leg3_cw, homebase);
   copy_array(leg3_down, homebase);
 
+  copy_array(leg2_up, homebase);
+  copy_array(leg2_cw, homebase);
+  copy_array(leg2_down, homebase);
+
   copy_array(leg1_up, homebase);
   copy_array(leg1_cw, homebase);
   copy_array(leg1_down, homebase);
 
-  copy_array(leg2_up, homebase);
-  copy_array(leg2_cw, homebase);
-  copy_array(leg2_down, homebase);
-  
+ 
   if (turning_right == 1) {
     std::cout << "GENERATING FOR TURNING RIGHT\n";
     // --- Leg 4 Movements ---
@@ -393,7 +394,7 @@ void generate_movement_arrays_turning(bool turning_right, int* homebase) {
     copy_array(leg1_up, leg2_down);
     leg1_up[2] += UP_DOWN_TICKS_TURNING;       // Up (ID:2)
     copy_array(leg1_cw, leg1_up);
-    leg1_cw[1] -= CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
+    leg1_cw[1] += CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
     copy_array(leg1_down, leg1_cw);
     leg1_down[2] -= UP_DOWN_TICKS_TURNING;     // Down (ID:2)
 
