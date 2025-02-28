@@ -382,7 +382,7 @@ void generate_movement_arrays_turning(bool turning_right) {
     leg3_down[8] -= UP_DOWN_TICKS_TURNING;     // Down (ID:8)
 
     // --- Leg 2 Movements ---
-    copy_array(leg2_up, leg1_down);
+    copy_array(leg2_up, leg3_down);
     leg2_up[5] -= UP_DOWN_TICKS_TURNING;       // Up (ID:5)
     copy_array(leg2_cw, leg2_up);
     leg2_cw[4] += CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:4)
@@ -390,6 +390,7 @@ void generate_movement_arrays_turning(bool turning_right) {
     leg2_down[5] += UP_DOWN_TICKS_TURNING;     // Down (ID:5)
 
     // --- Leg 1 Movements ---
+    copy_array(leg1_up, leg2_down);
     leg1_up[2] += UP_DOWN_TICKS_TURNING;       // Up (ID:2)
     copy_array(leg1_ccw, leg1_up);
     leg1_ccw[1] -= CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
