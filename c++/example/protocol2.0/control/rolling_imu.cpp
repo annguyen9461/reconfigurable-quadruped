@@ -1091,20 +1091,36 @@ int main()
               command = "rfb";
             }
         }
+        // else {
+        //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
+        //   // If acceleration isn't enough, try increasing momentum
+        //   if (yellow_under) {
+        //     std::cout << "yellow under. propel yellow" <<"\n";
+        //     command = "rpy";
+        //   } else if (blue_under) {
+        //     std::cout << "blue under. propel blue" <<"\n";
+        //     command = "rpb";
+        //   } else {
+        //     std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
+        //     command = "rpy";
+        //   }
+        // }
+
         else {
-            std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
-            // If acceleration isn't enough, try increasing momentum
-            if (yellow_under) {
-              std::cout << "yellow under. propel yellow" <<"\n";
-              command = "rpy";
-            } else if (blue_under) {
-              std::cout << "blue under. propel blue" <<"\n";
-              command = "rpb";
-            } else {
-              std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
-              command = "rpy";
-            }
+          std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
+          // If acceleration isn't enough, try increasing momentum
+          if (yellow_under) {
+            std::cout << "yellow under. propel yellow" <<"\n";
+            command = "rfy";
+          } else if (blue_under) {
+            std::cout << "blue under. propel blue" <<"\n";
+            command = "rfb";
+          } else {
+            std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
+            command = "rfy";
+          }
         }
+
         // Reset accuculators
         // after the window size is met, instead of prematurely which is immediately after the decision
         accumulated_accel_z = 0;
