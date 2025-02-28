@@ -104,6 +104,9 @@ int home_walking2[NUM_MOTORS + 1] = {0,
   2879, 2032, 3049, 1440, 2066, 1014, 2835, 2009, 3071, 2429, 2078, 1056
 };
 
+
+
+
 ///////////////////////////////// WALKING START /////////////////////////////////
 
 // Constants
@@ -114,7 +117,7 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 // const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
 // const int CW_CCW_TICKS_BACKLEG = static_cast<int>(35 * TICKS_PER_DEGREE);
 
-// TURNING RIGHT
+// WALKING TURNING RIGHT
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
 const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 const int CW_CCW_TICKS = static_cast<int>(10 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
@@ -138,27 +141,36 @@ int home_tiptoe[NUM_MOTORS + 1] = {0,
   1050   // [ID:12]
 };
 
-
 // Leg 4 Movements
 int leg4_up[NUM_MOTORS + 1] = {0}; 
 int leg4_cw[NUM_MOTORS + 1] = {0};
+int leg4_ccw[NUM_MOTORS + 1] = {0};
 int leg4_down[NUM_MOTORS + 1] = {0};
 
 // Leg 3 Movements
 int leg3_up[NUM_MOTORS + 1] = {0}; 
+int leg3_cw[NUM_MOTORS + 1] = {0};
 int leg3_ccw[NUM_MOTORS + 1] = {0};
 int leg3_down[NUM_MOTORS + 1] = {0};
 
 // Leg 1 Movements
 int leg1_up[NUM_MOTORS + 1] = {0}; 
+int leg1_cw[NUM_MOTORS + 1] = {0};
 int leg1_ccw[NUM_MOTORS + 1] = {0};
 int leg1_down[NUM_MOTORS + 1] = {0};
 
 // Leg 2 Movements
 int leg2_up[NUM_MOTORS + 1] = {0}; 
+int leg2_cw[NUM_MOTORS + 1] = {0};
 int leg2_ccw[NUM_MOTORS + 1] = {0};
 int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// WALKING END /////////////////////////////////
+
+///////////////////////////////// TURNING START ////////////////////////////////
+const int UP_DOWN_TICKS_TURNING = static_cast<int>(30 * TICKS_PER_DEGREE);
+const int CW_CCW_TICKS_TURNING = static_cast<int>(20 * TICKS_PER_DEGREE);
+
+///////////////////////////////// TURNING END /////////////////////////////////
 
 ///////////////////////////////// ROLLING START /////////////////////////////////
 const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE); 
@@ -333,6 +345,100 @@ void generate_movement_arrays_roll_fw() {
 
 }
 
+// Function to populate movement arrays based on sequence
+void generate_movement_arrays_turning(bool turning_right) {
+  // Start with home_tiptoe for all movements
+  copy_array(leg4_up, home_tiptoe);
+  copy_array(leg4_cw, home_tiptoe);
+  copy_array(leg4_down, home_tiptoe);
+  
+  copy_array(leg3_up, home_tiptoe);
+  copy_array(leg3_cw, home_tiptoe);
+  copy_array(leg3_down, home_tiptoe);
+
+  copy_array(leg1_up, home_tiptoe);
+  copy_array(leg1_ccw, home_tiptoe);
+  copy_array(leg1_down, home_tiptoe);
+
+  copy_array(leg2_up, home_tiptoe);
+  copy_array(leg2_cw, home_tiptoe);
+  copy_array(leg2_down, home_tiptoe);
+  
+  if (turning_right == 1) {
+    std::cout << "GENERATING FOR TURNING RIGHT\n";
+    // --- Leg 4 Movements ---
+    leg4_up[11] -= UP_DOWN_TICKS_TURNING;      // Up (ID:11)
+    copy_array(leg4_cw, leg4_up);
+    leg4_cw[10] += CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:10)
+    copy_array(leg4_down, leg4_cw);
+    leg4_down[11] += UP_DOWN_TICKS_TURNING;    // Down (ID:11)
+
+    // --- Leg 3 Movements ---
+    copy_array(leg3_up, leg4_down);
+    leg3_up[8] += UP_DOWN_TICKS_TURNING;       // Up (ID:8)
+    copy_array(leg3_cw, leg3_up);
+    leg3_cw[7] += CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:7)
+    copy_array(leg3_down, leg3_cw);
+    leg3_down[8] -= UP_DOWN_TICKS_TURNING;     // Down (ID:8)
+
+    // --- Leg 2 Movements ---
+    copy_array(leg2_up, leg1_down);
+    leg2_up[5] -= UP_DOWN_TICKS_TURNING;       // Up (ID:5)
+    copy_array(leg2_cw, leg2_up);
+    leg2_cw[4] += CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:4)
+    copy_array(leg2_down, leg2_cw);
+    leg2_down[5] += UP_DOWN_TICKS_TURNING;     // Down (ID:5)
+
+    // --- Leg 1 Movements ---
+    leg1_up[2] += UP_DOWN_TICKS_TURNING;       // Up (ID:2)
+    copy_array(leg1_ccw, leg1_up);
+    leg1_ccw[1] -= CW_CCW_TICKS_TURNING;       // Turning Right CW (ID:1)
+    copy_array(leg1_down, leg1_ccw);
+    leg1_down[2] -= UP_DOWN_TICKS_TURNING;     // Down (ID:2)
+
+  }
+  // else if (turning_right == 0) {
+  //   std::cout << "GENERATING FOR TURNING LEFT\n";
+  //   // TURNING LEFT
+  //   // --- Leg 3 Movements ---
+  //   leg3_up[8] += UP_DOWN_TICKS_TURNING;       // Up (ID:8)
+  //   copy_array(leg3_ccw, leg3_up);
+  //   leg3_ccw[7] -= CW_CCW_TICKS_TURNING;       // Forward CCW (ID:7)
+  //   copy_array(leg3_down, leg3_ccw);
+  //   leg3_down[8] -= UP_DOWN_TICKS_TURNING;     // Down (ID:8)
+
+  //   // --- Leg 4 Movements ---
+  //   copy_array(leg4_up, leg3_down);
+  //   leg4_up[11] -= UP_DOWN_TICKS_TURNING;      // Up (ID:11)
+  //   copy_array(leg4_cw, leg4_up);
+  //   leg4_cw[10] += CW_CCW_TICKS_TURNING;       // Forward CW (ID:10)
+  //   copy_array(leg4_down, leg4_cw);
+  //   leg4_down[11] += UP_DOWN_TICKS_TURNING;    // Down (ID:11)
+
+  //   // --- Leg 3 Movements ---
+  //   copy_array(leg3_up, leg4_down);
+  //   leg3_up[8] += UP_DOWN_TICKS_TURNING;       // Up (ID:8)
+  //   copy_array(leg3_ccw, leg3_up);
+  //   leg3_ccw[7] -= CW_CCW_TICKS_TURNING;       // Forward CCW (ID:7)
+  //   copy_array(leg3_down, leg3_ccw);
+  //   leg3_down[8] -= UP_DOWN_TICKS_TURNING;     // Down (ID:8)
+
+  //    // --- Leg 2 Movements ---
+  //   leg2_up[5] -= UP_DOWN_TICKS_TURNING;       // Up (ID:5)
+  //   copy_array(leg2_ccw, leg2_up);
+  //   leg2_ccw[4] -= CW_CCW_TICKS_TURNING;       // Forward CCW (ID:4)
+  //   copy_array(leg2_down, leg2_ccw);
+  //   leg2_down[5] += UP_DOWN_TICKS_TURNING;     // Down (ID:5)
+  
+  //   // --- Leg 1 Movements ---
+  //   copy_array(leg1_up, leg2_down);
+  //   leg1_up[2] += UP_DOWN_TICKS_TURNING;       // Up (ID:2)
+  //   copy_array(leg1_ccw, leg1_up);
+  //   leg1_ccw[1] += CW_CCW_TICKS_TURNING;       // Forward CCW (ID:1)
+  //   copy_array(leg1_down, leg1_ccw);
+  //   leg1_down[2] -= UP_DOWN_TICKS_TURNING;     // Down (ID:2)
+  // } 
+}
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
   2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
 };
@@ -1161,6 +1267,30 @@ int main()
       }
     }
     
+    // TURNING RIGHT
+    else if (command == "ri") {
+      
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_turning(1);
+
+      const int NUM_MOVEMENTS = 13;
+      int* walk_fw_r_movements[NUM_MOVEMENTS] = {
+        leg4_up, leg4_cw, leg4_down,
+        leg3_up, leg3_cw, leg3_down, 
+        leg2_up, leg2_cw, leg2_down,
+        leg1_up, leg1_cw, leg1_down,
+        home_tiptoe,
+      };
+      
+      while (1) {
+        for (int i = 0; i < NUM_MOVEMENTS; i++) {
+          gradual_transition(walk_fw_r_movements[i], groupSyncWrite, packetHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
+        }
+      }
+    }
+
     else if (command == "up") {
       int degree;
       char colon;
