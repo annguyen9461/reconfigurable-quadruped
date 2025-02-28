@@ -140,8 +140,9 @@ int main() {
             float avg_gyro_y = accumulated_gyro_y / sample_count;
 
             // Determine if BLUE or YELLOW is under based on orientation
-            bool blue_under = avg_gyro_y > 0;
-            bool yellow_under = avg_accel_z <= 0;
+            bool blue_under = (avg_accel_z > -6.6 && avg_accel_z < 3.9) && (avg_gyro_y > 0);
+            bool yellow_under = (avg_accel_z > -4.8 && avg_accel_z < 6.3) && (avg_gyro_y < 0);
+
 
             // Check propulsion conditions
             if (avg_accel_z >= accel_z_threshold) {
