@@ -1275,13 +1275,13 @@ int main()
 
       generate_movement_arrays_turning(1);
 
-      const int NUM_MOVEMENTS = 6;
+      const int NUM_MOVEMENTS = 13;
       int* movements[NUM_MOVEMENTS] = {
         leg4_up, leg4_cw, leg4_down,
         leg3_up, leg3_cw, leg3_down, 
-        // leg2_up, leg2_cw, leg2_down,
-        // leg1_up, leg1_cw, leg1_down,
-        // home_tiptoe,
+        leg2_up, leg2_cw, leg2_down,
+        leg1_up, leg1_cw, leg1_down,
+        home_tiptoe,
       };
       
       // while (1) {
