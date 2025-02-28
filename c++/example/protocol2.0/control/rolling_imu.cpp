@@ -995,7 +995,7 @@ int main()
     float gyro_z_offset = -0.37;
 
      // Open CSV file for writing
-    std::ofstream csvFile("imu_data.csv");
+    std::ofstream csvFile("imu_data_no_gaining_momentum.csv");
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open CSV file\n";
         close(file);
