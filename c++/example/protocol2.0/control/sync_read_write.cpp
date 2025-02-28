@@ -346,7 +346,7 @@ void generate_movement_arrays_roll_fw() {
 }
 
 // Function to populate movement arrays based on sequence
-void generate_movement_arrays_turning(bool turning_right, *homebase) {
+void generate_movement_arrays_turning(bool turning_right, int* homebase) {
   // Start with homebase for all movements
   copy_array(leg4_up, homebase);
   copy_array(leg4_cw, homebase);
