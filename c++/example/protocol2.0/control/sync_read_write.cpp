@@ -167,7 +167,7 @@ int leg2_down[NUM_MOTORS + 1] = {0};
 ///////////////////////////////// WALKING END /////////////////////////////////
 
 ///////////////////////////////// TURNING START ////////////////////////////////
-const int UP_DOWN_TICKS_TURNING = static_cast<int>(30 * TICKS_PER_DEGREE);
+const int UP_DOWN_TICKS_TURNING = static_cast<int>(20 * TICKS_PER_DEGREE);
 const int CW_CCW_TICKS_TURNING = static_cast<int>(20 * TICKS_PER_DEGREE);
 
 ///////////////////////////////// TURNING END /////////////////////////////////
@@ -1083,6 +1083,9 @@ int main()
     else if (command == "h1") {
       move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
     }
+    else if (command == "h2") {
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
+    }
 
     
     else if (command == "cirh") {
@@ -1271,7 +1274,7 @@ int main()
     // TURNING RIGHT
     else if (command == "ri") {
       
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
 
       generate_movement_arrays_turning(1);
 
@@ -1281,7 +1284,7 @@ int main()
         leg3_up, leg3_cw, leg3_down, 
         leg2_up, leg2_cw, leg2_down,
         leg1_up, leg1_cw, leg1_down,
-        home_tiptoe,
+        home_tiptoe_thin,
       };
       
       // while (1) {
