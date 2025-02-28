@@ -994,6 +994,18 @@ int main()
     float accel_z_offset = 0.2;
     float gyro_z_offset = -0.37;
 
+     // Open CSV file for writing
+    std::ofstream csvFile("imu_data.csv");
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open CSV file\n";
+        close(file);
+        return 1;
+    }
+
+    // Write CSV headers
+    csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
+
+
     auto start_time = std::chrono::high_resolution_clock::now();
 
     // Thresholds based on data analysis
@@ -1021,12 +1033,35 @@ int main()
     int16_t accel_y = read_16bit_register(file, 0x2A, 0x2B);
     int16_t accel_z = read_16bit_register(file, 0x2C, 0x2D);
 
+
     // Apply scale factors
+    float gyro_dps_x = gyro_x * (250.0 / 32768.0);
     float gyro_dps_y = gyro_y * (250.0 / 32768.0);
+    float gyro_dps_z = (gyro_z * (250.0 / 32768.0)) - gyro_z_offset;
+
+    float accel_mps2_x = accel_x * (2.0 / 32768.0) * 9.81;
+    float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
     float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
+
+    // Timestamp for each reading
+    auto current_time = std::chrono::high_resolution_clock::now();
+    double timestamp = std::chrono::duration<double>(current_time - start_time).count();
+
+    // Apply scale factors
+    // float gyro_dps_y = gyro_y * (250.0 / 32768.0);
+    // float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
 
     // std::cout << "Gyro Raw - X: " << gyro_x << " Y: " << gyro_y << " Z: " << gyro_z << " | "
     // << "Accel Raw - X: " << accel_x << " Y: " << accel_y << " Z: " << accel_z << std::endl;
+    
+    // Write to CSV
+    csvFile << std::fixed << std::setprecision(6)
+            << timestamp << ","
+            << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
+            << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
+
+    csvFile.flush(); // Ensure data is written in real-time
+
 
     // Accumulate data for smoothing
     accumulated_accel_z += accel_mps2_z;
@@ -1271,6 +1306,10 @@ int main()
     else {
       std::cout << "Unknown command: " << command << "\n";
     }
+
+     
+   
+
     // Adjust sampling rate (lower value for higher frequency)
     usleep(10000); // 10ms delay (~100Hz sampling rate)
 
@@ -1289,6 +1328,7 @@ int main()
   //   }
   // }
 
+csvFile.close();
 // Close port
 portHandler->closePort();
 
