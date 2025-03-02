@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
 
+# import rclpy
+# from ultralytics import YOLO
+# from rclpy.node import Node
+# from sensor_msgs.msg import Image
+# from cv_bridge import CvBridge
+
+import os
 import rclpy
 from ultralytics import YOLO
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
+from ament_index_python.packages import get_package_share_directory  # Find package path dynamically
+
 
 
 class YoloNode(Node):
@@ -25,11 +34,25 @@ class YoloNode(Node):
     def __init__(self):
         super().__init__("pose")
         self.bridge = CvBridge()
-        self.declare_parameter("model",
-                               value="yolo11n.pt")
-        self.model = YOLO(self.get_parameter("model").get_parameter_value().string_value)
+
+        # self.declare_parameter("model",
+        #                        value="yolo11s-obb.pt")
+        # self.model = YOLO(self.get_parameter("model").get_parameter_value().string_value)
+
+         # Get package path dynamically
+        package_path = get_package_share_directory('quad_vision')
+
+        # Path to trained model (best.pt)
+        model_path = os.path.join(package_path, "models", "best.pt")
+
+        # Log model path
+        self.get_logger().info(f"Using YOLO model: {model_path}")
+
+        # Load trained model
+        self.model = YOLO(model_path)
+
         self.create_subscription(Image, 'image', self.yolo_callback, 10)
-        self.pub = self.create_publisher(Image, 'new_image', 10)
+        self.pub = self.create_publisher(Image, 'yolo_image', 10)
 
     def yolo_callback(self, image):
         """Identify all the objects in the scene"""
@@ -37,6 +60,7 @@ class YoloNode(Node):
         cv_image = self.bridge.imgmsg_to_cv2(image, desired_encoding='bgr8')
         # Run the model
         results = self.model(cv_image)
+                    
         # Get the result and draw it on an OpenCV image
         frame = results[0].plot()
         new_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
