@@ -1,0 +1,26 @@
+<launch>    
+    <include file='$(find-pkg-share realsense2_camera)/launch/rs_launch.py' >
+        <arg name='depth_module.profile' value='1280x720x30' />
+        <arg name='rgb_camera.profile' value='1280x720x30' />
+        <arg name='enable_sync' value='true' />
+        <arg name='align_depth.enable' value='true' />
+        <arg name='enable_gyro' value='false' />
+        <arg name='enable_infra1' value='false' />
+        <arg name='enable_infra2' value='false' />
+        <arg name='enable_gyro' value='false' />
+        <arg name='enable_accel' value='false' />
+    </include>
+    
+    <node pkg='rviz2' exec='rviz2'/>
+
+    <node pkg='quad_vision' exec='yolo.py' name='yolo'>
+        <remap from='image' to='/camera/camera/color/image_raw' />
+    </node>
+
+    <!-- <node pkg='quad_vision' exec='img_proc' name='img_proc' output='screen'>
+        <remap from='rgb_image' to='/camera/camera/color/image_raw' />
+        <remap from='depth_image' to='/camera/camera/aligned_depth_to_color/image_raw' />
+        <remap from='color_camera_info' to='/camera/camera/color/camera_info' />
+    </node> -->
+
+</launch>

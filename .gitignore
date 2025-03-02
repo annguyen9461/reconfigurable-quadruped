@@ -7,3 +7,7 @@ c++/example/protocol2.0/control/env/
 ros2_ws/build/*
 ros2_ws/install/*
 ros2_ws/log/*
+ros2_ws/yolo11n.pt
+ros2_ws/src/custom_action_cpp/
+venv/
+build/
