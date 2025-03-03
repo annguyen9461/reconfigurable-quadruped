@@ -11,6 +11,7 @@ import rclpy
 from ultralytics import YOLO
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from std_msgs.msg import Int32
 from cv_bridge import CvBridge
 from ament_index_python.packages import get_package_share_directory  # Find package path dynamically
 
@@ -51,7 +52,8 @@ class YoloNode(Node):
         self.model = YOLO(model_path)
 
         self.create_subscription(Image, 'image', self.yolo_callback, 10)
-        self.pub = self.create_publisher(Image, 'yolo_image', 10)
+        self.pub_yolo_img = self.create_publisher(Image, 'yolo_image', 10)
+        self.pub_num_pins = self.create_publisher(Int32, 'num_detected_pins', 10)
 
     def yolo_callback(self, image):
         """Identify all the objects in the scene"""
@@ -75,7 +77,7 @@ class YoloNode(Node):
             # Count bowling pins with confidence > 0.7
             bowling_pins_count = sum((class_ids == 1) & (confidences > 0.7))
 
-            self.get_logger().info(f"{bowling_pins_count} bowling pins")
+            # self.get_logger().info(f"{bowling_pins_count} bowling pins")
 
             # Print each detection
             # for i, box in enumerate(boxes):
@@ -87,6 +89,11 @@ class YoloNode(Node):
             #         f"Object {i+1}: Class={class_names[class_id]}, Confidence={confidence:.2f}, BBox={bbox}"
             #     )
 
+            # Publish the count as an Int32 message
+            count_msg = Int32()
+            count_msg.data = int(bowling_pins_count)
+            self.pub_num_pins.publish(count_msg)
+
         # Draw detections on the image
         frame = detections.plot()
 
@@ -94,7 +101,7 @@ class YoloNode(Node):
         new_msg = self.bridge.cv2_to_imgmsg(frame, encoding='bgr8')
 
         # Publish the annotated image
-        self.pub.publish(new_msg)
+        self.pub_yolo_img.publish(new_msg)
 
 
 def main():
