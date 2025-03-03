@@ -77,7 +77,7 @@ int main() {
     }
 
     // Write CSV headers
-    csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
+    csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2,Tilt_Angle_Deg\n";
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -121,7 +121,8 @@ int main() {
         csvFile << std::fixed << std::setprecision(6)
                 << timestamp << ","
                 << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
-                << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
+                << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << ","
+                << angle_degrees << "\n";
 
         csvFile.flush(); // Ensure data is written in real-time
 
