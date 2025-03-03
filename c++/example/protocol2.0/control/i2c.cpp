@@ -10,6 +10,8 @@
 #include <chrono>
 #include <iomanip>
 
+#include <cmath>
+
 int write_register(int file, uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
     if (write(file, buf, 2) != 2) {
@@ -100,14 +102,20 @@ int main() {
         float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
         float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
 
+        // Compute tilt angle around x-axis
+        float angle_rad = std::atan2(accel_mps2_y, accel_mps2_z);
+        float angle_degrees = angle_rad * (180.0 / M_PI);
+
         // Timestamp for each reading
         auto current_time = std::chrono::high_resolution_clock::now();
         double timestamp = std::chrono::duration<double>(current_time - start_time).count();
 
         // Print to console
-        std::cout << "Time: " << std::fixed << std::setprecision(6) << timestamp << "s | "
-                  << "Gyro (dps) X: " << gyro_dps_x << " Y: " << gyro_dps_y << " Z: " << gyro_dps_z << " | "
-                  << "Accel (m/s²) X: " << accel_mps2_x << " Y: " << accel_mps2_y << " Z: " << accel_mps2_z << std::endl;
+        // std::cout << "Time: " << std::fixed << std::setprecision(6) << timestamp << "s | "
+        //           << "Gyro (dps) X: " << gyro_dps_x << " Y: " << gyro_dps_y << " Z: " << gyro_dps_z << " | "
+        //           << "Accel (m/s²) X: " << accel_mps2_x << " Y: " << accel_mps2_y << " Z: " << accel_mps2_z << std::endl;
+
+        std::cout << "Accelerometer Tilt Angle: " << angle_degrees << " degrees" << std::endl;
 
         // Write to CSV
         csvFile << std::fixed << std::setprecision(6)
