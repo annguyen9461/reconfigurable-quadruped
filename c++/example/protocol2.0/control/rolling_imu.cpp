@@ -10,6 +10,8 @@
 #include <chrono>
 #include <iomanip>
 
+#include <cmath>
+
 int write_register(int file, uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
     if (write(file, buf, 2) != 2) {
@@ -994,16 +996,16 @@ int main()
     float accel_z_offset = 0.2;
     float gyro_z_offset = -0.37;
 
-     // Open CSV file for writing
-    std::ofstream csvFile("imu_data_no_gaining_momentum.csv");
-    if (!csvFile.is_open()) {
-        std::cerr << "Failed to open CSV file\n";
-        close(file);
-        return 1;
-    }
+    //  // Open CSV file for writing
+    // std::ofstream csvFile("imu_data_no_gaining_momentum.csv");
+    // if (!csvFile.is_open()) {
+    //     std::cerr << "Failed to open CSV file\n";
+    //     close(file);
+    //     return 1;
+    // }
 
-    // Write CSV headers
-    csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
+    // // Write CSV headers
+    // csvFile << "Timestamp,Gyro_X_dps,Gyro_Y_dps,Gyro_Z_dps,Accel_X_mps2,Accel_Y_mps2,Accel_Z_mps2\n";
 
 
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -1014,8 +1016,11 @@ int main()
     const int window_size = 5;            // Number of samples to average (for smoothing)
     
     // Variables for data accumulation
-    float accumulated_accel_z = 0;
-    float accumulated_gyro_y = 0;
+    float accumulated_tilt_angle = 0;
+
+    // float accumulated_accel_z = 0;
+    // float accumulated_gyro_y = 0;
+
     int sample_count = 0;
     
   while (true) {
@@ -1043,6 +1048,10 @@ int main()
     float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
     float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
 
+    // Compute tilt angle around x-axis
+    float angle_rad = std::atan2(accel_mps2_y, accel_mps2_z);
+    float angle_degrees = angle_rad * (180.0 / M_PI);
+
     // Timestamp for each reading
     auto current_time = std::chrono::high_resolution_clock::now();
     double timestamp = std::chrono::duration<double>(current_time - start_time).count();
@@ -1055,41 +1064,50 @@ int main()
     // << "Accel Raw - X: " << accel_x << " Y: " << accel_y << " Z: " << accel_z << std::endl;
     
     // Write to CSV
-    csvFile << std::fixed << std::setprecision(6)
-            << timestamp << ","
-            << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
-            << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
+    // csvFile << std::fixed << std::setprecision(6)
+    //         << timestamp << ","
+    //         << gyro_dps_x << "," << gyro_dps_y << "," << gyro_dps_z << ","
+    //         << accel_mps2_x << "," << accel_mps2_y << "," << accel_mps2_z << "\n";
 
-    csvFile.flush(); // Ensure data is written in real-time
+    // csvFile.flush(); // Ensure data is written in real-time
 
 
     // Accumulate data for smoothing
-    accumulated_accel_z += accel_mps2_z;
-    accumulated_gyro_y += gyro_dps_y;
+    accumulated_tilt_angle += angle_degrees;
+
+    // accumulated_accel_z += accel_mps2_z;
+    // accumulated_gyro_y += gyro_dps_y;
     sample_count++;
     // std::cout << "Sample Count: " << sample_count << std::endl;
 
     // Check if enough samples have been collected
     if (sample_count >= window_size) {
         std::cout << "COLLECTED enough samples while loop\n";
-        float avg_accel_z = accumulated_accel_z / sample_count;
-        float avg_gyro_y = accumulated_gyro_y / sample_count;
+        // float avg_accel_z = accumulated_accel_z / sample_count;
+        // float avg_gyro_y = accumulated_gyro_y / sample_count;
+        // // Use gyro_y to determine which side is under
+        // bool blue_under = accumulated_accel_z < 0.0;     // Positive rotation → blue under
+        // bool yellow_under = accumulated_accel_z > 0.0;  // Negative rotation → yellow under
 
-        // Use gyro_y to determine which side is under
-        bool blue_under = accumulated_accel_z < 0.0;     // Positive rotation → blue under
-        bool yellow_under = accumulated_accel_z > 0.0;  // Negative rotation → yellow under
+        float avg_tilt_angle = accumulated_tilt_angle / sample_count;
+         // Use tilt angle to determine which side is under
+        bool blue_under = avg_tilt_angle >= -124 && avg_tilt_angle <= 157;     // Positive rotation → blue under
+        bool yellow_under = avg_tilt_angle >= -54 && avg_tilt_angle <= 58;  // Negative rotation → yellow under
+
+        bool blue_under_good_range = (avg_tilt_angle >= -179 && avg_tilt_angle <= -162) 
+        || (avg_tilt_angle <= 179 && avg_tilt_angle >= 167);
+        bool yellow_under_good_range = (avg_tilt_angle >= 0 && avg_tilt_angle <= 15) 
+        || (avg_tilt_angle <= 0 && avg_tilt_angle >= -23);
 
         // Check propulsion conditions
-        if (avg_accel_z >= accel_z_threshold) {
-            std::cout << "Avg Accel Z: " << avg_accel_z << " exceeds threshold " << accel_z_threshold << "\n";
-            // TODO: TESTING wehn is yellow or blue under
-            if (yellow_under) {
-              std::cout << "yellow under. push yellow" <<"\n";
-              command = "rfy";
-            } else if (blue_under) {
-              std::cout << "blue under. push blue" <<"\n";
-              command = "rfb";
-            }
+        if (yellow_under) {
+          std::cout << "yellow under. push yellow" <<"\n";
+          command = "rfy";
+        } else if (blue_under) {
+          std::cout << "blue under. push blue" <<"\n";
+          command = "rfb";
+        } else {
+          command = "rfy";
         }
         // else {
         //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
@@ -1106,25 +1124,27 @@ int main()
         //   }
         // }
 
-        else {
-          std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
-          // If acceleration isn't enough, try increasing momentum
-          if (yellow_under) {
-            std::cout << "yellow under. propel yellow" <<"\n";
-            command = "rfy";
-          } else if (blue_under) {
-            std::cout << "blue under. propel blue" <<"\n";
-            command = "rfb";
-          } else {
-            std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
-            command = "rfy";
-          }
-        }
+        // else {
+        //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
+        //   // If acceleration isn't enough, try increasing momentum
+        //   if (yellow_under) {
+        //     std::cout << "yellow under. propel yellow" <<"\n";
+        //     command = "rfy";
+        //   } else if (blue_under) {
+        //     std::cout << "blue under. propel blue" <<"\n";
+        //     command = "rfb";
+        //   } else {
+        //     std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
+        //     command = "rfy";
+        //   }
+        // }
 
-        // Reset accuculators
+        // Reset accumulators
         // after the window size is met, instead of prematurely which is immediately after the decision
-        accumulated_accel_z = 0;
-        accumulated_gyro_y = 0;
+        // accumulated_accel_z = 0;
+        // accumulated_gyro_y = 0;
+        
+        accumulated_tilt_angle = 0;
         sample_count = 0;
     }
 
@@ -1344,7 +1364,7 @@ int main()
   //   }
   // }
 
-csvFile.close();
+// csvFile.close();
 // Close port
 portHandler->closePort();
 
