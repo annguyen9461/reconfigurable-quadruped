@@ -1,4 +1,6 @@
-<launch>    
+<launch>
+    <arg name='rviz_config' default='$(find-pkg-share quad_vision)/config/detect_bowling_pins.rviz' description="Rviz configuration file."/>
+
     <include file='$(find-pkg-share realsense2_camera)/launch/rs_launch.py' >
         <arg name='depth_module.profile' value='1280x720x30' />
         <arg name='rgb_camera.profile' value='1280x720x30' />
@@ -11,7 +13,8 @@
         <arg name='enable_accel' value='false' />
     </include>
     
-    <node pkg='rviz2' exec='rviz2'/>
+    <node pkg='rviz2' exec='rviz2' args="-d $(var rviz_config)"/>
+
 
     <node pkg='quad_vision' exec='yolo.py' name='yolo'>
         <remap from='image' to='/camera/camera/color/image_raw' />

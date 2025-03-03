@@ -29,18 +29,26 @@ find_package(rclcpp_components REQUIRED)
 #   listener
 #   talker
 #   DESTINATION lib/${PROJECT_NAME})
+
 # Install launch files
 install(
   DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
-# Python scripts
+
+# Install config files
+install(DIRECTORY config/
+  DESTINATION share/${PROJECT_NAME}/config
+)
+
+# Install Python scripts
 install(
   PROGRAMS 
   scripts/yolo.py
   # scripts/img_proc.py
   DESTINATION lib/${PROJECT_NAME}
 )
+
 
 install(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/models/
