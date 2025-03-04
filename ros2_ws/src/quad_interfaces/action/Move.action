@@ -2,7 +2,7 @@
 string movement
 ---
 
-# Feedback: Status message while execiting
+# Feedback: Status message while executing
 string status_message
 
 ---
