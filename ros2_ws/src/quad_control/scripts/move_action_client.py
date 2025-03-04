@@ -5,6 +5,7 @@ from rclpy.node import Node
 from rclpy.action import ActionClient
 from std_msgs.msg import Int32  # The topic message type
 from quad_interfaces.action import Move   # The action type
+from quad_interfaces.msg import SetConfig   # The action type
 
 from action_msgs.msg import GoalStatus
 
@@ -21,21 +22,27 @@ class MoveActionClient(Node):
             self.command_callback,
             10
         )
-
+        
         self.current_command = None  # Track last sent command
+        self.action_in_progress = False  # Prevent sending multiple goals
 
     def command_callback(self, msg):
-        """Callback function for the /move_command topic."""
+        """Decides action based on the number of bowling pins detected."""
         bowling_pin_count = msg.data
-        
         self.get_logger().info(f"Received pin count: {bowling_pin_count}")
 
-        # Determine new command based on pin count
-        new_command = "turn" if bowling_pin_count < 2 else "stop"
+        if bowling_pin_count >= 2:  # Found a pin, stop turning
+            self.stop_moving()
+            return
+        
+        self.keep_turning()
 
-        self.get_logger().info(f"New Command: {new_command}, Current Command: {self.current_command}")
+        if self.action_in_progress:
+            self.get_logger().info("Action in progress, ignoring new command.")
+            return  # Ignore new commands until the current one finishes
 
-        # Only send a goal if the command has changed
+        new_command = "turn"
+
         if self.current_command != new_command:
             self.current_command = new_command
             self.send_goal(self.current_command)
@@ -50,6 +57,28 @@ class MoveActionClient(Node):
         self._action_client.wait_for_server()
 
         return self._action_client.send_goal_async(goal_msg)
+
+    def stop_moving(self):
+        """Stop turning and transition to Home1 configuration."""
+        self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
+        self.send_goal("stop")
+
+        # Publish to `/set_config` to stop moving
+        config_msg = SetConfig()
+        config_msg.config_id = 1
+        self.get_logger().info("Publishing transition to home1.")
+        self.get_publisher('/set_config').publish(config_msg)
+    
+    def keep_turing(self):
+        """Keep turning and until detect enough bowling pins."""
+        self.get_logger().info("Not enough pins yet! Keep turning.")
+        self.send_goal("turn")
+
+        # Publish to `/set_config` to stop moving
+        config_msg = SetConfig()
+        config_msg.config_id = 5
+        self.get_logger().info("Publishing congfig 5 to turn.")
+        self.get_publisher('/set_config').publish(config_msg)
 
 def main(args=None):
     rclpy.init(args=args)
