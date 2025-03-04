@@ -53,7 +53,7 @@ class YoloNode(Node):
 
         self.create_subscription(Image, 'image', self.yolo_callback, 10)
         self.pub_yolo_img = self.create_publisher(Image, 'yolo_image', 10)
-        self.pub_num_pins = self.create_publisher(Int32, 'num_detected_pins', 10)
+        self.pub_num_pins = self.create_publisher(Int32, 'num_bowling_pins', 10)
 
     def yolo_callback(self, image):
         """Identify all the objects in the scene"""

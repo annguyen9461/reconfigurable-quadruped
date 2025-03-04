@@ -1,0 +1,10 @@
+# Goal: Specify movement type ("stop" or "turn")
+string movement
+---
+
+# Feedback: Status message while execiting
+string status
+
+---
+# Result: Whether the action succeeded
+bool success

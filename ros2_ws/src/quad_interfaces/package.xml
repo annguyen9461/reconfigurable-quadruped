@@ -3,7 +3,7 @@
 <package format="3">
   <name>quad_interfaces</name>
   <version>0.0.0</version>
-  <description>Package for Dynamixel Motor Interfaces</description>
+  <description>Package for Quadruped Interfaces</description>
   <maintainer email="annguyen2025@u.northwestern.edu">annguyen</maintainer>
   <license>Apache-2.0</license>
 
