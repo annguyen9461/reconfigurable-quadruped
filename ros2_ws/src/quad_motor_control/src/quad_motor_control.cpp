@@ -106,6 +106,16 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
                     config_sequence = {perfect_cir, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
                     sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
                     break;
+                case 5:  // Turning Right Sequence
+                    config_sequence = {
+                        leg4_up_right, leg4_turn_right, leg4_down_right,
+                        leg3_up_right, leg3_turn_right, leg3_down_right, 
+                        leg2_up_right, leg2_turn_right, leg2_down_right,
+                        leg1_up_right, leg1_turn_right, leg1_down_right,
+                        home_tiptoe
+                    };
+                    sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500}; // 500ms delay per step
+                    break;
             }
             // Execute each step in the sequence
             for (size_t i = 0; i < config_sequence.size(); i++) {
@@ -273,6 +283,8 @@ void QuadMotorControl::initDynamixels()
 }
 
 int main(int argc, char * argv[]) {
+    initialize_turning_configs_right();  // Ensure all arrays are set up
+
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<QuadMotorControl>());
     rclcpp::shutdown();

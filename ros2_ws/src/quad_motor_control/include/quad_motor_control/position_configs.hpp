@@ -1,22 +1,25 @@
 #ifndef POSITION_CONFIGS_HPP
 #define POSITION_CONFIGS_HPP
 
+#include <iostream>
+
 #define NUM_MOTORS 12
+// Function to copy array
+void copy_array(int* dest, const int* src) {
+    for (int i = 0; i <= NUM_MOTORS; i++) {
+        dest[i] = src[i];
+    }
+}
+
+const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
+const int UP_DOWN_TICKS_TURNING = static_cast<int>(20 * TICKS_PER_DEGREE);
+const int CW_CCW_TICKS_TURNING = static_cast<int>(20 * TICKS_PER_DEGREE);
+
 // Home for walking
 int home_tiptoe[NUM_MOTORS + 1] = {0, 
-  2745,  // [ID:1]
-  2187,  // [ID:2]
-  3062,  // [ID:3]
-  1343,  // [ID:4]
-  1890,  // [ID:5]
-  1025,  // [ID:6]
-  2752,  // [ID:7]
-  2190,  // [ID:8]
-  3072,  // [ID:9]
-  2429,  // [ID:10]
-  1864,  // [ID:11]
-  1050   // [ID:12]
+  2745, 2187, 3062, 1343, 1890, 1025, 2752, 2190, 3072, 2429, 1864, 1050
 };
+
 
 // Home for rolling
 int perfect_cir[NUM_MOTORS + 1] = {0, 
@@ -71,5 +74,72 @@ int cir_to_yellow_up60[NUM_MOTORS + 1] = {0,
 int cir_to_yellow_up90[NUM_MOTORS + 1] = {0, 
     2046, 1631, 3097, 2042, 2485, 984, 2105, 2990, 3060, 3053, 1104, 1052
 };
+
+int leg4_up[NUM_MOTORS + 1] = {0, 
+    2040, 1098, 3081, 2054, 2997, 1007, 2041, 2993, 1045, 3054, 1095 - UP_DOWN_TICKS_TURNING, 3091
+};
+
+// Leg movement configurations for turning right (Declared but NOT initialized at global scope)
+int leg4_up_right[NUM_MOTORS + 1];
+int leg4_turn_right[NUM_MOTORS + 1];
+int leg4_down_right[NUM_MOTORS + 1];
+
+int leg3_up_right[NUM_MOTORS + 1];
+int leg3_turn_right[NUM_MOTORS + 1];
+int leg3_down_right[NUM_MOTORS + 1];
+
+int leg2_up_right[NUM_MOTORS + 1];
+int leg2_turn_right[NUM_MOTORS + 1];
+int leg2_down_right[NUM_MOTORS + 1];
+
+int leg1_up_right[NUM_MOTORS + 1];
+int leg1_turn_right[NUM_MOTORS + 1];
+int leg1_down_right[NUM_MOTORS + 1];
+
+// Function to initialize turning right configurations
+void initialize_turning_configs_right() {
+    // --- Leg 4 Movements ---
+    copy_array(leg4_up_right, home_tiptoe);
+    leg4_up_right[11] -= UP_DOWN_TICKS_TURNING;  // Up (ID:11)
+
+    copy_array(leg4_turn_right, leg4_up_right);
+    leg4_turn_right[10] += CW_CCW_TICKS_TURNING; // Turning Right CW (ID:10)
+
+    copy_array(leg4_down_right, leg4_turn_right);
+    leg4_down_right[11] += UP_DOWN_TICKS_TURNING; // Down (ID:11)
+
+    // --- Leg 3 Movements ---
+    copy_array(leg3_up_right, leg4_down_right);
+    leg3_up_right[8] += UP_DOWN_TICKS_TURNING; // Up (ID:8)
+
+    copy_array(leg3_turn_right, leg3_up_right);
+    leg3_turn_right[7] += CW_CCW_TICKS_TURNING; // Turning Right CW (ID:7)
+
+    copy_array(leg3_down_right, leg3_turn_right);
+    leg3_down_right[8] -= UP_DOWN_TICKS_TURNING; // Down (ID:8)
+
+    // --- Leg 2 Movements ---
+    copy_array(leg2_up_right, leg3_down_right);
+    leg2_up_right[5] -= UP_DOWN_TICKS_TURNING; // Up (ID:5)
+
+    copy_array(leg2_turn_right, leg2_up_right);
+    leg2_turn_right[4] += CW_CCW_TICKS_TURNING; // Turning Right CW (ID:4)
+
+    copy_array(leg2_down_right, leg2_turn_right);
+    leg2_down_right[5] += UP_DOWN_TICKS_TURNING; // Down (ID:5)
+
+    // --- Leg 1 Movements ---
+    copy_array(leg1_up_right, leg2_down_right);
+    leg1_up_right[2] += UP_DOWN_TICKS_TURNING; // Up (ID:2)
+
+    copy_array(leg1_turn_right, leg1_up_right);
+    leg1_turn_right[1] += CW_CCW_TICKS_TURNING; // Turning Right CW (ID:1)
+
+    copy_array(leg1_down_right, leg1_turn_right);
+    leg1_down_right[2] -= UP_DOWN_TICKS_TURNING; // Down (ID:2)
+
+    std::cout << "Turning right configurations initialized!\n";
+}
+
 
 #endif // POSITION_CONFIGS_HPP
