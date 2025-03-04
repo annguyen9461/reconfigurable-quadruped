@@ -5,7 +5,7 @@ from rclpy.node import Node
 from rclpy.action import ActionClient
 from std_msgs.msg import Int32  # The topic message type
 from quad_interfaces.action import Move   # The action type
-from quad_interfaces.msg import SetConfig   # The action type
+from quad_interfaces.msg import SetConfig
 
 from action_msgs.msg import GoalStatus
 
@@ -22,6 +22,8 @@ class MoveActionClient(Node):
             self.command_callback,
             10
         )
+
+        self.pub_config = self.create_publisher(SetConfig, '/set_config', 10)
         
         self.current_command = None  # Track last sent command
         self.action_in_progress = False  # Prevent sending multiple goals
@@ -34,18 +36,8 @@ class MoveActionClient(Node):
         if bowling_pin_count >= 2:  # Found a pin, stop turning
             self.stop_moving()
             return
-        
-        self.keep_turning()
-
-        if self.action_in_progress:
-            self.get_logger().info("Action in progress, ignoring new command.")
-            return  # Ignore new commands until the current one finishes
-
-        new_command = "turn"
-
-        if self.current_command != new_command:
-            self.current_command = new_command
-            self.send_goal(self.current_command)
+        else:
+            self.keep_turning()
 
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
@@ -67,9 +59,9 @@ class MoveActionClient(Node):
         config_msg = SetConfig()
         config_msg.config_id = 1
         self.get_logger().info("Publishing transition to home1.")
-        self.get_publisher('/set_config').publish(config_msg)
+        self.pub_config.publish(config_msg)
     
-    def keep_turing(self):
+    def keep_turning(self):
         """Keep turning and until detect enough bowling pins."""
         self.get_logger().info("Not enough pins yet! Keep turning.")
         self.send_goal("turn")
@@ -78,7 +70,7 @@ class MoveActionClient(Node):
         config_msg = SetConfig()
         config_msg.config_id = 5
         self.get_logger().info("Publishing congfig 5 to turn.")
-        self.get_publisher('/set_config').publish(config_msg)
+        self.pub_config.publish(config_msg)
 
 def main(args=None):
     rclpy.init(args=args)
