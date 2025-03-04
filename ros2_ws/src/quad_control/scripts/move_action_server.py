@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
 import rclpy
-from rclpy.action import ActionServer, CancelResponse
+from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.node import Node
 from quad_interfaces.action import Move
 from std_msgs.msg import String
-
 
 class MoveActionServer(Node):
 
@@ -16,15 +15,13 @@ class MoveActionServer(Node):
             Move,
             'move',
             execute_callback=self.execute_callback,
-            goal_callback=self.goal_callback,
-            cancel_callback=self.cancel_callback
         )
 
         # Subscription to /move_command
         self.sub_move_command = self.create_subscription(
             String,
             '/move_command',
-            self.move_command_callback,
+            self.execute_callback,
             10
         )
 
@@ -34,61 +31,13 @@ class MoveActionServer(Node):
         self.current_command = "stop" # Default movement state
         self.get_logger().info("MoveActionServer is ready.")
 
-    def goal_callback(self, goal_request):
-        """Accept or reject a goal."""
-        if goal_request.movement not in ["turn", "stop", "hcir", "cirh"]:
-            self.get_logger().warn("Invalid movement request!")
-            return rclpy.action.GoalResponse.REJECT
-
-        self.get_logger().info(f"Received movement request: {goal_request.movement}")
-        return rclpy.action.GoalResponse.ACCEPT
-
-    def cancel_callback(self, goal_handle):
-        """Handle goal cancellation."""
-        self.get_logger().info("Goal canceled.")
-        return CancelResponse.ACCEPT
-
-    def move_command_callback(self, msg):
-        """Update movement state based on /move_command topic."""
-        self.current_command = msg.data
-
-    async def execute_callback(self, goal_handle):
+    def execute_callback(self, goal_handle):
         """Execute the action, updating movement until the command changes."""
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")
-
-        feedback_msg = Move.Feedback()
-        rate = self.create_rate(1)  # 1 Hz update rate
-
-        while rclpy.ok():
-            if goal_handle.is_cancel_requested:
-                self.get_logger.info("Goal was canceled.")
-                goal_handle.canceled()
-                return Move.result(success=False)
-            
-            if self.current_command != movement_type:
-                self.get_logger().info(f"Command changed ({self.current_command}), stopping action.")
-                goal_handle.succeed()
-                return Move.Result(success=True)
-
-            # Publish feedback
-            feedback_msg.status = f"Executing {movement_type}"
-            goal_handle.publish_feedback(feedback_msg)
-
-            # Publish status message
-            feedback_status = String()
-            feedback_status.data = f"Executing {movement_type}"
-            self.feedback_publisher.publish(feedback_status)
-
-            self.get_logger().info(f"Executing {movement_type}...")
-            rate.sleep()
         
         # Populate result message
         result = Move.Result()
-        result.success = feedback_msg.success
-
-        self.get_logger().info('Returning result: {0}'.format(result.success))
-
         return result
 
 

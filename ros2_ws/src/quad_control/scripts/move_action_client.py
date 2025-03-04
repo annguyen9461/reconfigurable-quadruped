@@ -6,13 +6,11 @@ from rclpy.action import ActionClient
 from std_msgs.msg import Int32  # The topic message type
 from quad_interfaces.action import Move   # The action type
 
-from rclpy.qos import qos_profile_sensor_data
-import time
+from action_msgs.msg import GoalStatus
 
 class MoveActionClient(Node):
     def __init__(self):
         super().__init__('move_action_client')
-
         # Create an action client
         self._action_client = ActionClient(self, Move, 'move')
 
@@ -21,7 +19,7 @@ class MoveActionClient(Node):
             Int32,
             '/num_bowling_pins',
             self.command_callback,
-            qos_profile_sensor_data
+            10
         )
 
         self.current_command = None  # Track last sent command
@@ -49,37 +47,9 @@ class MoveActionClient(Node):
 
         self.get_logger().info(f"Sending goal: {movement_type}")
 
-        if not self._action_client.wait_for_server(timeout_sec=2.0):
-            self.get_logger().warn("⚠️ Action server unavailable, skipping goal")
-            return
-        send_goal_future = self._action_client.send_goal_async(goal_msg, self.goal_response_callback)
-        send_goal_future.add_done_callback(self.result_callback)
-        time.sleep(0.5)
+        self._action_client.wait_for_server()
 
-    def goal_response_callback(self, future):
-        """Callback function when the action server accepts or rejects the goal."""
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().warn("🚨 Goal rejected by the server!")
-            return
-
-        self.get_logger().info("✅ Goal accepted!")
-
-        # Log that we're waiting for the result
-        self.get_logger().info("⏳ Waiting for action result...")
-
-        # Wait for result
-        goal_handle.get_result_async().add_done_callback(self.result_callback)
-
-
-    def result_callback(self, future):
-        """Callback function when the action server returns the result."""
-        result = future.result().get_result()
-        if result.success:
-            self.get_logger().info("Goal succeeded!")
-        else:
-            self.get_logger().warn("Goal failed!")
-
+        return self._action_client.send_goal_async(goal_msg)
 
 def main(args=None):
     rclpy.init(args=args)

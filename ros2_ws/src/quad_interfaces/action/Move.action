@@ -3,8 +3,8 @@ string movement
 ---
 
 # Feedback: Status message while execiting
-string status
+string status_message
 
 ---
 # Result: Whether the action succeeded
-bool success
+bool is_success
