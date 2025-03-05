@@ -56,13 +56,8 @@ class MoveActionClient(Node):
         self.curr_state = msg.current_state
 
     def command_callback(self, msg):
-        """Decides action based on the number of bowling pins detected."""
-        try:
-            loop = asyncio.get_running_loop()  # Get current event loop
-            loop.create_task(self.handle_command(msg))  # Create task in the running loop
-        except RuntimeError:
-            self.get_logger().error("No running event loop found. Running task synchronously.")
-            asyncio.run(self.handle_command(msg))  # Run synchronously if no event loop
+        """Handles bowling pin detection."""
+        asyncio.create_task(self.handle_command(msg))
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
@@ -165,12 +160,39 @@ class MoveActionClient(Node):
         self.get_logger().info("Publishing congfig 5 to turn.")
         self.config_publisher.publish(config_msg)
 
-def main(args=None):
-    rclpy.init(args=args)
-    client_node = MoveActionClient()
-    rclpy.spin(client_node)
-    client_node.destroy_node()
+async def spinning(node):
+    """Continuously spin the ROS2 node asynchronously."""
+    while rclpy.ok():
+        rclpy.spin_once(node, timeout_sec=0.01)
+        await asyncio.sleep(0.001)
+
+
+async def run():
+    """Main async function to handle ROS2 spinning and task execution."""
+    rclpy.init()
+    action_client = MoveActionClient()
+
+    spin_task = asyncio.create_task(spinning(action_client))
+
+    # Example: Sequentially execute these goals for testing
+    await action_client.send_goal("turn")
+    await asyncio.sleep(2)  # Simulate delay
+    await action_client.send_goal("stop_turning")
+    await action_client.send_goal("hcir")
+    await action_client.send_goal("rolling")
+
+    spin_task.cancel()
+    try:
+        await spin_task
+    except asyncio.exceptions.CancelledError:
+        pass
+
     rclpy.shutdown()
+
+    
+def main(args=None):
+    """Set up an asyncio event loop and run the async main function."""
+    asyncio.run(run())
 
 if __name__ == '__main__':
     main()
