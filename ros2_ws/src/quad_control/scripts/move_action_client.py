@@ -101,7 +101,22 @@ class MoveActionClient(Node):
         await self._action_client.wait_for_server()
 
         future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
-        await future  # Wait for the goal to be accepted
+        goal_handle = await future  # Wait for goal acceptance
+
+        if not goal_handle.accepted:
+            self.get_logger().error(f"Goal {movement_type} was rejected!")
+            return
+
+        self.get_logger().info(f"Goal {movement_type} accepted. Waiting for result...")
+
+        # Wait for the action to complete
+        result_future = goal_handle.get_result_async()
+        result = await result_future
+
+        if result.status == GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().info(f"Goal {movement_type} succeeded!")
+        else:
+            self.get_logger().error(f"Goal {movement_type} failed with status {result.status}")
 
     async def stop_rolling(self):
         """Stop rolling"""
