@@ -57,8 +57,12 @@ class MoveActionClient(Node):
 
     def command_callback(self, msg):
         """Decides action based on the number of bowling pins detected."""
-        future = asyncio.ensure_future(self.handle_command(msg))
-        rclpy.spin_until_future_complete(self, future)
+        try:
+            loop = asyncio.get_running_loop()  # Get current event loop
+            loop.create_task(self.handle_command(msg))  # Create task in the running loop
+        except RuntimeError:
+            self.get_logger().error("No running event loop found. Running task synchronously.")
+            asyncio.run(self.handle_command(msg))  # Run synchronously if no event loop
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
