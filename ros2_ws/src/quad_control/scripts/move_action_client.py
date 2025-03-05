@@ -192,7 +192,16 @@ async def test_run():
     
 def main(args=None):
     """Set up an asyncio event loop and run the async main function."""
-    asyncio.run(test_run())
+    # asyncio.run(test_run())
+
+    # Actual run
+    rclpy.init()
+    action_client = MoveActionClient()
+    # Start ROS2 spinning (allows it to listen for messages)
+    rclpy.spin(action_client)
+    # Shutdown cleanly when done
+    action_client.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
