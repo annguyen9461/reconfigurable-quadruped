@@ -1,0 +1,12 @@
+int32 motor1_position
+int32 motor2_position
+int32 motor3_position
+int32 motor4_position
+int32 motor5_position
+int32 motor6_position
+int32 motor7_position
+int32 motor8_position
+int32 motor9_position
+int32 motor10_position
+int32 motor11_position
+int32 motor12_position

@@ -17,6 +17,7 @@
 #define DEVICE_NAME "/dev/ttyUSB0"  // [Linux]: "/dev/ttyUSB*", [Windows]: "COM*"
 
 #define NUM_MOTORS 12
+#define MOTOR_READ_FAIL -1
 
 
 uint8_t dxl_error = 0;
@@ -114,7 +115,7 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
                         leg1_up_right, leg1_turn_right, leg1_down_right,
                         home_tiptoe
                     };
-                    sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 3000}; // 500ms delay per step
+                    sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 3500}; // 500ms delay per step
                     break;
             }
             // Execute each step in the sequence
@@ -226,7 +227,43 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
         };
 
     get_all_positions_server_ = create_service<GetAllPositions>("get_all_positions", get_all_id_positions);
+    motor_positions_publisher_ = this->create_publisher<quad_interfaces::msg::MotorPositions>("/motor_positions", 10);
 
+    auto timer_callback =
+      [this]() -> void {
+        auto message = quad_interfaces::msg::MotorPositions();
+
+        // Read motor positions
+        for (int id = 1; id <= NUM_MOTORS; id++) {
+            uint32_t motor_position = 0;
+            dxl_comm_result = packetHandler->read4ByteTxRx(
+                portHandler,
+                (uint8_t) id,
+                ADDR_PRESENT_POSITION,
+                &motor_position,
+                &dxl_error
+            );
+
+            // Assign to message
+            switch (id) {
+                case 1: message.motor1_position = motor_position; break;
+                case 2: message.motor2_position = motor_position; break;
+                case 3: message.motor3_position = motor_position; break;
+                case 4: message.motor4_position = motor_position; break;
+                case 5: message.motor5_position = motor_position; break;
+                case 6: message.motor6_position = motor_position; break;
+                case 7: message.motor7_position = motor_position; break;
+                case 8: message.motor8_position = motor_position; break;
+                case 9: message.motor9_position = motor_position; break;
+                case 10: message.motor10_position = motor_position; break;
+                case 11: message.motor11_position = motor_position; break;
+                case 12: message.motor12_position = motor_position; break;
+            }
+        }
+
+        this->motor_positions_publisher_->publish(message);
+      };
+    timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback);
 }
 
 QuadMotorControl::~QuadMotorControl()

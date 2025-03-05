@@ -17,6 +17,7 @@ find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/Move.action"
+  "msg/MotorPositions.msg"
   "msg/RobotState.msg"
   "msg/SetPosition.msg"
   "msg/SetConfig.msg"
