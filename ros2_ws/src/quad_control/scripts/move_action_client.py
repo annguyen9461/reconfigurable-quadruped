@@ -98,7 +98,7 @@ class MoveActionClient(Node):
         goal_msg.movement = movement_type
 
         self.get_logger().info(f"Sending goal: {movement_type}")
-        await self._action_client.wait_for_server()
+        self._action_client.wait_for_server()
 
         future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
         goal_handle = await future  # Wait for goal acceptance
