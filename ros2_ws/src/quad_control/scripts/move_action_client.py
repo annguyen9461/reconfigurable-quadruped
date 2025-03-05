@@ -57,7 +57,8 @@ class MoveActionClient(Node):
 
     def command_callback(self, msg):
         """Decides action based on the number of bowling pins detected."""
-        asyncio.create_task(self.handle_command(msg))  # Call an async function to handle sequential execution
+        future = asyncio.ensure_future(self.handle_command(msg))
+        rclpy.spin_until_future_complete(self, future)
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
