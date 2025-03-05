@@ -167,7 +167,7 @@ async def spinning(node):
         await asyncio.sleep(0.001)
 
 
-async def run():
+async def test_run():
     """Main async function to handle ROS2 spinning and task execution."""
     rclpy.init()
     action_client = MoveActionClient()
@@ -192,7 +192,7 @@ async def run():
     
 def main(args=None):
     """Set up an asyncio event loop and run the async main function."""
-    asyncio.run(run())
+    asyncio.run(test_run())
 
 if __name__ == '__main__':
     main()
