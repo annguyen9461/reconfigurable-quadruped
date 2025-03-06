@@ -57,11 +57,7 @@ class MoveActionClient(Node):
 
     def command_callback(self, msg):
         """Handles bowling pin detection."""
-        try:
-            loop = asyncio.get_running_loop()
-            loop.create_task(self.handle_command(msg))  # Run as async task
-        except RuntimeError:
-            self.get_logger().error("No running event loop found.")
+        asyncio.create_task(self.handle_command(msg))  
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
@@ -193,19 +189,32 @@ async def test_run():
 
     rclpy.shutdown()
 
-    
+async def run():
+    """Main async function to handle ROS2 spinning and execution."""
+    rclpy.init()
+    action_client = MoveActionClient()
+
+    # Start async ROS2 spinner
+    spin_task = asyncio.create_task(spinning(action_client))
+
+    await asyncio.sleep(1)  
+
+    await asyncio.Event().wait()  # Keeps the program running
+
+    spin_task.cancel()
+    try:
+        await spin_task
+    except asyncio.exceptions.CancelledError:
+        pass
+
+    rclpy.shutdown()
+
 def main(args=None):
     """Set up an asyncio event loop and run the async main function."""
     # asyncio.run(test_run())
 
     # Actual run
-    rclpy.init()
-    action_client = MoveActionClient()
-    # Start ROS2 spinning (allows it to listen for messages)
-    rclpy.spin(action_client)
-    # Shutdown cleanly when done
-    action_client.destroy_node()
-    rclpy.shutdown()
+    asyncio.run(run())
 
 if __name__ == '__main__':
     main()
