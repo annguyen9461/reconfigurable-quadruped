@@ -11,6 +11,7 @@
 #include <iomanip>
 
 #include <cmath>
+#include <random>
 
 int write_register(int file, uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
@@ -886,6 +887,14 @@ void gradual_transition(int* next_positions,
     move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
 }
 
+std::string get_random_command() {
+    static std::random_device rd;   // Non-deterministic random seed
+    static std::mt19937 gen(rd());  // Mersenne Twister RNG
+    static std::uniform_int_distribution<int> dist(0, 1); // Randomly pick 0 or 1
+
+    return dist(gen) ? "rfy" : "rfb"; // Return "rfy" if 1, "rfb" if 0
+}
+
 int main() 
 {
   int perfect_cir[NUM_MOTORS + 1] = {0, 
@@ -1091,7 +1100,8 @@ int main()
 
         float avg_tilt_angle = accumulated_tilt_angle / sample_count;
          // Use tilt angle to determine which side is under
-        bool blue_under = avg_tilt_angle >= -124 && avg_tilt_angle <= 157;     // Positive rotation → blue under
+        bool blue_under = (avg_tilt_angle >= -180 && avg_tilt_angle <= -122) ||
+        (avg_tilt_angle >= 136 && avg_tilt_angle <= 180);     // Positive rotation → blue under
         bool yellow_under = avg_tilt_angle >= -54 && avg_tilt_angle <= 58;  // Negative rotation → yellow under
 
         bool blue_under_good_range = (avg_tilt_angle >= -179 && avg_tilt_angle <= -162) 
