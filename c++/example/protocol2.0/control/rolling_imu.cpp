@@ -1065,10 +1065,6 @@ int main()
     auto current_time = std::chrono::high_resolution_clock::now();
     double timestamp = std::chrono::duration<double>(current_time - start_time).count();
 
-    // Apply scale factors
-    // float gyro_dps_y = gyro_y * (250.0 / 32768.0);
-    // float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
-
     // std::cout << "Gyro Raw - X: " << gyro_x << " Y: " << gyro_y << " Z: " << gyro_z << " | "
     // << "Accel Raw - X: " << accel_x << " Y: " << accel_y << " Z: " << accel_z << std::endl;
     
@@ -1084,20 +1080,13 @@ int main()
     // Accumulate data for smoothing
     accumulated_tilt_angle += angle_degrees;
 
-    // accumulated_accel_z += accel_mps2_z;
-    // accumulated_gyro_y += gyro_dps_y;
     sample_count++;
     // std::cout << "Sample Count: " << sample_count << std::endl;
 
     // Check if enough samples have been collected
     if (sample_count >= window_size) {
         std::cout << "COLLECTED enough samples while loop\n";
-        // float avg_accel_z = accumulated_accel_z / sample_count;
-        // float avg_gyro_y = accumulated_gyro_y / sample_count;
-        // // Use gyro_y to determine which side is under
-        // bool blue_under = accumulated_accel_z < 0.0;     // Positive rotation → blue under
-        // bool yellow_under = accumulated_accel_z > 0.0;  // Negative rotation → yellow under
-
+        
         float avg_tilt_angle = accumulated_tilt_angle / sample_count;
         std::cout << "Average Tilt Angle: " << avg_tilt_angle << " degrees" << std::endl;
          // Use tilt angle to determine which side is under
@@ -1111,26 +1100,6 @@ int main()
         || (avg_tilt_angle <= 0 && avg_tilt_angle >= -23);
 
         // Check propulsion conditions
-        // if (yellow_under_good_range) {
-        //   std::cout << "yellow_under_good_range. push yellow" <<"\n";
-        //   command = "rfy";
-        // } 
-        // else if (blue_under_good_range) {
-        //   std::cout << "blue_under_good_range. push blue" <<"\n";
-        //   command = "rfb";
-        // }
-        // else if (yellow_under) {
-        //   std::cout << "yellow under but not good range. push blue to gain momentum" <<"\n";
-        //   command = "rfb";
-        // } else if (blue_under) {
-        //   std::cout << "blue under but not good range. push yellow to gain momentum" <<"\n";
-        //   command = "rfy";
-        // } else {
-        //   std::cout << "unknown orientation. push random" <<"\n";
-        //   command = get_random_command();
-        // }
-
-        // Check propulsion conditions
         if (yellow_under) {
           std::cout << "yellow under. push yellow" <<"\n";
           command = "rfy";
@@ -1142,41 +1111,9 @@ int main()
           command = get_random_command();
         }
 
-        // else {
-        //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
-        //   // If acceleration isn't enough, try increasing momentum
-        //   if (yellow_under) {
-        //     std::cout << "yellow under. propel yellow" <<"\n";
-        //     command = "rpy";
-        //   } else if (blue_under) {
-        //     std::cout << "blue under. propel blue" <<"\n";
-        //     command = "rpb";
-        //   } else {
-        //     std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
-        //     command = "rpy";
-        //   }
-        // }
-
-        // else {
-        //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
-        //   // If acceleration isn't enough, try increasing momentum
-        //   if (yellow_under) {
-        //     std::cout << "yellow under. propel yellow" <<"\n";
-        //     command = "rfy";
-        //   } else if (blue_under) {
-        //     std::cout << "blue under. propel blue" <<"\n";
-        //     command = "rfb";
-        //   } else {
-        //     std::cout << "UNKNOWN orientation. propel yellow by default" <<"\n";
-        //     command = "rfy";
-        //   }
-        // }
 
         // Reset accumulators
         // after the window size is met, instead of prematurely which is immediately after the decision
-        // accumulated_accel_z = 0;
-        // accumulated_gyro_y = 0;
-        
         accumulated_tilt_angle = 0;
         sample_count = 0;
     }
