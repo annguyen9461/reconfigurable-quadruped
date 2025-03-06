@@ -1099,6 +1099,7 @@ int main()
         // bool yellow_under = accumulated_accel_z > 0.0;  // Negative rotation → yellow under
 
         float avg_tilt_angle = accumulated_tilt_angle / sample_count;
+        std::cout << "Average Tilt Angle: " << avg_tilt_angle << " degrees" << std::endl;
          // Use tilt angle to determine which side is under
         bool blue_under = (avg_tilt_angle >= -180 && avg_tilt_angle <= -122) ||
         (avg_tilt_angle >= 136 && avg_tilt_angle <= 180);     // Positive rotation → blue under
