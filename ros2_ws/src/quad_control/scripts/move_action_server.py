@@ -94,13 +94,13 @@ class MoveActionServer(Node):
         self.get_logger().info(f"Executing movement: {movement_type}")
         
          # Append the seeds for the Fibonacci sequence
-        feedback_msg = Move.Feedback()
+        # feedback_msg = Move.Feedback()
         result = Move.Result()
 
         # Initial feedback message
         # feedback_msg.status_message = f"Starting {movement_type}..."
-        feedback_msg.still_moving = True
-        goal_handle.publish_feedback(feedback_msg)
+        # feedback_msg.still_moving = True
+        # goal_handle.publish_feedback(feedback_msg)
 
         if movement_type == "turn":
             self.publish_robot_state(self.TURNING)
@@ -109,8 +109,8 @@ class MoveActionServer(Node):
             # Wait for robot to reach home position
             while not self.is_at_home_position():
                 # feedback_msg.status_message = "Turning..."
-                feedback_msg.still_moving = True
-                goal_handle.publish_feedback(feedback_msg)
+                # feedback_msg.still_moving = True
+                # goal_handle.publish_feedback(feedback_msg)
                 await asyncio.sleep(0.5)  # wait and check again
             
             self.get_logger().info("Turn completed. At home position.")
@@ -127,8 +127,8 @@ class MoveActionServer(Node):
             # Wait for robot to reach rolling position
             while not self.is_at_roll_position():
                 # feedback_msg.status_message = "Trans to roll..."
-                feedback_msg.still_moving = True
-                goal_handle.publish_feedback(feedback_msg)
+                # feedback_msg.still_moving = True
+                # goal_handle.publish_feedback(feedback_msg)
                 await asyncio.sleep(0.5)  # wait and check again
             
             self.get_logger().info("Transition to roll config completed.")
@@ -146,8 +146,8 @@ class MoveActionServer(Node):
 
         # Final feedback and result
         # feedback_msg.status_message = f"{movement_type} completed"
-        feedback_msg.still_moving = False
-        goal_handle.publish_feedback(feedback_msg)
+        # feedback_msg.still_moving = False
+        # goal_handle.publish_feedback(feedback_msg)
 
         # Mark goal as succeeded
         goal_handle.succeed()
