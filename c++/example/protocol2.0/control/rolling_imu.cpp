@@ -1102,7 +1102,7 @@ int main()
         std::cout << "Average Tilt Angle: " << avg_tilt_angle << " degrees" << std::endl;
          // Use tilt angle to determine which side is under
         bool blue_under = (avg_tilt_angle >= -180 && avg_tilt_angle <= -122) ||
-        (avg_tilt_angle >= 136 && avg_tilt_angle <= 180);     // Positive rotation → blue under
+        (avg_tilt_angle >= 123 && avg_tilt_angle <= 180);     // Positive rotation → blue under
         bool yellow_under = avg_tilt_angle >= -54 && avg_tilt_angle <= 58;  // Negative rotation → yellow under
 
         bool blue_under_good_range = (avg_tilt_angle >= -179 && avg_tilt_angle <= -162) 
