@@ -57,7 +57,11 @@ class MoveActionClient(Node):
 
     def command_callback(self, msg):
         """Handles bowling pin detection."""
-        asyncio.create_task(self.handle_command(msg))
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(self.handle_command(msg))  # Run as async task
+        except RuntimeError:
+            self.get_logger().error("No running event loop found.")
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
