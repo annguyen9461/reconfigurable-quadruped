@@ -12,3 +12,5 @@ ros2_ws/src/custom_action_cpp/
 venv/
 build/
 ros2_ws/yolo11s-obb.pt
+c++/example/protocol2.0/control/rolling_imu/roll
+c++/example/protocol2.0/control/sync_read_write/sync_read_write
