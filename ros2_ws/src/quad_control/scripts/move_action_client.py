@@ -12,6 +12,7 @@ from action_msgs.msg import GoalStatus
 
 import time
 import asyncio
+from rclpy.executors import MultiThreadedExecutor
 
 class MoveActionClient(Node):
     # Enum-like representation for robot states
@@ -214,7 +215,16 @@ def main(args=None):
     # asyncio.run(test_run())
 
     # Actual run
-    asyncio.run(run())
+    # asyncio.run(run())
+
+    rclpy.init()
+    action_client = MoveActionClient()
+    
+    executor = MultiThreadedExecutor()
+    rclpy.spin(action_client, executor=executor)
+    
+    action_client.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
