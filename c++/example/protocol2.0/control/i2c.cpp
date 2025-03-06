@@ -69,7 +69,7 @@ int main() {
     float gyro_z_offset = -0.37;
 
     // Open CSV file for writing
-    std::ofstream csvFile("imu_high_res_data.csv");
+    std::ofstream csvFile("angle_range_.csv");
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open CSV file\n";
         close(file);
