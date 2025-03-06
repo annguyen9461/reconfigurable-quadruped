@@ -98,7 +98,7 @@ class MoveActionServer(Node):
         result = Move.Result()
 
         # Initial feedback message
-        feedback_msg.status_message = f"Starting {movement_type}..."
+        # feedback_msg.status_message = f"Starting {movement_type}..."
         feedback_msg.still_moving = True
         goal_handle.publish_feedback(feedback_msg)
 
@@ -108,7 +108,7 @@ class MoveActionServer(Node):
             
             # Wait for robot to reach home position
             while not self.is_at_home_position():
-                feedback_msg.status_message = "Turning..."
+                # feedback_msg.status_message = "Turning..."
                 feedback_msg.still_moving = True
                 goal_handle.publish_feedback(feedback_msg)
                 await asyncio.sleep(0.5)  # wait and check again
@@ -126,7 +126,7 @@ class MoveActionServer(Node):
             
             # Wait for robot to reach rolling position
             while not self.is_at_roll_position():
-                feedback_msg.status_message = "Trans to roll..."
+                # feedback_msg.status_message = "Trans to roll..."
                 feedback_msg.still_moving = True
                 goal_handle.publish_feedback(feedback_msg)
                 await asyncio.sleep(0.5)  # wait and check again
@@ -145,7 +145,7 @@ class MoveActionServer(Node):
             self.get_logger().info("Stopped rolling.")
 
         # Final feedback and result
-        feedback_msg.status_message = f"{movement_type} completed"
+        # feedback_msg.status_message = f"{movement_type} completed"
         feedback_msg.still_moving = False
         goal_handle.publish_feedback(feedback_msg)
 
