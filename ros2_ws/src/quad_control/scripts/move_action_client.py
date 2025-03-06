@@ -56,9 +56,19 @@ class MoveActionClient(Node):
         """Updates the robot's state based on published `/robot_state` topic."""
         self.curr_state = msg.current_state
 
+    # def command_callback(self, msg):
+    #     """Handles bowling pin detection."""
+    #     asyncio.create_task(self.handle_command(msg))
+    
     def command_callback(self, msg):
         """Handles bowling pin detection."""
-        asyncio.create_task(self.handle_command(msg))  
+        try:
+            loop = asyncio.get_running_loop()  # Get active asyncio loop
+            loop.create_task(self.handle_command(msg))  # Schedule task in asyncio loop
+        except RuntimeError:
+            self.get_logger().error("No running event loop found. Running manually.")
+            asyncio.run_coroutine_threadsafe(self.handle_command(msg), asyncio.get_event_loop())
+  
 
     async def handle_command(self, msg):
         """Processes the pin detection logic in order."""
@@ -226,10 +236,29 @@ def main(args=None):
     action_client = MoveActionClient()
     
     executor = MultiThreadedExecutor()
-    rclpy.spin(action_client, executor=executor)
     
-    action_client.destroy_node()
-    rclpy.shutdown()
+    # rclpy.spin(action_client, executor=executor)
+    
+    # action_client.destroy_node()
+    # rclpy.shutdown()
+
+    # Run rclpy.spin() in the executor
+    executor.add_node(action_client)
+
+    # Start asyncio event loop in a background thread
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    # Run asyncio in a separate thread so ROS2 can still function
+    loop.run_until_complete(asyncio.sleep(1))  # Small delay to ensure startup
+    try:
+        executor.spin()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        action_client.destroy_node()
+        rclpy.shutdown()
+        loop.close()
 
 if __name__ == '__main__':
     main()
