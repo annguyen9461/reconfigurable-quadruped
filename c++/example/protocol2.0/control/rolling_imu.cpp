@@ -1120,10 +1120,10 @@ int main()
         }
         else if (yellow_under) {
           std::cout << "yellow under but not good range. push blue to gain momentum" <<"\n";
-          command = "rfb";
+          command = "rpb";
         } else if (blue_under) {
           std::cout << "blue under but not good range. push yellow to gain momentum" <<"\n";
-          command = "rfy";
+          command = "rpy";
         } else {
           std::cout << "unknown orientation. push random" <<"\n";
           command = get_random_command();
@@ -1281,7 +1281,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
@@ -1295,7 +1295,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
+        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
