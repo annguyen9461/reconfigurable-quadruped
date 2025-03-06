@@ -1120,10 +1120,10 @@ int main()
         }
         else if (yellow_under) {
           std::cout << "yellow under but not good range. push blue to gain momentum" <<"\n";
-          command = "rpb";
+          command = "rfb";
         } else if (blue_under) {
           std::cout << "blue under but not good range. push yellow to gain momentum" <<"\n";
-          command = "rpy";
+          command = "rfy";
         } else {
           std::cout << "unknown orientation. push random" <<"\n";
           command = get_random_command();
