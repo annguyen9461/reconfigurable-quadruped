@@ -1110,24 +1110,37 @@ int main()
         || (avg_tilt_angle <= 0 && avg_tilt_angle >= -23);
 
         // Check propulsion conditions
-        if (yellow_under_good_range) {
-          std::cout << "yellow_under_good_range. push yellow" <<"\n";
+        // if (yellow_under_good_range) {
+        //   std::cout << "yellow_under_good_range. push yellow" <<"\n";
+        //   command = "rfy";
+        // } 
+        // else if (blue_under_good_range) {
+        //   std::cout << "blue_under_good_range. push blue" <<"\n";
+        //   command = "rfb";
+        // }
+        // else if (yellow_under) {
+        //   std::cout << "yellow under but not good range. push blue to gain momentum" <<"\n";
+        //   command = "rfb";
+        // } else if (blue_under) {
+        //   std::cout << "blue under but not good range. push yellow to gain momentum" <<"\n";
+        //   command = "rfy";
+        // } else {
+        //   std::cout << "unknown orientation. push random" <<"\n";
+        //   command = get_random_command();
+        // }
+
+        // Check propulsion conditions
+        if (yellow_under) {
+          std::cout << "yellow under. push yellow" <<"\n";
           command = "rfy";
-        } 
-        else if (blue_under_good_range) {
-          std::cout << "blue_under_good_range. push blue" <<"\n";
-          command = "rfb";
-        }
-        else if (yellow_under) {
-          std::cout << "yellow under but not good range. push blue to gain momentum" <<"\n";
-          command = "rfb";
         } else if (blue_under) {
-          std::cout << "blue under but not good range. push yellow to gain momentum" <<"\n";
-          command = "rfy";
+          std::cout << "blue under. push blue" <<"\n";
+          command = "rfb";
         } else {
           std::cout << "unknown orientation. push random" <<"\n";
           command = get_random_command();
         }
+
         // else {
         //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
         //   // If acceleration isn't enough, try increasing momentum
