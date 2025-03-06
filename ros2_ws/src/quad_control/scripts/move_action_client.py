@@ -98,8 +98,13 @@ class MoveActionClient(Node):
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
 
+        self.get_logger().info(f"Waiting for action server before sending goal: {movement_type}")
+    
+        while not self._action_client.wait_for_server(timeout_sec=1.0):
+            self.get_logger().warn("Waiting for move action server...")
+
+
         self.get_logger().info(f"Sending goal: {movement_type}")
-        self._action_client.wait_for_server()
 
         future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
         goal_handle = await future  # Wait for goal acceptance
