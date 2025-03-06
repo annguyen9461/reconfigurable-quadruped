@@ -9,6 +9,8 @@ from quad_interfaces.msg import MotorPositions
 from std_msgs.msg import String
 
 import asyncio
+import time
+from rclpy.executors import MultiThreadedExecutor
 
 class MoveActionServer(Node):
     # Enum-like representation for robot states
@@ -67,6 +69,10 @@ class MoveActionServer(Node):
     def is_at_home_position(self):
         """Checks if the robot's motors are within the threshold of the home position."""
         for i in range(12):
+            if self.current_motor_pos[i] is None:  # Ensure motor positions are initialized
+                self.get_logger().warn(f"Motor {i+1} position is None! Skipping check.")
+                return False
+        
             difference = abs(self.current_motor_pos[i] - self.home_tiptoe[i])
             if difference > self.position_threshold:
                 self.get_logger().info(f"Motor {i+1} is off by {difference} ticks")
@@ -76,6 +82,10 @@ class MoveActionServer(Node):
     def is_at_roll_position(self):
         """Checks if the robot's motors are within the threshold of the home position."""
         for i in range(12):
+            if self.current_motor_pos[i] is None:  # Ensure motor positions are initialized
+                self.get_logger().warn(f"Motor {i+1} position is None! Skipping check.")
+                return False
+            
             difference = abs(self.current_motor_pos[i] - self.perfect_cir[i])
             if difference > self.position_threshold:
                 self.get_logger().info(f"Motor {i+1} is off by {difference} ticks")
@@ -111,7 +121,8 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Turning..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
-                await asyncio.sleep(0.5)  # wait and check again
+                # await asyncio.sleep(0.5)  # wait and check again
+                time.sleep(0.5)
             
             self.get_logger().info("Turn completed. At home position.")
             self.publish_robot_state(self.STOPPED_TURNING)
@@ -129,7 +140,8 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Trans to roll..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
-                await asyncio.sleep(0.5)  # wait and check again
+                # await asyncio.sleep(0.5)  # wait and check again
+                time.sleep(0.5)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)
@@ -137,7 +149,8 @@ class MoveActionServer(Node):
         elif movement_type == "rolling":
             self.publish_robot_state(self.ROLLING)
             self.get_logger().info("Rolling...")
-            await asyncio.sleep(3)  # Simulate rolling time
+            # await asyncio.sleep(3)  # Simulate rolling time
+            time.sleep(0.5)
             self.publish_robot_state(self.KNOCKED_OVER_PINS)
 
         elif movement_type == "stop_rolling":
@@ -160,7 +173,9 @@ def main(args=None):
 
     node = MoveActionServer()
 
-    rclpy.spin(node)
+    # rclpy.spin(node) 
+    executor = MultiThreadedExecutor()
+    rclpy.spin(node, executor=executor)
 
 
 if __name__ == '__main__':
