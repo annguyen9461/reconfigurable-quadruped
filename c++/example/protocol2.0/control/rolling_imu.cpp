@@ -1117,7 +1117,7 @@ int main()
           std::cout << "blue under. push blue" <<"\n";
           command = "rfb";
         } else {
-          command = "rfy";
+          command = get_random_command();
         }
         // else {
         //   std::cout << "Avg Accel Z: " << avg_accel_z << " below threshold. Increasing momentum.\n";
