@@ -93,11 +93,11 @@ class MoveActionServer(Node):
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")
         
-         # Append the seeds for the Fibonacci sequence
+        #  # Append the seeds for the Fibonacci sequence
         # feedback_msg = Move.Feedback()
         
 
-        # Initial feedback message
+        # # Initial feedback message
         # feedback_msg.status_message = f"Starting {movement_type}..."
         # feedback_msg.still_moving = True
         # goal_handle.publish_feedback(feedback_msg)
@@ -111,7 +111,6 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Turning..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
-                # await asyncio.sleep(0.5)  # wait and check again
                 time.sleep(0.2)
             
             self.get_logger().info("Turn completed. At home position.")
@@ -130,7 +129,6 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Trans to roll..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
-                # await asyncio.sleep(0.5)  # wait and check again
                 time.sleep(0.5)
             
             self.get_logger().info("Transition to roll config completed.")
@@ -139,7 +137,6 @@ class MoveActionServer(Node):
         elif movement_type == "rolling":
             self.publish_robot_state(self.ROLLING)
             self.get_logger().info("Rolling...")
-            # await asyncio.sleep(3)  # Simulate rolling time
             time.sleep(0.5)
             self.publish_robot_state(self.KNOCKED_OVER_PINS)
 
@@ -147,7 +144,7 @@ class MoveActionServer(Node):
             self.publish_robot_state(self.STOPPED_ROLLING)
             self.get_logger().info("Stopped rolling.")
 
-        # Final feedback and result
+        # # Final feedback and result
         # feedback_msg.status_message = f"{movement_type} completed"
         # feedback_msg.still_moving = False
         # goal_handle.publish_feedback(feedback_msg)
@@ -157,6 +154,8 @@ class MoveActionServer(Node):
         
         # Populate result message
         result = Move.Result()
+        self.get_logger().info(f"Result object attributes: {dir(result)}")
+        self.get_logger().info(f"Result object type: {type(result)}")
         result.arrived = True
         self.get_logger().info('Returning result: {0}'.format(result.arrived))
         return result

@@ -1,12 +1,9 @@
 # Goal: Specify movement type ("stop", "turn", etc.)
 string movement
 ---
-
 # Feedback: Status message while executing
 string status_message
 bool still_moving  # True if still turning/moving, False if arrived
-
 ---
-
 # Result: Whether the action succeeded
 bool arrived  # True if the robot reached the desired state
