@@ -227,38 +227,10 @@ async def run():
 
 def main(args=None):
     """Set up an asyncio event loop and run the async main function."""
-    # asyncio.run(test_run())
+    asyncio.run(test_run())
 
     # Actual run
     # asyncio.run(run())
-
-    rclpy.init()
-    action_client = MoveActionClient()
-    
-    executor = MultiThreadedExecutor()
-    
-    # rclpy.spin(action_client, executor=executor)
-    
-    # action_client.destroy_node()
-    # rclpy.shutdown()
-
-    # Run rclpy.spin() in the executor
-    executor.add_node(action_client)
-
-    # Start asyncio event loop in a background thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    # Run asyncio in a separate thread so ROS2 can still function
-    loop.run_until_complete(asyncio.sleep(1))  # Small delay to ensure startup
-    try:
-        executor.spin()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        action_client.destroy_node()
-        rclpy.shutdown()
-        loop.close()
 
 if __name__ == '__main__':
     main()
