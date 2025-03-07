@@ -9,10 +9,7 @@ from quad_interfaces.msg import SetConfig
 from quad_interfaces.msg import RobotState
 
 from action_msgs.msg import GoalStatus
-
 import time
-import asyncio
-from rclpy.executors import MultiThreadedExecutor
 
 class MoveActionClient(Node):
     # Enum-like representation for robot states
@@ -23,7 +20,6 @@ class MoveActionClient(Node):
     ROLLING = 4
     KNOCKED_OVER_PINS = 5
     STOPPED_ROLLING = 6
-
     def __init__(self):
         super().__init__('move_action_client')
         # Create an action client
@@ -52,112 +48,32 @@ class MoveActionClient(Node):
         self.found_enough_pins = False
         self.curr_state = self.TURNING
 
-    def robot_state_callback(self, msg):
-        """Updates the robot's state based on published `/robot_state` topic."""
-        self.curr_state = msg.current_state
-
-    # def command_callback(self, msg):
-    #     """Handles bowling pin detection."""
-    #     asyncio.create_task(self.handle_command(msg))
-    
     def command_callback(self, msg):
-        """Handles bowling pin detection."""
-        try:
-            loop = asyncio.get_running_loop()  # Get active asyncio loop
-            loop.create_task(self.handle_command(msg))  # Schedule task in asyncio loop
-        except RuntimeError:
-            self.get_logger().error("No running event loop found. Running manually.")
-            asyncio.run_coroutine_threadsafe(self.handle_command(msg), asyncio.get_event_loop())
-  
-
-    async def handle_command(self, msg):
-        """Processes the pin detection logic in order."""
+        """Decides action based on the number of bowling pins detected."""
         bowling_pin_count = msg.data
         self.get_logger().info(f"Received pin count: {bowling_pin_count}")
 
-        if not self.found_enough_pins:
-            curr_time = time.time()
-
-            if bowling_pin_count >= 2:  
-                if self.pin_detected_time == None:
-                    # First detection, start timer
-                    self.pin_detected_time = curr_time
-                    self.get_logger().info("Pins detected! Starting 3s timer...")
-                elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
-                    # Pins have been detected continuously for 3 seconds
-                    await self.stop_turning()
-                    self.found_enough_pins = True
-                    return  # No need to continue processing
-            else:
-                # Reset timer if pins drop below threshold before 3 seconds
-                if self.pin_detected_time is not None:
-                    self.get_logger().info("Pins dropped below threshold, resetting timer.")
-                    self.pin_detected_time = None
-            
-            await self.keep_turning()
+        if bowling_pin_count >= 2:  # Found a pin, stop turning
+            self.stop_turning()
+            return
         else:
-            if self.curr_state == self.STOPPED_TURNING:
-                await self.transition_to_roll()
-            elif self.curr_state == self.AT_ROLL_STATIONARY:
-                await self.start_rolling()
-            elif self.curr_state == self.KNOCKED_OVER_PINS:
-                await self.stop_rolling()
+            self.keep_turning()
 
-    async def send_goal(self, movement_type):
+    def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
 
-        self.get_logger().info(f"Waiting for action server before sending goal: {movement_type}")
-    
-        while not self._action_client.wait_for_server(timeout_sec=1.0):
-            self.get_logger().warn("Waiting for move action server...")
-
-
         self.get_logger().info(f"Sending goal: {movement_type}")
 
-        future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
-        goal_handle = await future  # Wait for goal acceptance
+        self._action_client.wait_for_server()
 
-        if not goal_handle.accepted:
-            self.get_logger().error(f"Goal {movement_type} was rejected!")
-            return
+        return self._action_client.send_goal_async(goal_msg)
 
-        self.get_logger().info(f"Goal {movement_type} accepted. Waiting for result...")
-
-        # Wait for the action to complete
-        result_future = goal_handle.get_result_async()
-        result = await result_future
-
-        if result.status == GoalStatus.STATUS_SUCCEEDED:
-            self.get_logger().info(f"Goal {movement_type} succeeded!")
-        else:
-            self.get_logger().error(f"Goal {movement_type} failed with status {result.status}")
-
-    async def stop_rolling(self):
-        """Stop rolling"""
-        await self.send_goal("stop_rolling")
-        self.get_logger().info("Stopping rolling...")
-
-    async def start_rolling(self):
-        """Start rolling"""
-        await self.send_goal("rolling")
-        self.get_logger().info("Starting rolling...")
-
-    async def transition_to_roll(self):
-        """Transition to rolling configuration."""
-        await self.send_goal("hcir")
-
-        # Publish to `/set_config` to stop moving
-        config_msg = SetConfig()
-        config_msg.config_id = 3
-        self.get_logger().info("Transitioning to roll...")
-        self.config_publisher.publish(config_msg)
-
-    async def stop_turning(self):
+    def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
-        await self.send_goal("stop_turning")
+        self.send_goal("stopt")
 
         # Publish to `/set_config` to stop moving
         config_msg = SetConfig()
@@ -165,10 +81,10 @@ class MoveActionClient(Node):
         self.get_logger().info("Publishing transition to home1.")
         self.config_publisher.publish(config_msg)
     
-    async def keep_turning(self):
+    def keep_turning(self):
         """Keep turning and until detect enough bowling pins."""
         self.get_logger().info("Not enough pins yet! Keep turning.")
-        await self.send_goal("turn")
+        self.send_goal("turn")
 
         # Publish to `/set_config` to stop moving
         config_msg = SetConfig()
@@ -176,61 +92,123 @@ class MoveActionClient(Node):
         self.get_logger().info("Publishing congfig 5 to turn.")
         self.config_publisher.publish(config_msg)
 
-async def spinning(node):
-    """Continuously spin the ROS2 node asynchronously."""
-    while rclpy.ok():
-        rclpy.spin_once(node, timeout_sec=0.01)
-        await asyncio.sleep(0.001)
+    
+    # async def stop_rolling(self):
+    #     """Stop rolling"""
+    #     await self.send_goal("stop_rolling")
+    #     self.get_logger().info("Stopping rolling...")
 
+    # async def start_rolling(self):
+    #     """Start rolling"""
+    #     await self.send_goal("rolling")
+    #     self.get_logger().info("Starting rolling...")
 
-async def test_run():
-    """Main async function to handle ROS2 spinning and task execution."""
-    rclpy.init()
-    action_client = MoveActionClient()
+    # async def transition_to_roll(self):
+    #     """Transition to rolling configuration."""
+    #     await self.send_goal("hcir")
 
-    spin_task = asyncio.create_task(spinning(action_client))
+    #     # Publish to `/set_config` to stop moving
+    #     config_msg = SetConfig()
+    #     config_msg.config_id = 3
+    #     self.get_logger().info("Transitioning to roll...")
+    #     self.config_publisher.publish(config_msg)
 
-    # Example: Sequentially execute these goals for testing
-    await action_client.send_goal("turn")
-    await asyncio.sleep(2)  # Simulate delay
-    await action_client.send_goal("stop_turning")
-    await action_client.send_goal("hcir")
-    await action_client.send_goal("rolling")
+    # async def stop_turning(self):
+    #     """Stop turning and transition to Home1 configuration."""
+    #     self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
+    #     await self.send_goal("stop_turning")
 
-    spin_task.cancel()
-    try:
-        await spin_task
-    except asyncio.exceptions.CancelledError:
-        pass
+    #     # Publish to `/set_config` to stop moving
+    #     config_msg = SetConfig()
+    #     config_msg.config_id = 1
+    #     self.get_logger().info("Publishing transition to home1.")
+    #     self.config_publisher.publish(config_msg)
+    
+    # async def keep_turning(self):
+    #     """Keep turning and until detect enough bowling pins."""
+    #     self.get_logger().info("Not enough pins yet! Keep turning.")
+    #     await self.send_goal("turn")
 
-    rclpy.shutdown()
+    #     # Publish to `/set_config` to stop moving
+    #     config_msg = SetConfig()
+    #     config_msg.config_id = 5
+    #     self.get_logger().info("Publishing congfig 5 to turn.")
+    #     self.config_publisher.publish(config_msg)
 
-async def run():
-    """Main async function to handle ROS2 spinning and execution."""
-    rclpy.init()
-    action_client = MoveActionClient()
-
-    # Start async ROS2 spinner
-    spin_task = asyncio.create_task(spinning(action_client))
-
-    await asyncio.sleep(1)  
-
-    await asyncio.Event().wait()  # Keeps the program running
-
-    spin_task.cancel()
-    try:
-        await spin_task
-    except asyncio.exceptions.CancelledError:
-        pass
-
-    rclpy.shutdown()
 
 def main(args=None):
-    """Set up an asyncio event loop and run the async main function."""
-    asyncio.run(test_run())
-
-    # Actual run
-    # asyncio.run(run())
+    rclpy.init(args=args)
+    client_node = MoveActionClient()
+    rclpy.spin(client_node)
+    client_node.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
+    
+
+    # async def handle_command(self, msg):
+    #     """Processes the pin detection logic in order."""
+    #     bowling_pin_count = msg.data
+    #     self.get_logger().info(f"Received pin count: {bowling_pin_count}")
+
+    #     if not self.found_enough_pins:
+    #         curr_time = time.time()
+
+    #         if bowling_pin_count >= 2:  
+    #             if self.pin_detected_time == None:
+    #                 # First detection, start timer
+    #                 self.pin_detected_time = curr_time
+    #                 self.get_logger().info("Pins detected! Starting 3s timer...")
+    #             elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
+    #                 # Pins have been detected continuously for 3 seconds
+    #                 await self.stop_turning()
+    #                 self.found_enough_pins = True
+    #                 return  # No need to continue processing
+    #         else:
+    #             # Reset timer if pins drop below threshold before 3 seconds
+    #             if self.pin_detected_time is not None:
+    #                 self.get_logger().info("Pins dropped below threshold, resetting timer.")
+    #                 self.pin_detected_time = None
+            
+    #         await self.keep_turning()
+    #     else:
+    #         if self.curr_state == self.STOPPED_TURNING:
+    #             await self.transition_to_roll()
+    #         elif self.curr_state == self.AT_ROLL_STATIONARY:
+    #             await self.start_rolling()
+    #         elif self.curr_state == self.KNOCKED_OVER_PINS:
+    #             await self.stop_rolling()
+
+    # async def send_goal(self, movement_type):
+    #     """Send an action goal to the move action server."""
+    #     goal_msg = Move.Goal()
+    #     goal_msg.movement = movement_type
+
+    #     self.get_logger().info(f"Waiting for action server before sending goal: {movement_type}")
+    
+    #     while not self._action_client.wait_for_server(timeout_sec=1.0):
+    #         self.get_logger().warn("Waiting for move action server...")
+
+
+    #     self.get_logger().info(f"Sending goal: {movement_type}")
+
+    #     future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
+    #     goal_handle = await future  # Wait for goal acceptance
+
+    #     if not goal_handle.accepted:
+    #         self.get_logger().error(f"Goal {movement_type} was rejected!")
+    #         return
+
+    #     self.get_logger().info(f"Goal {movement_type} accepted. Waiting for result...")
+
+    #     # Wait for the action to complete
+    #     result_future = goal_handle.get_result_async()
+    #     result = await result_future
+
+    #     if result.status == GoalStatus.STATUS_SUCCEEDED:
+    #         self.get_logger().info(f"Goal {movement_type} succeeded!")
+    #     else:
+    #         self.get_logger().error(f"Goal {movement_type} failed with status {result.status}")
+
+   
