@@ -77,7 +77,7 @@ class MoveActionClient(Node):
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
-        self.send_goal("stopt")
+        self.send_goal("stop_turning")
 
         # Publish to `/set_config` to stop moving
         config_msg = SetConfig()

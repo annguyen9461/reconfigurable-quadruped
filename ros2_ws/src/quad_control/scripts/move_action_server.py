@@ -10,7 +10,6 @@ from std_msgs.msg import String
 
 import asyncio
 import time
-from rclpy.executors import MultiThreadedExecutor
 
 class MoveActionServer(Node):
     # Enum-like representation for robot states
@@ -173,9 +172,7 @@ def main(args=None):
 
     node = MoveActionServer()
 
-    # rclpy.spin(node) 
-    executor = MultiThreadedExecutor()
-    rclpy.spin(node, executor=executor)
+    rclpy.spin(node) 
 
 
 if __name__ == '__main__':
