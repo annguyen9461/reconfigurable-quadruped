@@ -11,7 +11,7 @@ from quad_interfaces.msg import RobotState
 from action_msgs.msg import GoalStatus
 import time
 
-class MoveActionClient(Node):
+class MoveActionClient(Ngode):
     # Enum-like representation for robot states
     TURNING = 0
     STOPPED_TURNING = 1
@@ -47,6 +47,10 @@ class MoveActionClient(Node):
 
         self.found_enough_pins = False
         self.curr_state = self.TURNING
+
+    def robot_state_callback(self, msg):
+        """Updates the robot's state based on published `/robot_state` topic."""
+        self.curr_state = msg.current_state
 
     def command_callback(self, msg):
         """Decides action based on the number of bowling pins detected."""
