@@ -154,10 +154,10 @@ class MoveActionServer(Node):
         
         # Populate result message
         result = Move.Result()
-        self.get_logger().info(f"Result object attributes: {dir(result)}")
-        self.get_logger().info(f"Result object type: {type(result)}")
-        result.arrived = True
-        self.get_logger().info('Returning result: {0}'.format(result.arrived))
+        # self.get_logger().info(f"Result object attributes: {dir(result)}")
+        # self.get_logger().info(f"Result object type: {type(result)}")
+        # result.arrived = True
+        # self.get_logger().info('Returning result: {0}'.format(result.arrived))
         return result
 
 
