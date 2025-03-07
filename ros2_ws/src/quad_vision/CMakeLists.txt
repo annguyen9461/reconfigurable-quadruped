@@ -49,11 +49,9 @@ install(
   DESTINATION lib/${PROJECT_NAME}
 )
 
-
 install(
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/models/
+  DIRECTORY models
   DESTINATION share/${PROJECT_NAME}/
-  FILES_MATCHING PATTERN "*.pt"
 )
 
 
