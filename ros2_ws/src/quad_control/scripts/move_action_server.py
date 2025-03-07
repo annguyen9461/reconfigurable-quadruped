@@ -14,12 +14,13 @@ import time
 class MoveActionServer(Node):
     # Enum-like representation for robot states
     TURNING = 0
-    STOPPED_TURNING = 1
-    WALK_TO_ROLL = 2
-    AT_ROLL_STATIONARY = 3
-    ROLLING = 4
-    KNOCKED_OVER_PINS = 5
-    STOPPED_ROLLING = 6
+    HOME1 = 1
+    STOPPED_TURNING = 2
+    WALK_TO_ROLL = 3
+    AT_ROLL_STATIONARY = 4
+    ROLLING = 5
+    KNOCKED_OVER_PINS = 6
+    STOPPED_ROLLING = 7
 
     def __init__(self):
         super().__init__('move_action_server')
@@ -114,7 +115,7 @@ class MoveActionServer(Node):
                 time.sleep(0.2)
             
             self.get_logger().info("Turn completed. At home position.")
-            self.publish_robot_state(self.STOPPED_TURNING)
+            self.publish_robot_state(self.HOME1)
 
         elif movement_type == "stop_turning":
             self.publish_robot_state(self.STOPPED_TURNING)
