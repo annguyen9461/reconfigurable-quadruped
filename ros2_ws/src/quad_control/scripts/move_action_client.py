@@ -63,17 +63,47 @@ class MoveActionClient(Node):
         else:
             self.keep_turning()
 
-    def send_goal(self, movement_type):
+    # def send_goal(self, movement_type):
+    #     """Send an action goal to the move action server."""
+    #     goal_msg = Move.Goal()
+    #     goal_msg.movement = movement_type
+
+    #     self.get_logger().info(f"Sending goal: {movement_type}")
+
+    #     self._action_client.wait_for_server()
+
+    #     return self._action_client.send_goal_async(goal_msg)
+
+    async def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
+
+        self.get_logger().info(f"Waiting for action server before sending goal: {movement_type}")
+    
 
         self.get_logger().info(f"Sending goal: {movement_type}")
 
         self._action_client.wait_for_server()
 
-        return self._action_client.send_goal_async(goal_msg)
+        future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
+        goal_handle = await future  # Wait for goal acceptance
 
+        if not goal_handle.accepted:
+            self.get_logger().error(f"Goal {movement_type} was rejected!")
+            return
+
+        self.get_logger().info(f"Goal {movement_type} accepted. Waiting for result...")
+
+        # Wait for the action to complete
+        result_future = goal_handle.get_result_async()
+        result = await result_future
+
+        if result.status == GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().info(f"Goal {movement_type} succeeded!")
+        else:
+            self.get_logger().error(f"Goal {movement_type} failed with status {result.status}")
+   
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")

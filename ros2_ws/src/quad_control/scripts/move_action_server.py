@@ -52,7 +52,7 @@ class MoveActionServer(Node):
             2040, 1098, 3081, 2054, 2997, 1007, 2041, 2993, 1045, 3054, 1095, 3091
         ]
 
-        self.position_threshold = 10  # Allowed error margin
+        self.position_threshold = 15  # Allowed error margin
 
         self.get_logger().info("MoveActionServer is ready.")
 
@@ -171,6 +171,12 @@ def main(args=None):
     rclpy.init(args=args)
 
     node = MoveActionServer()
+
+    # Test publishing a message every 2 seconds
+    while rclpy.ok():
+        node.publish_robot_state(node.TURNING)
+        node.get_logger().info("Published test state: TURNING")
+        time.sleep(2)
 
     rclpy.spin(node) 
 
