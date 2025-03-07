@@ -52,7 +52,7 @@ class MoveActionServer(Node):
             2040, 1098, 3081, 2054, 2997, 1007, 2041, 2993, 1045, 3054, 1095, 3091
         ]
 
-        self.position_threshold = 15  # Allowed error margin
+        self.position_threshold = 20  # Allowed error margin
 
         self.get_logger().info("MoveActionServer is ready.")
 
@@ -65,30 +65,21 @@ class MoveActionServer(Node):
             msg.motor10_position, msg.motor11_position, msg.motor12_position
         ]
 
-    def is_at_home_position(self):
+    def is_at_target_config(self, target_config):
         """Checks if the robot's motors are within the threshold of the home position."""
+        sum_diff = 0
         for i in range(12):
             if self.current_motor_pos[i] is None:  # Ensure motor positions are initialized
                 self.get_logger().warn(f"Motor {i+1} position is None! Skipping check.")
                 return False
         
-            difference = abs(self.current_motor_pos[i] - self.home_tiptoe[i])
+            difference = abs(self.current_motor_pos[i] - target_config[i])
+            sum_diff += difference
             if difference > self.position_threshold:
                 self.get_logger().info(f"Motor {i+1} is off by {difference} ticks")
-                return False
-        return True
-
-    def is_at_roll_position(self):
-        """Checks if the robot's motors are within the threshold of the home position."""
-        for i in range(12):
-            if self.current_motor_pos[i] is None:  # Ensure motor positions are initialized
-                self.get_logger().warn(f"Motor {i+1} position is None! Skipping check.")
-                return False
-            
-            difference = abs(self.current_motor_pos[i] - self.perfect_cir[i])
-            if difference > self.position_threshold:
-                self.get_logger().info(f"Motor {i+1} is off by {difference} ticks")
-                return False
+        if sum_diff > self.position_threshold*12:
+            self.get_logger().info(f"Motors are off by {sum_diff} ticks")
+            return False
         return True
 
     def publish_robot_state(self, state):
@@ -116,12 +107,12 @@ class MoveActionServer(Node):
             self.get_logger().info("Starting turn movement...")
             
             # Wait for robot to reach home position
-            while not self.is_at_home_position():
+            while not self.is_at_target_config(self.home_tiptoe):
                 # feedback_msg.status_message = "Turning..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
                 # await asyncio.sleep(0.5)  # wait and check again
-                time.sleep(0.5)
+                time.sleep(0.2)
             
             self.get_logger().info("Turn completed. At home position.")
             self.publish_robot_state(self.STOPPED_TURNING)
@@ -135,7 +126,7 @@ class MoveActionServer(Node):
             self.get_logger().info("Transitioning to rolling mode...")
             
             # Wait for robot to reach rolling position
-            while not self.is_at_roll_position():
+            while not self.is_at_target_config(self.perfect_cir):
                 # feedback_msg.status_message = "Trans to roll..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
@@ -172,11 +163,11 @@ def main(args=None):
 
     node = MoveActionServer()
 
-    # Test publishing a message every 2 seconds
-    while rclpy.ok():
-        node.publish_robot_state(node.TURNING)
-        node.get_logger().info("Published test state: TURNING")
-        time.sleep(2)
+    # # Test publishing a message every 2 seconds
+    # while rclpy.ok():
+    #     node.publish_robot_state(node.TURNING)
+    #     node.get_logger().info("Published test state: TURNING")
+    #     time.sleep(2)
 
     rclpy.spin(node) 
 
