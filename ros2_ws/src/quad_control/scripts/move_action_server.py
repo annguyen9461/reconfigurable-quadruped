@@ -95,7 +95,7 @@ class MoveActionServer(Node):
         
          # Append the seeds for the Fibonacci sequence
         # feedback_msg = Move.Feedback()
-        result = Move.Result()
+        
 
         # Initial feedback message
         # feedback_msg.status_message = f"Starting {movement_type}..."
@@ -154,7 +154,11 @@ class MoveActionServer(Node):
 
         # Mark goal as succeeded
         goal_handle.succeed()
+        
+        # Populate result message
+        result = Move.Result()
         result.arrived = True
+        self.get_logger().info('Returning result: {0}'.format(result.arrived))
         return result
 
 
