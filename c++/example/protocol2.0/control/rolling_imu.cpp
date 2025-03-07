@@ -1022,7 +1022,7 @@ int main()
     // Thresholds based on data analysis
     const float accel_z_threshold = 9.5;    // m/s² for a successful propel
     const float gyro_y_stability = 6.5;     // rad/s threshold for orientation stability
-    const int window_size = 2;            // Number of samples to average (for smoothing)
+    const int window_size = 10;            // Number of samples to average (for smoothing)
     
     // Variables for data accumulation
     float accumulated_tilt_angle = 0;
@@ -1317,7 +1317,7 @@ int main()
    
 
     // Adjust sampling rate (lower value for higher frequency)
-    usleep(10000); // 10ms delay (~100Hz sampling rate)
+    usleep(2000); // 10ms delay (~100Hz sampling rate)
 
   }
 
