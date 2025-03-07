@@ -11,7 +11,7 @@ from quad_interfaces.msg import RobotState
 from action_msgs.msg import GoalStatus
 import time
 
-class MoveActionClient(Ngode):
+class MoveActionClient(Node):
     # Enum-like representation for robot states
     TURNING = 0
     STOPPED_TURNING = 1
