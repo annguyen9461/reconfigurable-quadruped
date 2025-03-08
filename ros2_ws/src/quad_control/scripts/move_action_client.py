@@ -10,6 +10,7 @@ from quad_interfaces.msg import RobotState
 
 from action_msgs.msg import GoalStatus
 import time
+import states
 
 class MoveActionClient(Node):
     # Enum-like representation for robot states
@@ -56,7 +57,6 @@ class MoveActionClient(Node):
     def command_callback(self, msg):
         """Decides action based on the number of bowling pins detected."""
         bowling_pin_count = msg.data
-        self.get_logger().info(f"Received pin count: {bowling_pin_count}")
 
         # if bowling_pin_count >= 2:  # Found a pin, stop turning
         #     self.stop_turning()
@@ -65,6 +65,7 @@ class MoveActionClient(Node):
         #     self.keep_turning()
 
         if not self.found_enough_pins:
+            self.get_logger().info(f"Received pin count: {bowling_pin_count}")
             curr_time = time.time()
 
             if bowling_pin_count >= 2:  

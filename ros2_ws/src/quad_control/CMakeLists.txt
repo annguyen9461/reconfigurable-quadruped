@@ -37,6 +37,12 @@ install(
   RENAME move_action_client
 )
 
+# Install Python scripts
+install(
+  PROGRAMS 
+  scripts/states.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
