@@ -84,13 +84,13 @@ class MoveActionClient(Node):
                     self.pin_detected_time = None
             
                 self.keep_turning()
-        # else:
-        #     if self.curr_state == self.STOPPED_TURNING:
-        #         self.transition_to_roll()
-        #     elif self.curr_state == self.AT_ROLL_STATIONARY:
-        #         self.start_rolling()
-        #     elif self.curr_state == self.KNOCKED_OVER_PINS:
-        #             self.stop_rolling()
+        else:
+            if self.curr_state == self.STOPPED_TURNING:
+                self.transition_to_roll()
+            elif self.curr_state == self.AT_ROLL_STATIONARY:
+                self.start_rolling()
+            elif self.curr_state == self.KNOCKED_OVER_PINS:
+                self.stop_rolling()
 
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
@@ -103,36 +103,6 @@ class MoveActionClient(Node):
 
         return self._action_client.send_goal_async(goal_msg)
 
-    # async def send_goal(self, movement_type):
-    #     """Send an action goal to the move action server."""
-    #     goal_msg = Move.Goal()
-    #     goal_msg.movement = movement_type
-
-    #     self.get_logger().info(f"Waiting for action server before sending goal: {movement_type}")
-    
-
-    #     self.get_logger().info(f"Sending goal: {movement_type}")
-
-    #     self._action_client.wait_for_server()
-
-    #     future = self._action_client.send_goal_async(goal_msg)  # Request goal asynchronously
-    #     goal_handle = await future  # Wait for goal acceptance
-
-    #     if not goal_handle.accepted:
-    #         self.get_logger().error(f"Goal {movement_type} was rejected!")
-    #         return
-
-    #     self.get_logger().info(f"Goal {movement_type} accepted. Waiting for result...")
-
-    #     # Wait for the action to complete
-    #     result_future = goal_handle.get_result_async()
-    #     result = await result_future
-
-    #     if result.status == GoalStatus.STATUS_SUCCEEDED:
-    #         self.get_logger().info(f"Goal {movement_type} succeeded!")
-    #     else:
-    #         self.get_logger().error(f"Goal {movement_type} failed with status {result.status}")
-   
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
@@ -154,18 +124,7 @@ class MoveActionClient(Node):
             config_msg.config_id = 5
             self.get_logger().info("Publishing congfig 5 to turn.")
             self.config_publisher.publish(config_msg)
-
     
-    # async def stop_rolling(self):
-    #     """Stop rolling"""
-    #     await self.send_goal("stop_rolling")
-    #     self.get_logger().info("Stopping rolling...")
-
-    # async def start_rolling(self):
-    #     """Start rolling"""
-    #     await self.send_goal("rolling")
-    #     self.get_logger().info("Starting rolling...")
-
     def transition_to_roll(self):
         """Transition to rolling configuration."""
         self.send_goal("hcir")
@@ -174,6 +133,16 @@ class MoveActionClient(Node):
             config_msg.config_id = 3
             self.get_logger().info("Transitioning to roll...")
             self.config_publisher.publish(config_msg)
+
+    def start_rolling(self):
+            """Start rolling"""
+            self.send_goal("rolling")
+            self.get_logger().info("Starting rolling...")
+
+    def stop_rolling(self):
+        """Stop rolling"""
+        self.send_goal("stop_rolling")
+        self.get_logger().info("Stopping rolling...")
 
     # async def stop_turning(self):
     #     """Stop turning and transition to Home1 configuration."""
