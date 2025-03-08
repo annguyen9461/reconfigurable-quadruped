@@ -64,25 +64,26 @@ class MoveActionClient(Node):
         # else:
         #     self.keep_turning()
 
-        curr_time = time.time()
+        if not self.found_enough_pins:
+            curr_time = time.time()
 
-        if bowling_pin_count >= 2:  
-            if self.pin_detected_time == None:
-                # First detection, start timer
-                self.pin_detected_time = curr_time
-                self.get_logger().info("Pins detected! Starting 5s timer...")
-            elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
-                # Pins have been detected continuously for 5 seconds
-                self.stop_turning()
-                self.found_enough_pins = True
-                return  # No need to continue processing
-        else:
-            # Reset timer if pins drop below threshold before 5 seconds
-            if self.pin_detected_time is not None:
-                self.get_logger().info("Pins dropped below threshold, resetting timer.")
-                self.pin_detected_time = None
-        
-            self.keep_turning()
+            if bowling_pin_count >= 2:  
+                if self.pin_detected_time == None:
+                    # First detection, start timer
+                    self.pin_detected_time = curr_time
+                    self.get_logger().info("Pins detected! Starting 5s timer...")
+                elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
+                    # Pins have been detected continuously for 5 seconds
+                    self.stop_turning()
+                    self.found_enough_pins = True
+                    return  # No need to continue processing
+            else:
+                # Reset timer if pins drop below threshold before 5 seconds
+                if self.pin_detected_time is not None:
+                    self.get_logger().info("Pins dropped below threshold, resetting timer.")
+                    self.pin_detected_time = None
+            
+                self.keep_turning()
         # else:
         #     if self.curr_state == self.STOPPED_TURNING:
         #         self.transition_to_roll()
@@ -165,15 +166,14 @@ class MoveActionClient(Node):
     #     await self.send_goal("rolling")
     #     self.get_logger().info("Starting rolling...")
 
-    # async def transition_to_roll(self):
-    #     """Transition to rolling configuration."""
-    #     await self.send_goal("hcir")
-
-    #     # Publish to `/set_config` to stop moving
-    #     config_msg = SetConfig()
-    #     config_msg.config_id = 3
-    #     self.get_logger().info("Transitioning to roll...")
-    #     self.config_publisher.publish(config_msg)
+    def transition_to_roll(self):
+        """Transition to rolling configuration."""
+        self.send_goal("hcir")
+        if self.curr_state < self.WALK_TO_ROLL:
+            config_msg = SetConfig()
+            config_msg.config_id = 3
+            self.get_logger().info("Transitioning to roll...")
+            self.config_publisher.publish(config_msg)
 
     # async def stop_turning(self):
     #     """Stop turning and transition to Home1 configuration."""
