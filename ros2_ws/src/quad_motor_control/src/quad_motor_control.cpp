@@ -115,7 +115,7 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
                         leg1_up_right, leg1_turn_right, leg1_down_right,
                         home_tiptoe
                     };
-                    sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 3500}; // 500ms delay per step
+                    sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 5000}; // 500ms delay per step
                     break;
             }
             // Execute each step in the sequence
