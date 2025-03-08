@@ -44,7 +44,7 @@ class MoveActionClient(Node):
         self.config_publisher = self.create_publisher(SetConfig, '/set_config', 10)
         
         self.pin_detected_time = None  # Track when pins >=2 are first detected
-        self.pin_threshold = 3.0  # Seconds that pins must be detected
+        self.pin_threshold = 5.0  # Seconds that pins must be detected
 
         self.found_enough_pins = False
         self.curr_state = self.TURNING
@@ -58,39 +58,38 @@ class MoveActionClient(Node):
         bowling_pin_count = msg.data
         self.get_logger().info(f"Received pin count: {bowling_pin_count}")
 
-        if bowling_pin_count >= 2:  # Found a pin, stop turning
-            self.stop_turning()
-            return
-        else:
-            self.keep_turning()
-
-        # if not self.found_enough_pins:
-        #     curr_time = time.time()
-
-        #     if bowling_pin_count >= 2:  
-        #         if self.pin_detected_time == None:
-        #             # First detection, start timer
-        #             self.pin_detected_time = curr_time
-        #             self.get_logger().info("Pins detected! Starting 3s timer...")
-        #         elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
-        #             # Pins have been detected continuously for 3 seconds
-        #             self.stop_turning()
-        #             self.found_enough_pins = True
-        #             return  # No need to continue processing
-        #     else:
-        #         # Reset timer if pins drop below threshold before 3 seconds
-        #         if self.pin_detected_time is not None:
-        #             self.get_logger().info("Pins dropped below threshold, resetting timer.")
-        #             self.pin_detected_time = None
-            
+        # if bowling_pin_count >= 2:  # Found a pin, stop turning
+        #     self.stop_turning()
+        #     return
+        # else:
         #     self.keep_turning()
+
+        curr_time = time.time()
+
+        if bowling_pin_count >= 2:  
+            if self.pin_detected_time == None:
+                # First detection, start timer
+                self.pin_detected_time = curr_time
+                self.get_logger().info("Pins detected! Starting 5s timer...")
+            elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
+                # Pins have been detected continuously for 5 seconds
+                self.stop_turning()
+                self.found_enough_pins = True
+                return  # No need to continue processing
+        else:
+            # Reset timer if pins drop below threshold before 5 seconds
+            if self.pin_detected_time is not None:
+                self.get_logger().info("Pins dropped below threshold, resetting timer.")
+                self.pin_detected_time = None
+        
+            self.keep_turning()
         # else:
         #     if self.curr_state == self.STOPPED_TURNING:
         #         self.transition_to_roll()
         #     elif self.curr_state == self.AT_ROLL_STATIONARY:
         #         self.start_rolling()
         #     elif self.curr_state == self.KNOCKED_OVER_PINS:
-        #         self.stop_rolling()
+        #             self.stop_rolling()
 
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
