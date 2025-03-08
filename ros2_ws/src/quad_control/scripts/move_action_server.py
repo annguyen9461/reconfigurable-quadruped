@@ -103,7 +103,7 @@ class MoveActionServer(Node):
         # feedback_msg.still_moving = True
         # goal_handle.publish_feedback(feedback_msg)
 
-        if movement_type == "turn":
+        if movement_type == "turning":
             self.publish_robot_state(self.TURNING)
             self.get_logger().info("Starting turn movement...")
             

@@ -119,7 +119,7 @@ class MoveActionClient(Node):
     def keep_turning(self):
         """Keep turning and until detect enough bowling pins."""
         self.get_logger().info("Not enough pins yet! Keep turning.")
-        self.send_goal("turn")
+        self.send_goal("turning")
 
         # Publish to `/set_config` to stop moving
         config_msg = SetConfig()
