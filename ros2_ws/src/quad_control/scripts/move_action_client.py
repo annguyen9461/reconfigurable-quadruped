@@ -64,6 +64,34 @@ class MoveActionClient(Node):
         else:
             self.keep_turning()
 
+        # if not self.found_enough_pins:
+        #     curr_time = time.time()
+
+        #     if bowling_pin_count >= 2:  
+        #         if self.pin_detected_time == None:
+        #             # First detection, start timer
+        #             self.pin_detected_time = curr_time
+        #             self.get_logger().info("Pins detected! Starting 3s timer...")
+        #         elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
+        #             # Pins have been detected continuously for 3 seconds
+        #             self.stop_turning()
+        #             self.found_enough_pins = True
+        #             return  # No need to continue processing
+        #     else:
+        #         # Reset timer if pins drop below threshold before 3 seconds
+        #         if self.pin_detected_time is not None:
+        #             self.get_logger().info("Pins dropped below threshold, resetting timer.")
+        #             self.pin_detected_time = None
+            
+        #     self.keep_turning()
+        # else:
+        #     if self.curr_state == self.STOPPED_TURNING:
+        #         self.transition_to_roll()
+        #     elif self.curr_state == self.AT_ROLL_STATIONARY:
+        #         self.start_rolling()
+        #     elif self.curr_state == self.KNOCKED_OVER_PINS:
+        #         self.stop_rolling()
+
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
         goal_msg = Move.Goal()
@@ -118,14 +146,14 @@ class MoveActionClient(Node):
     
     def keep_turning(self):
         """Keep turning and until detect enough bowling pins."""
-        self.get_logger().info("Not enough pins yet! Keep turning.")
-        self.send_goal("turning")
+        if self.curr_state < self.STOPPED_TURNING:
+            self.get_logger().info("Not enough pins yet! Keep turning.")
+            self.send_goal("turning")
 
-        # Publish to `/set_config` to stop moving
-        config_msg = SetConfig()
-        config_msg.config_id = 5
-        self.get_logger().info("Publishing congfig 5 to turn.")
-        self.config_publisher.publish(config_msg)
+            config_msg = SetConfig()
+            config_msg.config_id = 5
+            self.get_logger().info("Publishing congfig 5 to turn.")
+            self.config_publisher.publish(config_msg)
 
     
     # async def stop_rolling(self):
