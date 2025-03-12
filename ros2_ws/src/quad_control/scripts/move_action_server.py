@@ -8,7 +8,6 @@ from quad_interfaces.msg import RobotState
 from quad_interfaces.msg import MotorPositions
 from std_msgs.msg import String
 
-import asyncio
 import time
 import states
 

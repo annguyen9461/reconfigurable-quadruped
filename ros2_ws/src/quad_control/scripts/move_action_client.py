@@ -90,11 +90,6 @@ class MoveActionClient(Node):
         """Send turn command repeatedly until enough pins are detected."""
         self.get_logger().info("Not enough pins yet! Keep turning.")
         self.send_goal("turning")
-
-        # config_msg = SetConfig()
-        # config_msg.config_id = 5
-        # self.get_logger().info("Publishing config 5 to turn.")
-        # self.config_publisher.publish(config_msg)
         self.publish_config_once(5)
     
     def cancel_done(self, future):
@@ -127,7 +122,6 @@ class MoveActionClient(Node):
             # React to state changes
             if self.curr_state == self.TURNING:
                 # We've reached HOME1 during turning - can continue turning
-                # self.action_in_progress = False
                 pass
                 
             elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
@@ -173,10 +167,6 @@ class MoveActionClient(Node):
             
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
-        # Don't send if an action is already in progress
-        # if self.action_in_progress and movement_type == "turning":
-        #     return False
-        
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
 
@@ -187,9 +177,6 @@ class MoveActionClient(Node):
             self.get_logger().warn("Action server not available, trying again later")
             return False
 
-        # Mark that we're sending an action
-        # self.action_in_progress = True
-
         # Send goal asynchronously
         self._send_goal_future = self._action_client.send_goal_async(goal_msg)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
@@ -199,7 +186,6 @@ class MoveActionClient(Node):
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected')
-            # self.action_in_progress = False
             return
         
         self.get_logger().info('Goal accepted')
@@ -216,44 +202,30 @@ class MoveActionClient(Node):
         else:
             self.get_logger().info(f'Goal failed with status: {status}')
 
-        # For turning, reset the action flag when we reach HOME1 state
-        # For other actions, we can reset it here
-        # if self.curr_state != self.TURNING and self.curr_state != self.HOME1:
-        #     self.action_in_progress = False
-
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.found_enough_pins = True
         self.destroy_turning_timer()  # Stop the turning timer
 
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
-        # First publish the config to stop motion
         self.publish_config_once(1)  # Home1 configuration
-        
-        # Then send the action goal
         self.send_goal("stop_turning")
     
     def transition_to_roll(self):
         """Transition to rolling configuration."""
         self.get_logger().info("Transitioning to roll configuration")
         
-        # First publish the config for roll
         self.publish_config_once(3)  # Roll configuration
-        
-        # Then send the action to transition to roll
-        # self.action_in_progress = False  # Allow new action
         self.send_goal("hcir")
 
     def start_rolling(self):
         """Start rolling"""
         self.get_logger().info("Starting rolling motion")
-        # self.action_in_progress = False  # Allow new action
         self.send_goal("rolling")
 
     def stop_rolling(self):
         """Stop rolling"""
         self.get_logger().info("Stopping rolling motion")
-        # self.action_in_progress = False  # Allow new action
         self.send_goal("stop_rolling")
 
 def main(args=None):
