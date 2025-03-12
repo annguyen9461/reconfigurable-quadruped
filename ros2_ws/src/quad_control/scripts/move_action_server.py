@@ -48,7 +48,7 @@ class MoveActionServer(Node):
 
         # Define home position to stop and stay when turning
         self.home_tiptoe = [
-            2745, 2187, 3062, 1343, 1890, 1025, 2752, 2190, 3072, 2429, 1864, 1050
+            2745, 2228, 3062, 1343, 1890, 1025, 2752, 2190, 3072, 2429, 1864, 1050
         ]
         self.perfect_cir = [
             2040, 1098, 3081, 2054, 2997, 1007, 2041, 2993, 1045, 3054, 1095, 3091

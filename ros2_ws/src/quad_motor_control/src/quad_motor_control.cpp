@@ -321,7 +321,8 @@ void QuadMotorControl::initDynamixels()
 
 int main(int argc, char * argv[]) {
     initialize_turning_configs_right();  // Ensure all arrays are set up
-
+    initialize_relative_configs();
+    
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<QuadMotorControl>());
     rclcpp::shutdown();
