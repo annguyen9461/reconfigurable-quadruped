@@ -12,6 +12,8 @@ from action_msgs.msg import GoalStatus
 import time
 
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy
+from rclpy.task import Future
+from rclpy.executors import SingleThreadedExecutor
 
 class MoveActionClient(Node):
     # Enum-like representation for robot states
@@ -53,9 +55,6 @@ class MoveActionClient(Node):
         # self.config_publisher = self.create_publisher(SetConfig, '/set_config', 10)
         self.config_publisher = self.create_publisher(SetConfig, '/set_config', qos_profile)
 
-        # Timer for continuous turning
-        self.turning_timer = None
-
         # State tracking
         self.pin_detected_time = None  # Track when pins >=2 are first detected
         self.pin_threshold = 5.0  # Seconds that pins must be detected
@@ -64,33 +63,39 @@ class MoveActionClient(Node):
         self.last_published_config = None   # Track last published config ID
         # self.action_in_progress = False     # Flag to prevent multiple action calls
 
-        # Start in turning state
-        # self.get_logger().info("Starting in turning state")
-        self.turning_timer = self.create_timer(1.0, self.turning_callback)
+        self.turning_timer = self.create_timer(2.0, self.turning_timer_callback)
+        # Add a flag to track if turning has been initiated
+        self.turning_initiated = False
 
-    def turning_callback(self):
-        """Keeps turning if we haven't detected enough pins."""
-        if self.found_enough_pins:
-            self.get_logger().info("Stopping turning timer (pins detected).")
-            self.destroy_turning_timer()
-            return  # Exit function early, stop sending turns!
+    def turning_timer_callback(self):
+        """Timer callback to initiate turning if not already turning."""
+        if not self.found_enough_pins and not self.turning_initiated:
+            self.get_logger().info("Timer: initiating turning...")
+            self.turning_initiated = True
+            future = self.executor.create_task(self.keep_turning())
+            future.add_done_callback(self.turning_done_callback)
 
-        if self.curr_state < self.STOPPED_TURNING:
-            self.get_logger().info("Still searching for pins. Sending turn command.")
-            self.keep_turning()  # Send turn command
+    def turning_done_callback(self, future):
+        """Callback for when the turning task completes."""
+        try:
+            result = future.result()
+            self.get_logger().info(f"Turning completed with result: {result}")
+        except Exception as e:
+            self.get_logger().error(f"Turning task failed with exception: {e}")
+        finally:
+            # Reset flag to allow turning to be reinitiated if needed
+            self.turning_initiated = False
 
-    def destroy_turning_timer(self):
-        """Stop the turning timer when no longer needed"""
-        if self.turning_timer is not None:
-            self.turning_timer.cancel()
-            self.turning_timer = None
-            self.get_logger().info("Destroyed turning timer")
-
-    def keep_turning(self):
+    async def keep_turning(self):
         """Send turn command repeatedly until enough pins are detected."""
         self.get_logger().info("Not enough pins yet! Keep turning.")
-        self.send_goal("turning")
-        self.publish_config_once(5)
+        await self.send_goal("turning")
+        config_id = 5
+        config_msg = SetConfig()
+        config_msg.config_id = config_id
+        self.config_publisher.publish(config_msg)
+        self.last_published_config = config_id  # Update last published config ID
+        self.get_logger().info(f"Published new config: {config_id}")
     
     def cancel_done(self, future):
         cancel_response = future.result()
@@ -101,7 +106,7 @@ class MoveActionClient(Node):
 
     def publish_config_once(self, config_id):
         """Publishes a configuration message **only if it's new**."""
-        if self.last_published_config == config_id and config_id != 5:
+        if self.last_published_config == config_id:
             # self.get_logger().info(f"Config {config_id} already published. Skipping duplicate.")
             return  # Skip duplicate publication
         
@@ -120,9 +125,9 @@ class MoveActionClient(Node):
             self.get_logger().info(f"State changed from {previous_state} to {self.curr_state}")
             
             # React to state changes
-            if self.curr_state == self.TURNING:
+            if self.curr_state < self.STOPPED_TURNING and self.found_enough_pins:
                 # We've reached HOME1 during turning - can continue turning
-                pass
+                self.keep_turning()
                 
             elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
                 # Robot has stopped turning, now transition to roll
@@ -156,7 +161,6 @@ class MoveActionClient(Node):
                 elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
                     # Pins have been detected continuously for 5 seconds
                     self.found_enough_pins = True
-                    self.destroy_turning_timer()
                     self.stop_turning()
                     return  # No need to continue processing
             else:
@@ -164,8 +168,9 @@ class MoveActionClient(Node):
                 if self.pin_detected_time is not None:
                     self.get_logger().info("Pins dropped below threshold, resetting timer.")
                     self.pin_detected_time = None
+                    self.turning_initiated = False
             
-    def send_goal(self, movement_type):
+    async def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
@@ -178,20 +183,9 @@ class MoveActionClient(Node):
             return False
 
         # Send goal asynchronously
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
-        self._send_goal_future.add_done_callback(self.goal_response_callback)
-
-    def goal_response_callback(self, future):
-        """Handle response from the action server"""
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected')
-            return
-        
-        self.get_logger().info('Goal accepted')
-
-        self._get_result_future = goal_handle.get_result_async()
-        self._get_result_future.add_done_callback(self.get_result_callback)
+        goal_future = await self._action_client.send_goal_async(goal_msg)
+        result_future = goal_future.get_result_async()
+        return result_future
 
     def get_result_callback(self, future):
         """Handle the result from the action server"""
@@ -205,33 +199,51 @@ class MoveActionClient(Node):
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.found_enough_pins = True
-        self.destroy_turning_timer()  # Stop the turning timer
-
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
         self.publish_config_once(1)  # Home1 configuration
-        self.send_goal("stop_turning")
+
+        # Create a task for the async operation
+        future = self.executor.create_task(self._stop_turning_async())
+        return future
+
+    async def _stop_turning_async(self):
+        """Async implementation of stop turning."""
+        return await self.send_goal("stop_turning")
     
     def transition_to_roll(self):
         """Transition to rolling configuration."""
         self.get_logger().info("Transitioning to roll configuration")
-        
         self.publish_config_once(3)  # Roll configuration
-        self.send_goal("hcir")
+        # Create a task for the async operation
+        future = self.executor.create_task(self._transition_to_roll_async())
+        return future
+    
+    async def _transition_to_roll_async(self):
+        """Async implementation of transition to roll."""
+        await self.send_goal("hcir")
 
-    def start_rolling(self):
+    async def start_rolling(self):
         """Start rolling"""
         self.get_logger().info("Starting rolling motion")
-        self.send_goal("rolling")
+        await self.send_goal("rolling")
 
-    def stop_rolling(self):
+    async def stop_rolling(self):
         """Stop rolling"""
         self.get_logger().info("Stopping rolling motion")
-        self.send_goal("stop_rolling")
+        await self.send_goal("stop_rolling")
 
 def main(args=None):
     rclpy.init(args=args)
     client_node = MoveActionClient()
-    rclpy.spin(client_node)
+
+    # rclpy.spin(client_node)
+    # client_node.destroy_node()
+    # rclpy.shutdown()
+
+    executor = SingleThreadedExecutor()
+    executor.add_node(client_node)
+    client_node.executor = executor
+    executor.spin()
     client_node.destroy_node()
     rclpy.shutdown()
 

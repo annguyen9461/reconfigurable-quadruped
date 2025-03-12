@@ -54,7 +54,6 @@ class MoveActionServer(Node):
         ]
 
         self.position_threshold = 20  # Allowed error margin
-
         self.get_logger().info("MoveActionServer is ready.")
 
     def get_motor_pos(self, msg):
@@ -89,15 +88,14 @@ class MoveActionServer(Node):
         msg.current_state = state
         self.state_publisher.publish(msg)
 
-    def execute_callback(self, goal_handle):
+    async def execute_callback(self, goal_handle):
         """Executes the action, checking movement status and publishing state."""
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")
-        
+
         #  # Append the seeds for the Fibonacci sequence
         # feedback_msg = Move.Feedback()
         
-
         # # Initial feedback message
         # feedback_msg.status_message = f"Starting {movement_type}..."
         # feedback_msg.still_moving = True
@@ -130,7 +128,7 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Trans to roll..."
                 # feedback_msg.still_moving = True
                 # goal_handle.publish_feedback(feedback_msg)
-                time.sleep(0.5)
+                time.sleep(0.2)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)
