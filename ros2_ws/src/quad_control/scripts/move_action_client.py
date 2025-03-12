@@ -91,14 +91,15 @@ class MoveActionClient(Node):
         self.get_logger().info("Not enough pins yet! Keep turning.")
         self.send_goal("turning")
 
-        config_msg = SetConfig()
-        config_msg.config_id = 5
-        self.get_logger().info("Publishing config 5 to turn.")
-        self.config_publisher.publish(config_msg)
+        # config_msg = SetConfig()
+        # config_msg.config_id = 5
+        # self.get_logger().info("Publishing config 5 to turn.")
+        # self.config_publisher.publish(config_msg)
+        self.publish_config_once(5)
     
     def publish_config_once(self, config_id):
         """Publishes a configuration message **only if it's new**."""
-        if self.last_published_config == config_id:
+        if self.last_published_config == config_id and config_id != 5:
             # self.get_logger().info(f"Config {config_id} already published. Skipping duplicate.")
             return  # Skip duplicate publication
         
@@ -183,9 +184,12 @@ class MoveActionClient(Node):
         # self.action_in_progress = True
 
         # Send goal asynchronously
-        future = self._action_client.send_goal_async(goal_msg)
-        future.add_done_callback(self.goal_response_callback)
-        return True
+        # future = self._action_client.send_goal_async(goal_msg)
+        # future.add_done_callback(self.goal_response_callback)
+        # return True
+        self._send_goal_future = self._action_client.send_goal_async(
+            goal_msg)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
         """Handle response from the action server"""
