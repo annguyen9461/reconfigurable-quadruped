@@ -57,7 +57,7 @@ class MoveActionClient(Node):
 
         # State tracking
         self.pin_detected_time = None  # Track when pins >=2 are first detected
-        self.pin_threshold = 5.0  # Seconds that pins must be detected
+        self.pin_threshold = 3.0  # Seconds that pins must be detected
         self.found_enough_pins = False
         self.curr_state = self.TURNING
         self.last_published_config = None   # Track last published config ID
