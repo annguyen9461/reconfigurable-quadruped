@@ -62,17 +62,20 @@ class MoveActionClient(Node):
         self.found_enough_pins = False
         self.curr_state = self.TURNING
         self.last_published_config = None   # Track last published config ID
-        self.action_in_progress = False     # Flag to prevent multiple action calls
+        # self.action_in_progress = False     # Flag to prevent multiple action calls
 
         # Start in turning state
-        self.get_logger().info("Starting in turning state")
-        self.create_turning_timer()
+        # self.get_logger().info("Starting in turning state")
+        self.turning_timer = self.create_timer(1.0, self.turning_callback)
 
-    def create_turning_timer(self):
-        """Create a timer that will repeatedly send turning commands"""
-        if self.turning_timer is None:
-            self.turning_timer = self.create_timer(1.0, self.turning_callback)
-            self.get_logger().info("Created turning timer")
+    def turning_callback(self):
+        """Keeps turning if we haven't detected enough pins."""
+        if not self.found_enough_pins and self.curr_state < self.STOPPED_TURNING:
+            self.get_logger().info("Still searching for pins. Sending turn command.")
+            self.keep_turning()  # Resend turn command
+        else:
+            self.get_logger().info("Stopping turning timer.")
+            self.turning_timer.cancel()  # Stop the timer
 
     def destroy_turning_timer(self):
         """Stop the turning timer when no longer needed"""
@@ -81,20 +84,16 @@ class MoveActionClient(Node):
             self.turning_timer = None
             self.get_logger().info("Destroyed turning timer")
 
-    def turning_callback(self):
-        """Callback for the turning timer - sends turn command regularly"""
-        if self.curr_state == self.HOME1:
-            self.action_in_progress = False
-        if not self.found_enough_pins and self.curr_state < self.STOPPED_TURNING:
-            # Publish turning config first, as that's what motors will use
-            self.publish_config_once(5)  # Config ID 5 for turning
-            
-            # Send action goal if no action is currently in progress
-            if not self.action_in_progress:
-                self.send_goal("turning")
-        else:
-            self.destroy_turning_timer()
+    def keep_turning(self):
+        """Send turn command repeatedly until enough pins are detected."""
+        self.get_logger().info("Not enough pins yet! Keep turning.")
+        self.send_goal("turning")
 
+        config_msg = SetConfig()
+        config_msg.config_id = 5
+        self.get_logger().info("Publishing config 5 to turn.")
+        self.config_publisher.publish(config_msg)
+    
     def publish_config_once(self, config_id):
         """Publishes a configuration message **only if it's new**."""
         if self.last_published_config == config_id:
@@ -116,9 +115,10 @@ class MoveActionClient(Node):
             self.get_logger().info(f"State changed from {previous_state} to {self.curr_state}")
             
             # React to state changes
-            if self.curr_state == self.HOME1:
+            if self.curr_state == self.TURNING:
                 # We've reached HOME1 during turning - can continue turning
-                self.action_in_progress = False
+                # self.action_in_progress = False
+                pass
                 
             elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
                 # Robot has stopped turning, now transition to roll
@@ -141,7 +141,7 @@ class MoveActionClient(Node):
         bowling_pin_count = msg.data
 
         if not self.found_enough_pins:
-            self.get_logger().info(f"Received pin count: {bowling_pin_count}")
+            # self.get_logger().info(f"Received pin count: {bowling_pin_count}")
             curr_time = time.time()
 
             if bowling_pin_count >= 2:  
@@ -162,8 +162,8 @@ class MoveActionClient(Node):
     def send_goal(self, movement_type):
         """Send an action goal to the move action server."""
         # Don't send if an action is already in progress
-        if self.action_in_progress and movement_type == "turning":
-            return False
+        # if self.action_in_progress and movement_type == "turning":
+        #     return False
         
         goal_msg = Move.Goal()
         goal_msg.movement = movement_type
@@ -176,7 +176,7 @@ class MoveActionClient(Node):
             return False
 
         # Mark that we're sending an action
-        self.action_in_progress = True
+        # self.action_in_progress = True
 
         # Send goal asynchronously
         future = self._action_client.send_goal_async(goal_msg)
@@ -188,7 +188,7 @@ class MoveActionClient(Node):
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.get_logger().info('Goal rejected')
-            self.action_in_progress = False
+            # self.action_in_progress = False
             return
         
         self.get_logger().info('Goal accepted')
@@ -208,8 +208,8 @@ class MoveActionClient(Node):
 
         # For turning, reset the action flag when we reach HOME1 state
         # For other actions, we can reset it here
-        if self.curr_state != self.TURNING and self.curr_state != self.HOME1:
-            self.action_in_progress = False
+        # if self.curr_state != self.TURNING and self.curr_state != self.HOME1:
+        #     self.action_in_progress = False
 
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
@@ -231,19 +231,19 @@ class MoveActionClient(Node):
         self.publish_config_once(3)  # Roll configuration
         
         # Then send the action to transition to roll
-        self.action_in_progress = False  # Allow new action
+        # self.action_in_progress = False  # Allow new action
         self.send_goal("hcir")
 
     def start_rolling(self):
         """Start rolling"""
         self.get_logger().info("Starting rolling motion")
-        self.action_in_progress = False  # Allow new action
+        # self.action_in_progress = False  # Allow new action
         self.send_goal("rolling")
 
     def stop_rolling(self):
         """Stop rolling"""
         self.get_logger().info("Stopping rolling motion")
-        self.action_in_progress = False  # Allow new action
+        # self.action_in_progress = False  # Allow new action
         self.send_goal("stop_rolling")
 
 def main(args=None):
