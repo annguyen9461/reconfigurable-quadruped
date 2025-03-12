@@ -70,12 +70,14 @@ class MoveActionClient(Node):
 
     def turning_callback(self):
         """Keeps turning if we haven't detected enough pins."""
-        if not self.found_enough_pins and self.curr_state < self.STOPPED_TURNING:
+        if self.found_enough_pins:
+            self.get_logger().info("Stopping turning timer (pins detected).")
+            self.destroy_turning_timer()
+            return  # Exit function early, stop sending turns!
+
+        if self.curr_state < self.STOPPED_TURNING:
             self.get_logger().info("Still searching for pins. Sending turn command.")
-            self.keep_turning()  # Resend turn command
-        else:
-            self.get_logger().info("Stopping turning timer.")
-            self.turning_timer.cancel()  # Stop the timer
+            self.keep_turning()  # Send turn command
 
     def destroy_turning_timer(self):
         """Stop the turning timer when no longer needed"""
@@ -151,6 +153,8 @@ class MoveActionClient(Node):
                     self.get_logger().info("Pins detected! Starting 5s timer...")
                 elif (curr_time - self.pin_detected_time) >= self.pin_threshold:
                     # Pins have been detected continuously for 5 seconds
+                    self.found_enough_pins = True
+                    self.destroy_turning_timer()
                     self.stop_turning()
                     return  # No need to continue processing
             else:
