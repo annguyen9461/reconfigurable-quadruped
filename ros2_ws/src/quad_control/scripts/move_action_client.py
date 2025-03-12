@@ -83,6 +83,8 @@ class MoveActionClient(Node):
 
     def turning_callback(self):
         """Callback for the turning timer - sends turn command regularly"""
+        if self.curr_state == self.HOME1:
+            self.action_in_progress = False
         if not self.found_enough_pins and self.curr_state < self.STOPPED_TURNING:
             # Publish turning config first, as that's what motors will use
             self.publish_config_once(5)  # Config ID 5 for turning

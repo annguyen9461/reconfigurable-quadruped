@@ -37,18 +37,60 @@ int perfect_cir[NUM_MOTORS + 1] = {0,
   3091   // [ID:12]
 };
 
-int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
-  2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
-};
 
 int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
   2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
 };
 
 // WALK TO CIR
-int walk_to_cir1[NUM_MOTORS + 1] = {0, 
-    2045, 1637, 3059, 2052, 2435, 1017, 2045, 1983, 2726, 3051, 2085, 1396
-};
+// Create arrays but do NOT initialize with fixed values
+int aligned_before_rolling[NUM_MOTORS + 1];
+int walk_to_cir1[NUM_MOTORS + 1];
+
+// int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
+//   2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
+// };
+// int walk_to_cir1[NUM_MOTORS + 1] = {0, 
+//     2045, 1637, 3059, 2052, 2435, 1017, 2045, 1983, 2726, 3051, 2085, 1396
+// };
+
+// Function to initialize relative configurations
+void initialize_trans_to_roll_relative_configs() {
+    // Start with home_tiptoe as the base
+    copy_array(aligned_before_rolling, home_tiptoe);
+    copy_array(walk_to_cir1, home_tiptoe);
+
+    // Adjust motor positions relative to home_tiptoe
+    // Example: Modify joint positions slightly for alignment before rolling
+    aligned_before_rolling[1]  -= 700;  // Adjust ID:1
+    aligned_before_rolling[2]  -= 130;  // Adjust ID:2
+    aligned_before_rolling[3]  -= 13;   // Adjust ID:3
+    aligned_before_rolling[4]  += 711;  // Adjust ID:4
+    aligned_before_rolling[5]  += 145;  // Adjust ID:5
+    aligned_before_rolling[6]  -= 11;   // Adjust ID:6
+    aligned_before_rolling[7]  -= 708;  // Adjust ID:7
+    aligned_before_rolling[8]  -= 143;  // Adjust ID:8
+    aligned_before_rolling[9]  += 1;    // Adjust ID:9
+    aligned_before_rolling[10] += 622;  // Adjust ID:10
+    aligned_before_rolling[11] += 179;  // Adjust ID:11
+    aligned_before_rolling[12] += 6;    // Adjust ID:12
+
+    // Example: Modify joint positions for transitioning to circular motion
+    walk_to_cir1[1]  -= 700;
+    walk_to_cir1[2]  -= 550;
+    walk_to_cir1[3]  -= 3;
+    walk_to_cir1[4]  += 710;
+    walk_to_cir1[5]  += 545;
+    walk_to_cir1[6]  -= 5;
+    walk_to_cir1[7]  -= 705;
+    walk_to_cir1[8]  -= 207;
+    walk_to_cir1[9]  -= 346;
+    walk_to_cir1[10] += 621;
+    walk_to_cir1[11] += 221;
+    walk_to_cir1[12] += 346;
+
+    std::cout << "Relative configurations initialized!\n";
+}
 
 // CIR TO WALK
 int cir_to_blue3_180[NUM_MOTORS + 1] = {0, 
