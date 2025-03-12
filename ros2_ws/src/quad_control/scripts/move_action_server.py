@@ -90,7 +90,7 @@ class MoveActionServer(Node):
         msg.current_state = state
         self.state_publisher.publish(msg)
 
-    async def execute_callback(self, goal_handle):
+    def execute_callback(self, goal_handle):
         """Executes the action, checking movement status and publishing state."""
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")

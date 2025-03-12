@@ -97,6 +97,13 @@ class MoveActionClient(Node):
         # self.config_publisher.publish(config_msg)
         self.publish_config_once(5)
     
+    def cancel_done(self, future):
+        cancel_response = future.result()
+        if len(cancel_response.goals_canceling) > 0:
+            self.get_logger().info('Goal successfully canceled')
+        else:
+            self.get_logger().info('Goal failed to cancel')
+
     def publish_config_once(self, config_id):
         """Publishes a configuration message **only if it's new**."""
         if self.last_published_config == config_id and config_id != 5:
@@ -184,11 +191,7 @@ class MoveActionClient(Node):
         # self.action_in_progress = True
 
         # Send goal asynchronously
-        # future = self._action_client.send_goal_async(goal_msg)
-        # future.add_done_callback(self.goal_response_callback)
-        # return True
-        self._send_goal_future = self._action_client.send_goal_async(
-            goal_msg)
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
         self._send_goal_future.add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
@@ -201,9 +204,8 @@ class MoveActionClient(Node):
         
         self.get_logger().info('Goal accepted')
 
-        # Request the result
-        result_future = goal_handle.get_result_async()
-        result_future.add_done_callback(self.get_result_callback)
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
         """Handle the result from the action server"""
