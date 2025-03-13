@@ -129,9 +129,9 @@ class MoveActionClient(Node):
                 # We've reached HOME1 during turning - can continue turning
                 pass
                 
-            elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
-                # Robot has stopped turning, now transition to roll
-                self.transition_to_roll()
+            # elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
+            #     # Robot has stopped turning, now transition to roll
+            #     self.transition_to_roll()
                 
             elif self.curr_state == self.AT_ROLL_STATIONARY:
                 # We've reached roll position, now start rolling
@@ -211,37 +211,53 @@ class MoveActionClient(Node):
         self.publish_config_once(1)  # Home1 configuration
         
         # Create a task for the async operation
-        future = self.executor.create_task(self._transition_to_roll_async())
+        future = self.executor.create_task(self._stop_turning_async())
         return future
 
     async def _stop_turning_async(self):
         """Async implementation of stop turning."""
         future = self._goal_handle.cancel_goal_async()
-        future.add_done_callback(self.cancel_done)
+        await future
 
-        return await self.send_goal("stop_turning")
-    
-    def transition_to_roll(self):
-        """Transition to rolling configuration."""
-        self.get_logger().info("Transitioning to roll configuration")
-        self.publish_config_once(3)  # Roll configuration
-        # Create a task for the async operation
+        self.get_logger().info("Turning goal successfully canceled. Sending 'stop_turning' command.")
+        await self.send_goal("stop_turning")
+
+        # Now immediately queue the "hcir" transition
+        self.publish_config_once(3)
         future = self.executor.create_task(self._transition_to_roll_async())
-        return future
+        await future
+    
+    # def transition_to_roll(self):
+    #     """Transition to rolling configuration."""
+    #     self.get_logger().info("Transitioning to roll configuration")
+    #     self.publish_config_once(3)  # Roll configuration
+    #     # Create a task for the async operation
+    #     future = self.executor.create_task(self._transition_to_roll_async())
+    #     return future
     
     async def _transition_to_roll_async(self):
         """Async implementation of transition to roll."""
         await self.send_goal("hcir")
 
-    async def start_rolling(self):
+    def start_rolling(self):
+        """Start rolling"""
+        self.get_logger().info("Starting rolling motion")
+        self.executor.create_task(self._start_rolling_async())
+    
+    async def _start_rolling_async(self):
         """Start rolling"""
         self.get_logger().info("Starting rolling motion")
         await self.send_goal("rolling")
-
-    async def stop_rolling(self):
+    
+    def stop_rolling(self):
         """Stop rolling"""
         self.get_logger().info("Stopping rolling motion")
-        await self.send_goal("stop_rolling")
+        self.executor.create_task(self._start_rol_stop_rolling_asyncling_async())
+
+    async def _stop_rolling_async(self):
+        """Start rolling"""
+        self.get_logger().info("Starting rolling motion")
+        await self.send_goal("rolling")
 
 def main(args=None):
     rclpy.init(args=args)

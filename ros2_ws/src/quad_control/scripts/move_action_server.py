@@ -137,7 +137,7 @@ class MoveActionServer(Node):
                     self.get_logger().info("Turning goal was canceled early!")
                     return Move.Result()  # Exit immediately
 
-                time.sleep(0.1)  # Reduce sleep time for faster response
+                time.sleep(0.05)  # Reduce sleep time for faster response
             
             self.get_logger().info("Turn completed. At home position.")
             self.publish_robot_state(self.HOME1)
@@ -155,7 +155,7 @@ class MoveActionServer(Node):
                 # feedback_msg.status_message = "Trans to roll..."
                 # feedback_msg.still_movng = True
                 # goal_handle.publish_feedback(feedback_msg)
-                time.sleep(0.1)
+                time.sleep(0.05)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)
