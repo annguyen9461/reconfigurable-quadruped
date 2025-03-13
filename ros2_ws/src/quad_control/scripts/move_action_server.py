@@ -8,9 +8,8 @@ from quad_interfaces.msg import RobotState
 from quad_interfaces.msg import MotorPositions
 from std_msgs.msg import String
 
-import collections
-import threading
 import time
+import states
 
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -62,15 +61,6 @@ class MoveActionServer(Node):
         self.position_threshold = 20  # Allowed error margin
         self.get_logger().info("MoveActionServer is ready.")
 
-        self._goal_queue = collections.deque()
-        self._goal_queue_lock = threading.Lock()
-        self._current_goal = None
-
-    def destroy(self):
-        self._action_server.destroy()
-        super().destroy_node()
-
-
     def get_motor_pos(self, msg):
         """Updates the current motor positions from the MotorPositions message."""
         self.current_motor_pos = [
@@ -102,7 +92,7 @@ class MoveActionServer(Node):
         msg = RobotState()
         msg.current_state = state
         self.state_publisher.publish(msg)
-    
+
     def destroy(self):
         self._action_server.destroy()
         super().destroy_node()
@@ -112,14 +102,19 @@ class MoveActionServer(Node):
         # This server allows multiple goals in parallel
         self.get_logger().info('Received goal request')
         return GoalResponse.ACCEPT
-    
+
     def cancel_callback(self, goal_handle):
         """Accept or reject a client request to cancel an action."""
         self.get_logger().info('Received cancel request')
         return CancelResponse.ACCEPT
-
+    
     async def execute_callback(self, goal_handle):
         """Executes the action, checking movement status and publishing state."""
+        if goal_handle.is_cancel_requested:
+            goal_handle.canceled()
+            self.get_logger().info('Goal canceled')
+            return Move.Result()
+        
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")
 
@@ -137,10 +132,12 @@ class MoveActionServer(Node):
             
             # Wait for robot to reach home position
             while not self.is_at_target_config(self.home_tiptoe):
-                # feedback_msg.status_message = "Turning..."
-                # feedback_msg.still_moving = True
-                # goal_handle.publish_feedback(feedback_msg)
-                time.sleep(0.2)
+                if goal_handle.is_cancel_requested:
+                    goal_handle.canceled()
+                    self.get_logger().info("Turning goal was canceled early!")
+                    return Move.Result()  # Exit immediately
+
+                time.sleep(0.1)  # Reduce sleep time for faster response
             
             self.get_logger().info("Turn completed. At home position.")
             self.publish_robot_state(self.HOME1)
@@ -156,9 +153,9 @@ class MoveActionServer(Node):
             # Wait for robot to reach rolling position
             while not self.is_at_target_config(self.perfect_cir):
                 # feedback_msg.status_message = "Trans to roll..."
-                # feedback_msg.still_moving = True
+                # feedback_msg.still_movng = True
                 # goal_handle.publish_feedback(feedback_msg)
-                time.sleep(0.2)
+                time.sleep(0.1)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)
@@ -197,9 +194,12 @@ def main(args=None):
 
     # Use a MultiThreadedExecutor to enable processing goals concurrently
     executor = MultiThreadedExecutor()
+
     rclpy.spin(node, executor=executor)
+
     node.destroy()
-    rclpy.spin(node) 
+    rclpy.shutdown()
+
 
 
 if __name__ == '__main__':

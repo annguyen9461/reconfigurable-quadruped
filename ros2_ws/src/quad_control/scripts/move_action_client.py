@@ -127,7 +127,7 @@ class MoveActionClient(Node):
             # React to state changes
             if self.curr_state < self.STOPPED_TURNING and self.found_enough_pins:
                 # We've reached HOME1 during turning - can continue turning
-                self.keep_turning()
+                pass
                 
             elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
                 # Robot has stopped turning, now transition to roll
@@ -183,31 +183,42 @@ class MoveActionClient(Node):
             return False
 
         # Send goal asynchronously
-        goal_future = await self._action_client.send_goal_async(goal_msg)
-        result_future = goal_future.get_result_async()
-        return result_future
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg)
+        self._send_goal_future.add_done_callback(self.goal_response_callback)
+    
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().info('Goal rejected :(')
+            return
+
+        self._goal_handle = goal_handle
+
+        self.get_logger().info('Goal accepted :)')
+
+        self._get_result_future = goal_handle.get_result_async()
+        self._get_result_future.add_done_callback(self.get_result_callback)
+
 
     def get_result_callback(self, future):
-        """Handle the result from the action server"""
-        status = future.result().status
-
-        if status == GoalStatus.STATUS_SUCCEEDED:
-            self.get_logger().info('Goal succeeded!')
-        else:
-            self.get_logger().info(f'Goal failed with status: {status}')
+        result = future.result().result
+        # self.get_logger().info('Result: {0}'.format(result))
 
     def stop_turning(self):
         """Stop turning and transition to Home1 configuration."""
         self.found_enough_pins = True
         self.get_logger().info("Pin detected! Stopping turn and transitioning to home1.")
         self.publish_config_once(1)  # Home1 configuration
-
+        
         # Create a task for the async operation
-        future = self.executor.create_task(self._stop_turning_async())
+        future = self.executor.create_task(self._transition_to_roll_async())
         return future
 
     async def _stop_turning_async(self):
         """Async implementation of stop turning."""
+        future = self._goal_handle.cancel_goal_async()
+        future.add_done_callback(self.cancel_done)
+
         return await self.send_goal("stop_turning")
     
     def transition_to_roll(self):
