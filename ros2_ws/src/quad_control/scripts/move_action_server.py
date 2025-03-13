@@ -8,8 +8,12 @@ from quad_interfaces.msg import RobotState
 from quad_interfaces.msg import MotorPositions
 from std_msgs.msg import String
 
+import collections
+import threading
 import time
-import states
+
+from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.executors import MultiThreadedExecutor
 
 class MoveActionServer(Node):
     # Enum-like representation for robot states
@@ -29,7 +33,9 @@ class MoveActionServer(Node):
             Move,
             'move',
             execute_callback=self.execute_callback,
-        )
+            callback_group=ReentrantCallbackGroup(),
+            goal_callback=self.goal_callback,
+            cancel_callback=self.cancel_callback)
         
         self.current_command = "stop" # Default movement state
         self.current_motor_pos = [None]*12
@@ -55,6 +61,15 @@ class MoveActionServer(Node):
 
         self.position_threshold = 20  # Allowed error margin
         self.get_logger().info("MoveActionServer is ready.")
+
+        self._goal_queue = collections.deque()
+        self._goal_queue_lock = threading.Lock()
+        self._current_goal = None
+
+    def destroy(self):
+        self._action_server.destroy()
+        super().destroy_node()
+
 
     def get_motor_pos(self, msg):
         """Updates the current motor positions from the MotorPositions message."""
@@ -87,6 +102,21 @@ class MoveActionServer(Node):
         msg = RobotState()
         msg.current_state = state
         self.state_publisher.publish(msg)
+    
+    def destroy(self):
+        self._action_server.destroy()
+        super().destroy_node()
+
+    def goal_callback(self, goal_request):
+        """Accept or reject a client request to begin an action."""
+        # This server allows multiple goals in parallel
+        self.get_logger().info('Received goal request')
+        return GoalResponse.ACCEPT
+    
+    def cancel_callback(self, goal_handle):
+        """Accept or reject a client request to cancel an action."""
+        self.get_logger().info('Received cancel request')
+        return CancelResponse.ACCEPT
 
     async def execute_callback(self, goal_handle):
         """Executes the action, checking movement status and publishing state."""
@@ -165,12 +195,10 @@ def main(args=None):
 
     node = MoveActionServer()
 
-    # # Test publishing a message every 2 seconds
-    # while rclpy.ok():
-    #     node.publish_robot_state(node.TURNING)
-    #     node.get_logger().info("Published test state: TURNING")
-    #     time.sleep(2)
-
+    # Use a MultiThreadedExecutor to enable processing goals concurrently
+    executor = MultiThreadedExecutor()
+    rclpy.spin(node, executor=executor)
+    node.destroy()
     rclpy.spin(node) 
 
 
