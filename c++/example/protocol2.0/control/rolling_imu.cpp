@@ -1198,10 +1198,16 @@ int main()
         yellow_up_cir,
         perfect_cir
       };
+
+      int* sleep_amount[NUM_MOVEMENTS] = {
+        500,
+        300
+      };
+      
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
         move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(700));  
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_amount[i]));  
       }
     }
 
@@ -1215,9 +1221,14 @@ int main()
         perfect_cir
       };
       
+      int* sleep_amount[NUM_MOVEMENTS] = {
+        500,
+        300
+      };
+      
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
         move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(700));  
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_amount[i]));  
       }
     }
 
