@@ -1200,8 +1200,8 @@ int main()
       };
 
       int sleep_amount[NUM_MOVEMENTS] = {
-        500,
-        200
+        300,
+        100
       };
       
       
@@ -1222,8 +1222,8 @@ int main()
       };
       
       int sleep_amount[NUM_MOVEMENTS] = {
-        500,
-        200
+        300,
+        100
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
