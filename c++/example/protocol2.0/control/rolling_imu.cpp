@@ -1317,7 +1317,7 @@ int main()
    
 
     // Adjust sampling rate (lower value for higher frequency)
-    usleep(2000); // 10ms delay (~100Hz sampling rate)
+    // usleep(2000); // 10ms delay (~100Hz sampling rate)
 
   }
 
