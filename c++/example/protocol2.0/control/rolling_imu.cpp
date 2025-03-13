@@ -1199,7 +1199,7 @@ int main()
         perfect_cir
       };
 
-      int* sleep_amount[NUM_MOVEMENTS] = {
+      int sleep_amount[NUM_MOVEMENTS] = {
         500,
         300
       };
@@ -1221,7 +1221,7 @@ int main()
         perfect_cir
       };
       
-      int* sleep_amount[NUM_MOVEMENTS] = {
+      int sleep_amount[NUM_MOVEMENTS] = {
         500,
         300
       };
