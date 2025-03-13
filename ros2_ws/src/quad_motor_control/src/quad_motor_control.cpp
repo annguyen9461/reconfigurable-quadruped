@@ -347,13 +347,16 @@ void QuadMotorControl::execute_config(int config_id) {
             sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 5000}; // 500ms delay per step
             break;
     }
-    // **Apply first transformation immediately**
-    apply_motor_positions(config_sequence[0]);
-
-    // **Queue remaining transformations with delays**
-    for (size_t i = 1; i < config_sequence.size(); i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i-1]));
+    
+    // Apply each configuration and sleep afterward (like original code)
+    for (size_t i = 0; i < config_sequence.size(); i++) {
+        // Apply the current motor positions
         apply_motor_positions(config_sequence[i]);
+        
+        // Sleep after applying positions (if not the last configuration)
+        if (i < sleep_durations.size()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
+        }
     }
 }
 
