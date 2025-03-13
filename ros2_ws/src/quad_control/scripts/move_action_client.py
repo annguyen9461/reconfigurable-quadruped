@@ -252,7 +252,7 @@ class MoveActionClient(Node):
     def stop_rolling(self):
         """Stop rolling"""
         self.get_logger().info("Stopping rolling motion")
-        self.executor.create_task(self._start_rol_stop_rolling_asyncling_async())
+        self.executor.create_task(self._stop_rolling_async())
 
     async def _stop_rolling_async(self):
         """Start rolling"""
