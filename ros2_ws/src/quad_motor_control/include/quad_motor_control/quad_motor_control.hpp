@@ -32,11 +32,13 @@ public:
     virtual ~QuadMotorControl();
 
 private:
+    // DYNAMIXEL SDK components
     dynamixel::PortHandler* portHandler;
     dynamixel::PacketHandler* packetHandler;
     dynamixel::GroupSyncWrite* groupSyncWrite;
     dynamixel::GroupSyncRead* groupSyncRead;
 
+    // ROS2 Components
     rclcpp::Subscription<SetPosition>::SharedPtr set_position_subscriber_;
     rclcpp::Subscription<SetConfig>::SharedPtr set_config_subscriber_;
     rclcpp::Service<GetPosition>::SharedPtr get_position_server_;
@@ -50,6 +52,10 @@ private:
     void publishMotorPositions();
     void executeConfiguration(const SetConfig::SharedPtr msg);
     int readMotorPosition(int motor_id);
+
+    // **Configuration Execution and Motor Control**
+    void execute_config(int config_id);              // Executes a predefined configuration
+    void apply_motor_positions(int* target_positions);  // Moves motors to a target position immediately
 
     int present_position;
 };
