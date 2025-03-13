@@ -25,7 +25,7 @@ uint32_t goal_position = 0;
 int dxl_comm_result = COMM_TX_FAIL;
 
 
-QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
+QuadMotorControl::QuadMotorControl() : Node("quad_motor_control"), last_executed_config_(-1), curr_robot_state_(RobotStateEnum::TURNING) 
 {
     RCLCPP_INFO(this->get_logger(), "Run quad_motor_control node");
 
@@ -156,9 +156,19 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
     //     }
     //     );
 
+    robot_state_subscriber_ = this->create_subscription<quad_interfaces::msg::RobotState>(
+        "/robot_state",
+        rclcpp::QoS(1).best_effort().durability_volatile(),
+        [this](const quad_interfaces::msg::RobotState::SharedPtr msg) -> void {
+            curr_robot_state_ = static_cast<RobotStateEnum>(msg->current_state);
+            RCLCPP_INFO(this->get_logger(), "Robot state updated: %d", static_cast<int>(curr_robot_state_));
+        }
+    );
+
+
     const auto QOS_KEEP_LATEST = rclcpp::QoS(rclcpp::KeepLast(1))
-        .reliable()
-        .durability_volatile();  // Keep only the latest message
+        .best_effort()  // Do NOT queue old messages, discard outdated ones
+        .durability_volatile();  // Do NOT persist messages
         
     set_config_subscriber_ =
         this->create_subscription<SetConfig>(
@@ -167,7 +177,20 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control")
         [this](const SetConfig::SharedPtr msg) -> void
         {   
             int config_id = msg->config_id;
-            RCLCPP_INFO(this->get_logger(), "Received config update: %d", config_id);
+            
+            // Allow turning only if the robot is still in a state before STOPPED_TURNING
+            if (config_id == 5 && curr_robot_state_ < RobotStateEnum::STOPPED_TURNING) {
+                RCLCPP_INFO(this->get_logger(), "Robot is still turning, executing config 5.");
+                execute_config(5);
+            } else if (config_id == 5 && curr_robot_state_ >= RobotStateEnum::STOPPED_TURNING) {
+                RCLCPP_WARN(this->get_logger(), "Ignoring redundant config 5, robot has already stopped turning.");
+                return;
+            }
+
+
+            last_executed_config_ = config_id;  // Store latest config
+
+            RCLCPP_INFO(this->get_logger(), "🔥 Processing latest config update: %d", config_id);
 
             // Clear any previous queued SyncWrite commands
             groupSyncWrite->clearParam();
