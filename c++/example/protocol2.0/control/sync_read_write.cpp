@@ -121,10 +121,11 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 
 // WALKING TURNING RIGHT
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
-const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
+
+const int UP_DOWN_TICKS = static_cast<int>(22 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
 const int CW_CCW_TICKS = static_cast<int>(10 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
-const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
-const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
+const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE); 
+const int CW_CCW_TICKS_BACKLEG = static_cast<int>(10 * TICKS_PER_DEGREE);
 
 
 // Home Tiptoe Positions
@@ -252,11 +253,11 @@ void generate_movement_arrays_walk_fw(bool turning_right) {
 
     // --- Leg 3 Movements ---
     copy_array(leg3_up, leg4_down);
-    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
+    leg3_up[8] += (UP_DOWN_TICKS+5);       // Up (ID:8)
     copy_array(leg3_ccw, leg3_up);
     leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
     copy_array(leg3_down, leg3_ccw);
-    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
+    leg3_down[8] -= (UP_DOWN_TICKS+5);     // Down (ID:8)
 
     // --- Leg 1 Movements ---
     leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
