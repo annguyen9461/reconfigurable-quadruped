@@ -87,84 +87,6 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control"), last_executed
             }
         }
         );
-    
-    // set_config_subscriber_ =
-    //     this->create_subscription<SetConfig>(
-    //     "set_config", // topic
-    //     QOS_RKL10V,
-    //     [this](const SetConfig::SharedPtr msg) -> void
-    //     {   
-    //         int config_id = msg->config_id;
-
-    //         // Define multi-step configurations
-    //         std::vector<int*> config_sequence;
-    //         std::vector<int> sleep_durations;      // Sleep times between moves (milliseconds)
-    //         int* target_positions = home_tiptoe;
-    //         switch (config_id) {
-    //             case 1: 
-    //                 config_sequence = {home_tiptoe};
-    //                 sleep_durations = {0}; 
-    //                 break;
-    //             case 2: 
-    //                 config_sequence = {perfect_cir};
-    //                 sleep_durations = {0};  
-    //                 break;
-    //             case 3:                             // Home to Cir
-    //                 config_sequence = {aligned_before_rolling, walk_to_cir1, perfect_cir};
-    //                 sleep_durations = {500, 300, 0}; // Time delays between steps
-    //                 break;
-    //             case 4:                             // Cir to Home
-    //                 config_sequence = {perfect_cir, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
-    //                 sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
-    //                 break;
-    //             case 5:  // Turning Right Sequence
-    //                 config_sequence = {
-    //                     leg4_up_right, leg4_turn_right, leg4_down_right,
-    //                     leg3_up_right, leg3_turn_right, leg3_down_right, 
-    //                     leg2_up_right, leg2_turn_right, leg2_down_right,
-    //                     leg1_up_right, leg1_turn_right, leg1_down_right,
-    //                     home_tiptoe
-    //                 };
-    //                 sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 5000}; // 500ms delay per step
-    //                 break;
-    //         }
-    //         // Execute each step in the sequence
-    //         for (size_t i = 0; i < config_sequence.size(); i++) {
-    //             target_positions = config_sequence[i];
-    //             // Clear previous SyncWrite parameters
-    //             groupSyncWrite->clearParam();
-                
-    //             for (int id = 1; id <= NUM_MOTORS; id++)  // Loop through motor IDs 1-12
-    //             {
-    //                 uint8_t param_goal_position[4];
-    //                 int goal_position = target_positions[id];
-
-    //                 param_goal_position[0] = DXL_LOBYTE(DXL_LOWORD(goal_position));
-    //                 param_goal_position[1] = DXL_HIBYTE(DXL_LOWORD(goal_position));
-    //                 param_goal_position[2] = DXL_LOBYTE(DXL_HIWORD(goal_position));
-    //                 param_goal_position[3] = DXL_HIBYTE(DXL_HIWORD(goal_position));
-
-    //                 // Add goal position to SyncWrite buffer
-    //                 if (!groupSyncWrite->addParam(id, param_goal_position)) {
-    //                     fprintf(stderr, "[ID:%03d] groupSyncWrite addParam failed\n", id);
-    //                     continue;
-    //                 }
-    //             }
-
-    //             // Transmit the target positions to all motors at once
-    //             int dxl_comm_result = groupSyncWrite->txPacket();
-    //             if (dxl_comm_result != COMM_SUCCESS) {
-    //                 printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-    //             }
-
-    //             // Clear SyncWrite buffer after sending data
-    //             groupSyncWrite->clearParam();
-
-    //             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
-    //         }
-           
-    //     }
-    //     );
 
     robot_state_subscriber_ = this->create_subscription<quad_interfaces::msg::RobotState>(
         "/robot_state",
@@ -359,28 +281,6 @@ QuadMotorControl::~QuadMotorControl()
     }
 }
 
-// void QuadMotorControl::execute_roll_yellow() {
-//     // Implement yellow push sequence (similar to what you had in paste.txt)
-//     std::vector<int*> roll_sequence = {yellow_up_cir, perfect_cir};
-//     std::vector<int> sleep_times = {500, 300};
-    
-//     for (size_t i = 0; i < roll_sequence.size(); i++) {
-//         apply_motor_positions(roll_sequence[i]);
-//         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
-//     }
-// }
-
-// void QuadMotorControl::execute_roll_blue() {
-//     // Implement blue push sequence
-//     std::vector<int*> roll_sequence = {blue_up_cir, perfect_cir};
-//     std::vector<int> sleep_times = {500, 300};
-    
-//     for (size_t i = 0; i < roll_sequence.size(); i++) {
-//         apply_motor_positions(roll_sequence[i]);
-//         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
-//     }
-// }
-
 void QuadMotorControl::execute_roll_yellow() {
     gradual_transition(yellow_up_cir);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -481,51 +381,6 @@ void QuadMotorControl::execute_config(int config_id) {
         }
     }
 }
-
-// void QuadMotorControl::execute_config(int config_id) {
-//     std::vector<int*> config_sequence;
-//     std::vector<int> sleep_durations;
-
-//     switch (config_id) {
-//         case 1: 
-//             config_sequence = {home_tiptoe};
-//             sleep_durations = {0}; 
-//             break;
-//         case 2: 
-//             config_sequence = {perfect_cir};
-//             sleep_durations = {0};  
-//             break;
-//         case 3:                             // Home to Cir
-//             config_sequence = {aligned_before_rolling, walk_to_cir1, perfect_cir};
-//             sleep_durations = {500, 300, 0}; // Time delays between steps
-//             break;
-//         case 4:                             // Cir to Home
-//             config_sequence = {perfect_cir, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
-//             sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
-//             break;
-//         case 5:  // Turning Right Sequence
-//             config_sequence = {
-//                 leg4_up_right, leg4_turn_right, leg4_down_right,
-//                 leg3_up_right, leg3_turn_right, leg3_down_right, 
-//                 leg2_up_right, leg2_turn_right, leg2_down_right,
-//                 leg1_up_right, leg1_turn_right, leg1_down_right,
-//                 home_tiptoe
-//             };
-//             sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 7000}; // 500ms delay per step
-//             break;
-//     }
-    
-//     // Apply each configuration and sleep afterward (like original code)
-//     for (size_t i = 0; i < config_sequence.size(); i++) {
-//         // Apply the current motor positions
-//         apply_motor_positions(config_sequence[i]);
-        
-//         // Sleep after applying positions (if not the last configuration)
-//         if (i < sleep_durations.size()) {
-//             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
-//         }
-//     }
-// }
 
 void QuadMotorControl::apply_motor_positions(int* target_positions) {
     groupSyncWrite->clearParam();
