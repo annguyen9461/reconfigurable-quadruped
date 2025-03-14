@@ -150,12 +150,14 @@ class MoveActionServer(Node):
             self.publish_robot_state(self.WALK_TO_ROLL)
             self.get_logger().info("Transitioning to rolling mode...")
             
-            # Wait for robot to reach rolling position
-            while not self.is_at_target_config(self.perfect_cir):
-                # feedback_msg.status_message = "Trans to roll..."
-                # feedback_msg.still_movng = True
-                # goal_handle.publish_feedback(feedback_msg)
-                time.sleep(0.05)
+            # # Wait for robot to reach rolling position
+            # while not self.is_at_target_config(self.perfect_cir):
+            #     # feedback_msg.status_message = "Trans to roll..."
+            #     # feedback_msg.still_movng = True
+            #     # goal_handle.publish_feedback(feedback_msg)
+            #     time.sleep(0.05)
+
+            time.sleep(0.1)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)
