@@ -173,5 +173,42 @@ void initialize_turning_configs_right() {
     std::cout << "Turning right configurations initialized!\n";
 }
 
+// ROLL FORWARD CONFIGURATIONS (Declared but NOT initialized at global scope)
+int yellow_up_cir[NUM_MOTORS + 1];     // Yellow legs up position
+int blue_up_cir[NUM_MOTORS + 1];       // Blue legs up position
+int yellow_up_propel[NUM_MOTORS + 1];  // Yellow legs up for propelling (smaller movement)
+int blue_up_propel[NUM_MOTORS + 1];    // Blue legs up for propelling (smaller movement)
+
+// Constants for rolling motion
+const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE);  // 50 degrees of movement
+const int UP_TICKS_PROPEL_SMALL = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees for propelling
+
+void initialize_rolling_configs() {
+    // Start with perfect_cir as the base for all roll configurations
+    copy_array(yellow_up_cir, perfect_cir);
+    copy_array(blue_up_cir, perfect_cir);
+    copy_array(yellow_up_propel, perfect_cir);
+    copy_array(blue_up_propel, perfect_cir);
+    
+    // YELLOW LEGS (1 and 2)
+    // Yellow legs up for full roll
+    yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;     // Leg 1 up (ID:2)
+    yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;     // Leg 2 up (ID:5)
+    
+    // Yellow legs up for propelling (smaller movement)
+    yellow_up_propel[2] += UP_TICKS_PROPEL_SMALL;   // Leg 1 small up (ID:2)
+    yellow_up_propel[5] -= UP_TICKS_PROPEL_SMALL;   // Leg 2 small up (ID:5)
+    
+    // BLUE LEGS (3 and 4)
+    // Blue legs up for full roll
+    blue_up_cir[8] -= UP_DOWN_TICKS_ROLL;       // Leg 3 up (ID:8)
+    blue_up_cir[11] += UP_DOWN_TICKS_ROLL;      // Leg 4 up (ID:11)
+    
+    // Blue legs up for propelling (smaller movement)
+    blue_up_propel[8] -= UP_TICKS_PROPEL_SMALL;     // Leg 3 small up (ID:8)
+    blue_up_propel[11] += UP_TICKS_PROPEL_SMALL;    // Leg 4 small up (ID:11)
+    
+    std::cout << "Rolling forward configurations initialized!\n";
+}
 
 #endif // POSITION_CONFIGS_HPP

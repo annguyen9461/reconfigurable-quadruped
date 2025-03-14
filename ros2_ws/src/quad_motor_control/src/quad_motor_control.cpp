@@ -19,6 +19,12 @@
 #define NUM_MOTORS 12
 #define MOTOR_READ_FAIL -1
 
+// Includes for I2C
+#include <linux/i2c-dev.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <cmath>
 
 uint8_t dxl_error = 0;
 uint32_t goal_position = 0;
@@ -44,6 +50,10 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control"), last_executed
     // this->groupSyncRead = new dynamixel::GroupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
 
     this->initDynamixels();
+
+    // Initialize IMU
+    initIMU();
+
 
     set_position_subscriber_ =
         this->create_subscription<SetPosition>(
@@ -307,12 +317,68 @@ QuadMotorControl::QuadMotorControl() : Node("quad_motor_control"), last_executed
         }
 
         this->motor_positions_publisher_->publish(message);
+
+        // Check tilt angle if IMU is working
+        if (i2c_file > 0) {
+            float tilt_angle = getTiltAngle();
+            
+            // Only process valid readings
+            if (tilt_angle != -1000.0f) {
+                RCLCPP_DEBUG(this->get_logger(), "Current tilt angle: %.2f degrees", tilt_angle);
+                
+                // Determine orientation based on tilt angle
+                bool blue_under = (tilt_angle >= -180 && tilt_angle <= -122) ||
+                                (tilt_angle >= 123 && tilt_angle <= 180);
+                bool yellow_under = tilt_angle >= -54 && tilt_angle <= 58;
+                
+                // If in ROLLING state and not already moving
+                if (curr_robot_state_ >= RobotStateEnum::ROLLING) {
+                    // Example of how to trigger a roll based on orientation
+                    if (yellow_under) {
+                        RCLCPP_INFO(this->get_logger(), "Yellow side under, initiating yellow push");
+                        // Call yellow push sequence
+                        // For example:
+                        execute_roll_yellow();
+                    } else if (blue_under) {
+                        RCLCPP_INFO(this->get_logger(), "Blue side under, initiating blue push");
+                        // Call blue push sequence
+                        // For example:
+                        execute_roll_blue();
+                    }
+                }
+            }
+        }
       };
     timer_ = this->create_wall_timer(std::chrono::milliseconds(500), timer_callback);
 }
 
 QuadMotorControl::~QuadMotorControl()
 {
+    if (i2c_file > 0) {
+        close(i2c_file);
+    }
+}
+
+void QuadMotorControl::execute_roll_yellow() {
+    // Implement yellow push sequence (similar to what you had in paste.txt)
+    std::vector<int*> roll_sequence = {yellow_up_cir, perfect_cir};
+    std::vector<int> sleep_times = {300, 100};
+    
+    for (size_t i = 0; i < roll_sequence.size(); i++) {
+        apply_motor_positions(roll_sequence[i]);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
+    }
+}
+
+void QuadMotorControl::execute_roll_blue() {
+    // Implement blue push sequence
+    std::vector<int*> roll_sequence = {blue_up_cir, perfect_cir};
+    std::vector<int> sleep_times = {300, 100};
+    
+    for (size_t i = 0; i < roll_sequence.size(); i++) {
+        apply_motor_positions(roll_sequence[i]);
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
+    }
 }
 
 void QuadMotorControl::execute_config(int config_id) {
@@ -436,9 +502,108 @@ void QuadMotorControl::initDynamixels()
   }
 }
 
+void QuadMotorControl::initIMU() {
+    // Open I2C device
+    int adapter_nr = 1;  // Use /dev/i2c-1
+    char filename[20];
+    snprintf(filename, 19, "/dev/i2c-%d", adapter_nr);
+    i2c_file = open(filename, O_RDWR);
+    if (i2c_file < 0) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to open I2C bus");
+        return;
+    }
+
+    // Set I2C device address (LSM330DHCX)
+    int addr = 0x6A;
+    if (ioctl(i2c_file, I2C_SLAVE, addr) < 0) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to set I2C address");
+        close(i2c_file);
+        i2c_file = -1;
+        return;
+    }
+
+    // Enable gyroscope and accelerometer
+    write_register(0x10, 0x60);  // Accelerometer
+    write_register(0x11, 0x60);  // Gyroscope
+    
+    // Initialize IMU variables
+    accumulated_tilt_angle = 0.0f;
+    sample_count = 0;
+    
+    RCLCPP_INFO(this->get_logger(), "IMU initialized successfully");
+    
+    // Sleep to allow sensor to initialize
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+}
+
+int QuadMotorControl::write_register(uint8_t reg, uint8_t value) {
+    uint8_t buf[2] = {reg, value};
+    if (write(i2c_file, buf, 2) != 2) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to write register 0x%x", reg);
+        return -1;
+    }
+    return 0;
+}
+
+int QuadMotorControl::read_register(uint8_t reg) {
+    uint8_t data;
+    if (write(i2c_file, &reg, 1) != 1) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to write register address: 0x%x", reg);
+        return -1;
+    }
+    if (read(i2c_file, &data, 1) != 1) {
+        RCLCPP_ERROR(this->get_logger(), "Failed to read from register: 0x%x", reg);
+        return -1;
+    }
+    return data;
+}
+
+int16_t QuadMotorControl::read_16bit_register(uint8_t reg_low, uint8_t reg_high) {
+    int16_t low = read_register(reg_low);
+    int16_t high = read_register(reg_high);
+    if (low == -1 || high == -1) return -1;
+    return (high << 8) | low;
+}
+
+float QuadMotorControl::getTiltAngle() {
+    // Read accelerometer data
+    // int16_t accel_x = read_16bit_register(0x28, 0x29);
+    int16_t accel_y = read_16bit_register(0x2A, 0x2B);
+    int16_t accel_z = read_16bit_register(0x2C, 0x2D);
+    
+    // Apply scale factors and bias correction
+    float accel_z_offset = 0.2;
+    // float accel_mps2_x = accel_x * (2.0 / 32768.0) * 9.81;
+    float accel_mps2_y = accel_y * (2.0 / 32768.0) * 9.81;
+    float accel_mps2_z = ((accel_z * (2.0 / 32768.0)) * 9.81) - accel_z_offset;
+    
+    // Compute tilt angle around x-axis
+    float angle_rad = std::atan2(accel_mps2_y, accel_mps2_z);
+    float angle_degrees = angle_rad * (180.0 / M_PI);
+    
+    // Add to accumulated values for averaging
+    accumulated_tilt_angle += angle_degrees;
+    sample_count++;
+    
+    // If we have enough samples, return the average
+    if (sample_count >= window_size) {
+        float avg_tilt_angle = accumulated_tilt_angle / sample_count;
+        
+        // Reset for next reading
+        accumulated_tilt_angle = 0;
+        sample_count = 0;
+        
+        return avg_tilt_angle;
+    }
+    
+    // Not enough samples yet
+    return -1000.0f;  // Special value indicating not ready
+}
+
 int main(int argc, char * argv[]) {
     initialize_turning_configs_right();  // Ensure all arrays are set up
     initialize_relative_configs();
+    initialize_rolling_configs();
     
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<QuadMotorControl>());

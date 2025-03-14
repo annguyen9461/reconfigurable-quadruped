@@ -48,6 +48,22 @@ public:
     virtual ~QuadMotorControl();
 
 private:
+    // IMU related variables
+    int i2c_file;
+    float accumulated_tilt_angle;
+    int sample_count;
+    const int window_size = 2;  // Number of samples to average
+    
+    // IMU functions
+    void initIMU();
+    int write_register(uint8_t reg, uint8_t value);
+    int read_register(uint8_t reg);
+    int16_t read_16bit_register(uint8_t reg_low, uint8_t reg_high);
+    float getTiltAngle();
+
+    void execute_roll_yellow();
+    void execute_roll_blue();
+    
     // DYNAMIXEL SDK components
     dynamixel::PortHandler* portHandler;
     dynamixel::PacketHandler* packetHandler;
