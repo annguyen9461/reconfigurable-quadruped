@@ -954,34 +954,7 @@ void move_to_target_positions(
   printf("Motors moved to %s position.\n", toggle_position ? "TOP RIGHT up" : "TOP LEFT up");
 }
 
-
 void gradual_transition(int* next_positions, 
-                        dynamixel::GroupSyncWrite &groupSyncWrite, 
-                        dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 17;  // number of steps for smooth transition
-    int step_arr[NUM_MOTORS + 1] = {0};
-    int num_motors = NUM_MOTORS;
-    // loop range to start from 1 (ignoring index 0)
-
-    int updated_positions[NUM_MOTORS + 1];
-    std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
-
-    for (int i = 1; i <= num_motors; i++) {
-        step_arr[i] = (next_positions[i] - updated_positions[i]) / step_size;
-    }
-    // perform transitions for each step
-    for (int step = 0; step < step_size; step++) {
-        // update motor transition based on respective step size
-        for (int i = 1; i <= num_motors; i++) {
-            updated_positions[i] += step_arr[i];
-        }
-        move_to_target_positions(updated_positions, groupSyncWrite, packetHandler);
-    }
-    // ensure final position is accurate (due to integer division)
-    move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
-}
-
-void gradual_transition2(int* next_positions, 
                          dynamixel::GroupSyncWrite &groupSyncWrite, 
                          dynamixel::PacketHandler *packetHandler,
                          dynamixel::GroupSyncRead &groupSyncRead,  // Added parameter
@@ -1231,7 +1204,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
+        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
@@ -1247,7 +1220,7 @@ int main()
       };
       
       for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler);
+        gradual_transition(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
@@ -1296,8 +1269,8 @@ int main()
       
       while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          gradual_transition2(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
+          gradual_transition(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(200));  
         }
       }
     }
