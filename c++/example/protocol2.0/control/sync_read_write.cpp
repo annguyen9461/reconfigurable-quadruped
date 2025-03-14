@@ -47,6 +47,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <cmath>
+
 
 #define MAX_INPUT_SIZE 100      // define max input buffer size
 
@@ -979,6 +981,37 @@ void gradual_transition(int* next_positions,
     move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
 }
 
+void gradual_transition2(int* next_positions, 
+                         dynamixel::GroupSyncWrite &groupSyncWrite, 
+                         dynamixel::PacketHandler *packetHandler,
+                         dynamixel::GroupSyncRead &groupSyncRead,  // Added parameter
+                         dynamixel::PortHandler *portHandler) {  // Added parameter
+    const int step_size = 17;
+    float step_arr[NUM_MOTORS + 1] = {0};
+    int num_motors = NUM_MOTORS;
+
+    int updated_positions[NUM_MOTORS + 1];
+
+    // Ensure present_positions is updated before starting the transition
+    update_present_positions(groupSyncRead, packetHandler, portHandler);
+    
+    std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
+
+    for (int i = 1; i <= num_motors; i++) {
+        step_arr[i] = static_cast<float>(next_positions[i] - updated_positions[i]) / step_size;
+    }
+
+    for (int step = 0; step < step_size; step++) {
+        for (int i = 1; i <= num_motors; i++) {
+            updated_positions[i] += std::round(step_arr[i]);  // Fix rounding issue
+        }
+        move_to_target_positions(updated_positions, groupSyncWrite, packetHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+
+    move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
+}
+
 int main() 
 {
   // Initialize PortHandler instance
@@ -1239,6 +1272,31 @@ int main()
       while (1) {
         for (int i = 0; i < NUM_MOVEMENTS; i++) {
           move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
+        }
+      }
+    }
+
+    // WALK TURNING RIGHT
+    else if (command == "walkg") {
+      
+      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
+
+      generate_movement_arrays_walk_fw(1);
+
+      const int NUM_MOVEMENTS = 14;
+      int* walk_fw_r_movements[NUM_MOVEMENTS] = {
+        leg4_up, leg4_cw, leg4_down,
+        leg3_up, leg3_ccw, leg3_down, 
+        home_tiptoe,
+        leg1_up, leg1_ccw, leg1_down,
+        leg2_up, leg2_ccw, leg2_down,
+        home_tiptoe,
+      };
+      
+      while (1) {
+        for (int i = 0; i < NUM_MOVEMENTS; i++) {
+          gradual_transition2(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
           std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
         }
       }
