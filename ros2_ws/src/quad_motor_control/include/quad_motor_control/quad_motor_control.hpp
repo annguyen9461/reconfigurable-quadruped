@@ -63,7 +63,10 @@ private:
 
     void execute_roll_yellow();
     void execute_roll_blue();
-    
+
+    void gradual_transition(int* next_positions);
+    void update_present_positions();
+
     // DYNAMIXEL SDK components
     dynamixel::PortHandler* portHandler;
     dynamixel::PacketHandler* packetHandler;
@@ -96,6 +99,7 @@ private:
     // rclcpp::Subscription<RobotState>::SharedPtr robot_state_subscriber_;  // New subscriber
     rclcpp::Subscription<quad_interfaces::msg::RobotState>::SharedPtr robot_state_subscriber_;
 
+    int present_positions[NUM_MOTORS + 1] = {0};
 };
 
 // Function to move motors to a target position

@@ -359,32 +359,49 @@ QuadMotorControl::~QuadMotorControl()
     }
 }
 
-void QuadMotorControl::execute_roll_yellow() {
-    // Implement yellow push sequence (similar to what you had in paste.txt)
-    std::vector<int*> roll_sequence = {yellow_up_cir, perfect_cir};
-    std::vector<int> sleep_times = {500, 300};
+// void QuadMotorControl::execute_roll_yellow() {
+//     // Implement yellow push sequence (similar to what you had in paste.txt)
+//     std::vector<int*> roll_sequence = {yellow_up_cir, perfect_cir};
+//     std::vector<int> sleep_times = {500, 300};
     
-    for (size_t i = 0; i < roll_sequence.size(); i++) {
-        apply_motor_positions(roll_sequence[i]);
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
-    }
+//     for (size_t i = 0; i < roll_sequence.size(); i++) {
+//         apply_motor_positions(roll_sequence[i]);
+//         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
+//     }
+// }
+
+// void QuadMotorControl::execute_roll_blue() {
+//     // Implement blue push sequence
+//     std::vector<int*> roll_sequence = {blue_up_cir, perfect_cir};
+//     std::vector<int> sleep_times = {500, 300};
+    
+//     for (size_t i = 0; i < roll_sequence.size(); i++) {
+//         apply_motor_positions(roll_sequence[i]);
+//         std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
+//     }
+// }
+
+void QuadMotorControl::execute_roll_yellow() {
+    gradual_transition(yellow_up_cir);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    gradual_transition(perfect_cir);
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 }
 
 void QuadMotorControl::execute_roll_blue() {
-    // Implement blue push sequence
-    std::vector<int*> roll_sequence = {blue_up_cir, perfect_cir};
-    std::vector<int> sleep_times = {500, 300};
+    gradual_transition(blue_up_cir);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
-    for (size_t i = 0; i < roll_sequence.size(); i++) {
-        apply_motor_positions(roll_sequence[i]);
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_times[i]));
-    }
+    gradual_transition(perfect_cir);
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 }
 
 void QuadMotorControl::execute_config(int config_id) {
     std::vector<int*> config_sequence;
     std::vector<int> sleep_durations;
 
+    // Your existing switch statement remains the same
     switch (config_id) {
         case 1: 
             config_sequence = {home_tiptoe};
@@ -414,17 +431,101 @@ void QuadMotorControl::execute_config(int config_id) {
             break;
     }
     
-    // Apply each configuration and sleep afterward (like original code)
-    for (size_t i = 0; i < config_sequence.size(); i++) {
-        // Apply the current motor positions
-        apply_motor_positions(config_sequence[i]);
+    // Use gradual transition for specific transitions
+    if (config_id == 3) {  // Home to Cir - use gradual transition
+        // First get to aligned position
+        gradual_transition(aligned_before_rolling);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         
-        // Sleep after applying positions (if not the last configuration)
-        if (i < sleep_durations.size()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
+        // Then to walk_to_cir1
+        gradual_transition(walk_to_cir1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        
+        // Finally to perfect_cir
+        gradual_transition(perfect_cir);
+    }
+    else if (config_id == 4) {  // Cir to Home - use gradual transition
+        // Process each step with gradual transition
+        gradual_transition(perfect_cir);
+        std::this_thread::sleep_for(std::chrono::milliseconds(700));
+        
+        gradual_transition(cir_to_blue3_180);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        // Continue with each step...
+        gradual_transition(cir_to_both_blues_180);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        gradual_transition(cir_to_yellow_up60);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        gradual_transition(cir_to_yellow_up90);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        gradual_transition(aligned_before_rolling);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        gradual_transition(home_tiptoe_thin);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        gradual_transition(home_tiptoe);
+    }
+    else {
+        // For other configs, use the original method
+        for (size_t i = 0; i < config_sequence.size(); i++) {
+            apply_motor_positions(config_sequence[i]);
+            
+            if (i < sleep_durations.size()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
+            }
         }
     }
 }
+
+// void QuadMotorControl::execute_config(int config_id) {
+//     std::vector<int*> config_sequence;
+//     std::vector<int> sleep_durations;
+
+//     switch (config_id) {
+//         case 1: 
+//             config_sequence = {home_tiptoe};
+//             sleep_durations = {0}; 
+//             break;
+//         case 2: 
+//             config_sequence = {perfect_cir};
+//             sleep_durations = {0};  
+//             break;
+//         case 3:                             // Home to Cir
+//             config_sequence = {aligned_before_rolling, walk_to_cir1, perfect_cir};
+//             sleep_durations = {500, 300, 0}; // Time delays between steps
+//             break;
+//         case 4:                             // Cir to Home
+//             config_sequence = {perfect_cir, cir_to_blue3_180, cir_to_both_blues_180, cir_to_yellow_up60, cir_to_yellow_up90, aligned_before_rolling, home_tiptoe_thin, home_tiptoe};
+//             sleep_durations = {700, 1000, 1000, 1000, 1000, 1000, 1000}; // Time delays between steps
+//             break;
+//         case 5:  // Turning Right Sequence
+//             config_sequence = {
+//                 leg4_up_right, leg4_turn_right, leg4_down_right,
+//                 leg3_up_right, leg3_turn_right, leg3_down_right, 
+//                 leg2_up_right, leg2_turn_right, leg2_down_right,
+//                 leg1_up_right, leg1_turn_right, leg1_down_right,
+//                 home_tiptoe
+//             };
+//             sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 7000}; // 500ms delay per step
+//             break;
+//     }
+    
+//     // Apply each configuration and sleep afterward (like original code)
+//     for (size_t i = 0; i < config_sequence.size(); i++) {
+//         // Apply the current motor positions
+//         apply_motor_positions(config_sequence[i]);
+        
+//         // Sleep after applying positions (if not the last configuration)
+//         if (i < sleep_durations.size()) {
+//             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_durations[i]));
+//         }
+//     }
+// }
 
 void QuadMotorControl::apply_motor_positions(int* target_positions) {
     groupSyncWrite->clearParam();
@@ -598,6 +699,51 @@ float QuadMotorControl::getTiltAngle() {
     
     // Not enough samples yet
     return -1000.0f;  // Special value indicating not ready
+}
+
+void QuadMotorControl::update_present_positions() {
+    for (int id = 1; id <= NUM_MOTORS; id++) {
+        uint32_t motor_position = 0;
+        dxl_comm_result = packetHandler->read4ByteTxRx(
+            portHandler,
+            (uint8_t) id,
+            ADDR_PRESENT_POSITION,
+            &motor_position,
+            &dxl_error
+        );
+        
+        if (dxl_comm_result == COMM_SUCCESS) {
+            present_positions[id] = motor_position;
+        }
+    }
+}
+
+void QuadMotorControl::gradual_transition(int* next_positions) {
+    const int step_size = 17;
+    float step_arr[NUM_MOTORS + 1] = {0};
+    int num_motors = NUM_MOTORS;
+
+    int updated_positions[NUM_MOTORS + 1] = {0};
+
+    // Ensure present_positions is updated before starting the transition
+    update_present_positions();
+    
+    std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
+
+    for (int i = 1; i <= num_motors; i++) {
+        step_arr[i] = static_cast<float>(next_positions[i] - updated_positions[i]) / step_size;
+    }
+
+    for (int step = 0; step < step_size; step++) {
+        for (int i = 1; i <= num_motors; i++) {
+            updated_positions[i] += std::round(step_arr[i]);  // Fix rounding issue
+        }
+        apply_motor_positions(updated_positions);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    }
+
+    // Ensure we reach the exact target position
+    apply_motor_positions(next_positions);
 }
 
 int main(int argc, char * argv[]) {
