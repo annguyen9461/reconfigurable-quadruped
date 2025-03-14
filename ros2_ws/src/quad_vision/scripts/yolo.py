@@ -75,7 +75,7 @@ class YoloNode(Node):
             confidences = boxes.conf.cpu().numpy()  # Get confidence scores
 
             # Count bowling pins with confidence > 0.7
-            bowling_pins_count = sum((class_ids == 1) & (confidences > 0.7))
+            bowling_pins_count = sum((class_ids == 1) & (confidences > 0.4))
 
             # self.get_logger().info(f"{bowling_pins_count} bowling pins")
 
