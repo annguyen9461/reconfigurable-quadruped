@@ -157,7 +157,7 @@ class MoveActionServer(Node):
             #     # goal_handle.publish_feedback(feedback_msg)
             #     time.sleep(0.05)
 
-            time.sleep(0.1)
+            time.sleep(0.5)
             
             self.get_logger().info("Transition to roll config completed.")
             self.publish_robot_state(self.AT_ROLL_STATIONARY)

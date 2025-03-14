@@ -362,7 +362,7 @@ QuadMotorControl::~QuadMotorControl()
 void QuadMotorControl::execute_roll_yellow() {
     // Implement yellow push sequence (similar to what you had in paste.txt)
     std::vector<int*> roll_sequence = {yellow_up_cir, perfect_cir};
-    std::vector<int> sleep_times = {300, 100};
+    std::vector<int> sleep_times = {500, 300};
     
     for (size_t i = 0; i < roll_sequence.size(); i++) {
         apply_motor_positions(roll_sequence[i]);
@@ -373,7 +373,7 @@ void QuadMotorControl::execute_roll_yellow() {
 void QuadMotorControl::execute_roll_blue() {
     // Implement blue push sequence
     std::vector<int*> roll_sequence = {blue_up_cir, perfect_cir};
-    std::vector<int> sleep_times = {300, 100};
+    std::vector<int> sleep_times = {500, 300};
     
     for (size_t i = 0; i < roll_sequence.size(); i++) {
         apply_motor_positions(roll_sequence[i]);
