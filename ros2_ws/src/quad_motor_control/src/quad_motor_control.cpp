@@ -327,7 +327,8 @@ void QuadMotorControl::execute_config(int config_id) {
                 leg1_up_right, leg1_turn_right, leg1_down_right,
                 home_tiptoe
             };
-            sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 7000}; // 500ms delay per step
+            // sleep_durations = {500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 7000}; // 500ms delay per step
+            sleep_durations = {100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
             break;
     }
     
