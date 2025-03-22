@@ -860,30 +860,34 @@ void move_to_target_positions(
   groupSyncWrite.clearParam();
 }
 
-
 void gradual_transition(int* next_positions, 
-                        dynamixel::GroupSyncWrite &groupSyncWrite, 
-                        dynamixel::PacketHandler *packetHandler) {
-    const int step_size = 17;  // number of steps for smooth transition
-    int step_arr[NUM_MOTORS + 1] = {0};
+                         dynamixel::GroupSyncWrite &groupSyncWrite, 
+                         dynamixel::PacketHandler *packetHandler,
+                         dynamixel::GroupSyncRead &groupSyncRead,  // Added parameter
+                         dynamixel::PortHandler *portHandler) {  // Added parameter
+    const int step_size = 17;
+    float step_arr[NUM_MOTORS + 1] = {0};
     int num_motors = NUM_MOTORS;
-    // loop range to start from 1 (ignoring index 0)
 
     int updated_positions[NUM_MOTORS + 1];
+
+    // Ensure present_positions is updated before starting the transition
+    update_present_positions(groupSyncRead, packetHandler, portHandler);
+    
     std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
 
     for (int i = 1; i <= num_motors; i++) {
-        step_arr[i] = (next_positions[i] - updated_positions[i]) / step_size;
+        step_arr[i] = static_cast<float>(next_positions[i] - updated_positions[i]) / step_size;
     }
-    // perform transitions for each step
+
     for (int step = 0; step < step_size; step++) {
-        // update motor transition based on respective step size
         for (int i = 1; i <= num_motors; i++) {
-            updated_positions[i] += step_arr[i];
+            updated_positions[i] += std::round(step_arr[i]);  // Fix rounding issue
         }
         move_to_target_positions(updated_positions, groupSyncWrite, packetHandler);
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
-    // ensure final position is accurate (due to integer division)
+
     move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
 }
 

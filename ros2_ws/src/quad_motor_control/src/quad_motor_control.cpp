@@ -283,18 +283,18 @@ QuadMotorControl::~QuadMotorControl()
 
 void QuadMotorControl::execute_roll_yellow() {
     gradual_transition(yellow_up_cir);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
     gradual_transition(perfect_cir);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
 void QuadMotorControl::execute_roll_blue() {
     gradual_transition(blue_up_cir);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
     gradual_transition(perfect_cir);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 }
 
 void QuadMotorControl::execute_config(int config_id) {
