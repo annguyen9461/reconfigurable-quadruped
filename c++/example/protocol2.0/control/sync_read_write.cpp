@@ -1250,7 +1250,7 @@ int main()
     //   }
     // }
 
-    else if (command == "walkg") {
+    else if (command == "trot") {
       // First move to home position
       move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
 
@@ -1299,6 +1299,164 @@ int main()
           std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
 
           // Phase 8: Final body adjustment
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+      }
+    }
+    else if (command == "bound") {
+      // Move to home position first
+      move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+
+      // Generate movement arrays if needed
+      generate_movement_arrays_walk_fw(1); // Using existing walk generation
+
+      // Timing parameters (faster than walk)
+      const int lift_time = 100;     // Time to lift legs
+      const int swing_time = 150;    // Time for forward swing
+      const int place_time = 100;    // Time to place legs down
+      const int flight_time = 50;    // Time in aerial phase
+
+      while (1) {
+          // Phase 1: Lift FRONT legs (1 and 2)
+          gradual_transition(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+
+          // Phase 2: Swing front legs forward
+          gradual_transition(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+
+          // Phase 3: Place front legs down while lifting hind legs
+          gradual_transition(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+
+          // Phase 4: Swing hind legs forward
+          gradual_transition(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+
+          // Phase 5: Place hind legs down with brief flight phase
+          gradual_transition(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+
+          // Brief aerial phase
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(flight_time));
+      }
+    }
+
+    else if (command == "pace") {
+      // Move to home position first
+      move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+
+      // Generate movement arrays if needed
+      generate_movement_arrays_walk_fw(1); // Using existing walk generation
+
+      // Timing parameters
+      const int lift_time = 180;     // Time to lift legs
+      const int swing_time = 220;    // Time for forward swing
+      const int place_time = 180;    // Time to place legs down
+      const int support_time = 150;  // Time in support phase
+
+      while (1) {
+          // Phase 1: Lift LEFT side legs (1 and 3)
+          gradual_transition(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+
+          // Phase 2: Swing left legs forward
+          gradual_transition(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+
+          // Phase 3: Place left legs down
+          gradual_transition(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+
+          // Phase 4: Body moves forward during support phase
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+
+          // Phase 5: Lift RIGHT side legs (2 and 4)
+          gradual_transition(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+
+          // Phase 6: Swing right legs forward
+          gradual_transition(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+
+          // Phase 7: Place right legs down
+          gradual_transition(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          gradual_transition(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+
+          // Phase 8: Final body adjustment
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+      }
+    }
+
+    else if (command == "crawl") {
+      // Move to home position first
+      move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+
+      // Generate movement arrays if needed
+      generate_movement_arrays_walk_fw(1); // Using existing walk generation
+
+      // Timing parameters (slower than other gaits)
+      const int lift_time = 200;     // Time to lift leg
+      const int swing_time = 250;    // Time for forward swing
+      const int place_time = 200;    // Time to place leg down
+      const int support_time = 200;  // Time in support phase
+
+      while (1) {
+          // Sequence: Leg4 -> Leg1 -> Leg3 -> Leg2 (wave pattern)
+
+          // Leg 4 movement
+          gradual_transition(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+          gradual_transition(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+          gradual_transition(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+
+          // Leg 1 movement
+          gradual_transition(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+          gradual_transition(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+          gradual_transition(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+
+          // Leg 3 movement
+          gradual_transition(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+          gradual_transition(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+          gradual_transition(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
+          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
+
+          // Leg 2 movement
+          gradual_transition(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
+          gradual_transition(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
+          gradual_transition(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
           move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
           std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
       }
