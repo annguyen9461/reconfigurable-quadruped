@@ -1266,56 +1266,6 @@ int main()
       }
     }
 
-    // WALK TURNING RIGHT
-    else if (command == "wfwr") {
-      
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      generate_movement_arrays_walk_fw(1);
-
-      const int NUM_MOVEMENTS = 14;
-      int* walk_fw_r_movements[NUM_MOVEMENTS] = {
-        leg4_up, leg4_cw, leg4_down,
-        leg3_up, leg3_ccw, leg3_down, 
-        home_tiptoe,
-        leg1_up, leg1_ccw, leg1_down,
-        leg2_up, leg2_ccw, leg2_down,
-        home_tiptoe,
-      };
-      
-      while (1) {
-        for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(1000));  
-        }
-      }
-    }
-
-    // WALK TURNING LEFT
-    else if (command == "wfwl") {
-      
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      generate_movement_arrays_walk_fw(0);
-
-      const int NUM_MOVEMENTS = 14;
-      int* walk_fw_r_movements[NUM_MOVEMENTS] = {
-        leg3_up, leg3_ccw, leg3_down, 
-        leg4_up, leg4_cw, leg4_down,
-        home_tiptoe,
-        leg2_up, leg2_ccw, leg2_down,
-        leg1_up, leg1_ccw, leg1_down,
-        home_tiptoe,
-      };
-
-      while (1) {
-        for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          move_to(walk_fw_r_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(500));  
-        }
-      }
-    }
-
     else if (command == "ali") {
       move_to(
         aligned_before_rolling,
