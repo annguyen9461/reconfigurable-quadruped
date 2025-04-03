@@ -1095,22 +1095,29 @@ int main()
         (avg_tilt_angle >= 123 && avg_tilt_angle <= 180);     // Positive rotation → blue under
         bool yellow_under = avg_tilt_angle >= -54 && avg_tilt_angle <= 58;  // Negative rotation → yellow under
 
-        bool blue_under_good_range = (avg_tilt_angle >= -179 && avg_tilt_angle <= -162) 
-        || (avg_tilt_angle <= 179 && avg_tilt_angle >= 167);
-        bool yellow_under_good_range = (avg_tilt_angle >= 0 && avg_tilt_angle <= 15) 
-        || (avg_tilt_angle <= 0 && avg_tilt_angle >= -23);
-
         // Check propulsion conditions
         if (yellow_under) {
-          std::cout << "yellow under. push yellow" <<"\n";
-          command = "rfy";
+          std::cout << "Yellow under – pushing yellow\n";
+          move_to(yellow_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(700));
+          move_to(perfect_cir, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         } else if (blue_under) {
-          std::cout << "blue under. push blue" <<"\n";
-          command = "rfb";
+          std::cout << "Blue under – pushing blue\n";
+          move_to(blue_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          std::this_thread::sleep_for(std::chrono::milliseconds(700));
+          move_to(perfect_cir, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         } else {
-          std::cout << "unknown orientation. push random" <<"\n";
-          command = get_random_command();
-        }
+          std::cout << "Unknown orientation. Executing random roll...\n";
+          std::string random_cmd = get_random_command();
+          if (random_cmd == "rfy") {
+              move_to(yellow_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          } else {
+              move_to(blue_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+          }
+          std::this_thread::sleep_for(std::chrono::milliseconds(700));
+          move_to(perfect_cir, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
+      }
+
 
 
         // Reset accumulators
