@@ -1,17 +1,67 @@
-#include <linux/i2c-dev.h>
+// === Standard C/C++ Libraries ===
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <cstdint>
+#include <cstring>
+#include <cmath>
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <unordered_map>
+#include <random>
+#include <thread>
+#include <chrono>
+
+// === System Headers ===
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <fstream>
-#include <chrono>
-#include <iomanip>
 
-#include <cmath>
-#include <random>
+#if defined(__linux__) || defined(__APPLE__)
+    #include <termios.h>
+    #define STDIN_FILENO 0
+#elif defined(_WIN32) || defined(_WIN64)
+    #include <conio.h>
+#endif
+
+// === Linux I2C ===
+#include <linux/i2c-dev.h>
+
+// === Dynamixel SDK ===
+#include "dynamixel_sdk.h"  // Uses Dynamixel SDK library
+
+// === Macro Definitions ===
+
+// Control table addresses
+#define ADDR_PRO_TORQUE_ENABLE          64
+#define ADDR_PRO_GOAL_POSITION          116
+#define ADDR_PRESENT_POSITION           132
+
+// Data Byte Length
+#define LEN_PRO_GOAL_POSITION           4
+#define LEN_PRESENT_POSITION            4
+
+// Protocol version
+#define PROTOCOL_VERSION                2.0
+
+// Default settings
+#define BAUDRATE                        57600
+#define DEVICENAME                      "/dev/ttyUSB0"
+
+#define TORQUE_ENABLE                   1
+#define TORQUE_DISABLE                  0
+#define DXL_MINIMUM_POSITION_VALUE      0
+#define DXL_MAXIMUM_POSITION_VALUE      4095
+#define DXL_MOVING_STATUS_THRESHOLD     20
+
+#define ESC_ASCII_VALUE                 0x1b
+#define NUM_MOTORS                      12
+#define MAX_INPUT_SIZE                  100
+
+// === Utility Functions ===
 
 int write_register(int file, uint8_t reg, uint8_t value) {
     uint8_t buf[2] = {reg, value};
@@ -41,59 +91,6 @@ int16_t read_16bit_register(int file, uint8_t reg_low, uint8_t reg_high) {
     if (low == -1 || high == -1) return -1;
     return (high << 8) | low;
 }
-
-
-#if defined(__linux__) || defined(__APPLE__)
-#include <fcntl.h>
-#include <termios.h>
-#define STDIN_FILENO 0
-#elif defined(_WIN32) || defined(_WIN64)
-#include <conio.h>
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-
-#include "dynamixel_sdk.h"                                  // Uses Dynamixel SDK library
-
-#include <string.h>
-#include <chrono>
-#include <thread>
-
-#include <unordered_map>
-#include <vector>
-#include <sstream>
-#include <iostream>
-
-
-#define MAX_INPUT_SIZE 100      // define max input buffer size
-
-// Control table address
-#define ADDR_PRO_TORQUE_ENABLE          64                 // Control table address is different in Dynamixel model
-#define ADDR_PRO_GOAL_POSITION          116
-#define ADDR_PRESENT_POSITION           132
-
-// Data Byte Length
-#define LEN_PRO_GOAL_POSITION           4
-#define LEN_PRESENT_POSITION            4
-
-// Protocol version
-#define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
-
-// Default setting
-#define BAUDRATE                        57600
-#define DEVICENAME                      "/dev/ttyUSB0"      // Check which port is being used on your controller
-                                                            // ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
-
-#define TORQUE_ENABLE                   1                   // Value for enabling the torque
-#define TORQUE_DISABLE                  0                   // Value for disabling the torque
-#define DXL_MINIMUM_POSITION_VALUE      0             // Dynamixel will rotate between this value
-#define DXL_MAXIMUM_POSITION_VALUE      4095              // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
-#define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
-
-#define ESC_ASCII_VALUE                 0x1b
-
-#define NUM_MOTORS                      12                  // IDs from 1 to 12
 
 
 int DXL_ID;
