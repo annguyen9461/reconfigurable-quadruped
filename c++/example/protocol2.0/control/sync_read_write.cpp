@@ -243,7 +243,6 @@ void generate_movement_arrays_walk_fw(bool turning_right) {
   copy_array(leg2_down, home_tiptoe);
   
   if (turning_right == 1) {
-    std::cout << "GENERATING FOR TURNING RIGHT\n";
     // --- Leg 4 Movements ---
     leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
     copy_array(leg4_cw, leg4_up);
@@ -1224,61 +1223,6 @@ int main()
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
     }
-
-    else if (command == "trot") {
-      // First move to home position
-      move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler); 
-
-      // Generate movement arrays (1 = turning right, 0 = turning left)
-      generate_movement_arrays_walk_fw(1);
-
-      // Timing parameters (in milliseconds)
-      const int lift_time = 150;    // Time to lift legs
-      const int swing_time = 200;   // Time for forward swing
-      const int place_time = 150;   // Time to place legs down
-      const int support_time = 100; // Time in support phase
-
-      while (1) {
-          // Phase 1: Lift first diagonal pair (LF + RH)
-          gradual_transition(leg1_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg4_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
-
-          // Phase 2: Swing legs forward
-          gradual_transition(leg1_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg4_cw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
-
-          // Phase 3: Place legs down
-          gradual_transition(leg1_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg4_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
-
-          // Phase 4: Body moves forward during support phase
-          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
-
-          // Phase 5: Lift second diagonal pair (RF + LH)
-          gradual_transition(leg2_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg3_up, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(lift_time));
-
-          // Phase 6: Swing legs forward
-          gradual_transition(leg2_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg3_ccw, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(swing_time));
-
-          // Phase 7: Place legs down
-          gradual_transition(leg2_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          gradual_transition(leg3_down, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(place_time));
-
-          // Phase 8: Final body adjustment
-          move_to(home_tiptoe, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(support_time));
-      }
-    }
-    
 
     else if (command == "crawl") {
       // Move to home position first
