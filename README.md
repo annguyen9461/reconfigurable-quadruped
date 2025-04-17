@@ -2,6 +2,8 @@
 
 This README describes the usage of the control system for the quadruped robot, including both walking and rolling modes. The ROS2 code also performs a autonomous bowling using computer vision (YOLO) and machine learning.
 
+## Demo
+
 ## Overview
 
 The robot has two main modes of operation:
