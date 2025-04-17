@@ -17,7 +17,7 @@ The robot has 12 servo motors, with 3 motors per leg. Each leg has the following
 - **Yaw Motor** - Controls side-to-side movement
 - **Fold Motor** - Controls folding/unfolding of the leg
 
-## Setup & Compilation (Option1: Pure C++ Control)
+## Setup & Compilation (Option 1: Pure C++ Control)
 
 ### Overall Control
 - cd into sync_read_write folder
@@ -107,7 +107,7 @@ For transformation from rolling to walking (`cirh`):
 
 When using the rolling executable, the robot has an automatic mode where it detects orientation using the IMU sensor and automatically propels the appropriate side. This allows the robot to continue rolling even when its orientation changes.
 
-## Examples
+## Example of some commands
 
 ```
 # Move to home position
@@ -132,7 +132,7 @@ cirh
 ## Troubleshooting
 
 If motors are not responding:
-1. Check connections and power
+1. Check connections and power 
 2. Verify motors are enabled with `get` command 
 3. If needed, enable torque with `en` command for specific motors
 4. If a motor shows errors, try disabling and re-enabling its torque
@@ -141,7 +141,7 @@ If the robot falls during rolling:
 1. Return to circle position with `cir`
 2. Resume rolling with `rfw` or propel once with `rfy`/`rfb`
 
-## Setup & Compilation (Option 2: Autonomous Bowling using ROS2)
+## Setup (Option 2: Autonomous Bowling using ROS2)
 
 ### ROS2-Based Autonomous Bowling System
 
