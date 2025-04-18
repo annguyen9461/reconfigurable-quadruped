@@ -5,7 +5,6 @@ This README describes the usage of the control system for the quadruped robot, i
 ## Demo
 https://github.com/user-attachments/assets/16f294a2-c4f4-4af3-99e2-1b8f990bea4d
 
-
 ## Overview
 
 The robot has two main modes of operation:
@@ -42,8 +41,7 @@ The system provides a command-line interface that accepts various commands.
 |---------|-------------|
 | `get` | Scan and display all connected motors with their current positions |
 | `exit` | Exit the program |
-| `h1` | Move to home tiptoe position |
-| `h2` | Move to thin tiptoe position |
+| `h1` | Move to home position for walking|
 | `ali` | Move to aligned position |
 | `en X Y Z` | Enable torque for motors with IDs X, Y, Z |
 | `d X Y Z` | Disable torque for motors with IDs X, Y, Z |
@@ -74,13 +72,7 @@ The system provides a command-line interface that accepts various commands.
 | Command | Description |
 |---------|-------------|
 | `cir` | Move to perfect circle position |
-| `rfw` | Roll forward continuously (alternating yellow/blue propulsion) |
-| `rfy` | Execute single yellow side propulsion |
-| `rfb` | Execute single blue side propulsion |
-| `rpy` | Execute stronger yellow side propulsion |
-| `rpb` | Execute stronger blue side propulsion |
 | `cirh` | Transform from rolling back to walking configuration |
-| `recol` | Recover from left side on ground |
 
 ## Leg Numbering
 
@@ -107,39 +99,17 @@ For transformation from rolling to walking (`cirh`):
 
 When using the rolling executable, the robot has an automatic mode where it detects orientation using the IMU sensor and automatically propels the appropriate side. This allows the robot to continue rolling even when its orientation changes.
 
-## Example of some commands
-
-```
-# Move to home position
-h1
-
-# Move legs 1 and 3 up by 20 degrees
-up 20:1 3
-
-# Set motor 5 to position 2500
-set 5:2500
-
-# Start continuous rolling
-rfw
-
-# Transform from walking to rolling
-hcir
-
-# Transform from rolling to walking
-cirh
-```
-
 ## Troubleshooting
 
 If motors are not responding:
 1. Check connections and power 
-2. Verify motors are enabled with `get` command 
-3. If needed, enable torque with `en` command for specific motors
-4. If a motor shows errors, try disabling and re-enabling its torque
+3. If a motor shows errors, try disabling and re-enabling its torque, switch the U2D2 off and on, and/or unplugging the power source to the U2D2
+4. Run ./sync_read_write again and run `h1` command to reset the robot to its home positio
 
 If the robot falls during rolling:
-1. Return to circle position with `cir`
-2. Resume rolling with `rfw` or propel once with `rfy`/`rfb`
+1. Cancel ./roll
+2. Return to circle position with `cir`
+3. Run ./roll again
 
 ## Setup (Option 2: Autonomous Bowling using ROS2)
 
@@ -147,15 +117,18 @@ If the robot falls during rolling:
 
 This system enables autonomous bowling using computer vision (YOLO) and machine learning. The robot uses IMU data and visual feedback to find, roll toward, and knock down bowling pins.
 
-#### Step 1: Start the `quad_motor_control` Node on the RPi5
+#### Step 1: Start the `quad_motor_control` Node on the RPi5 by ssh from the laptop
+- The laptop and pi must have the same wifi.
 
-This node:
+quad_motor_control node:
 - Controls the motors and reads IMU data for rolling mode
 - Publishes motor positions and subscribes to rolling commands
 
 ```bash
-# On RPi5
-source ~/ros2_ws/install/setup.bash
+# On laptop - RPi5 Terminal
+ssh <rpi_name>@<ip_address>
+cd ~/reconfigurable_quadruped/ros2_ws
+source install/setup.bash
 ros2 run quad_motor_control quad_motor_control
 ```
 
@@ -166,13 +139,17 @@ These nodes:
 - Use YOLO to detect and count bowling pins
 
 ```bash
-# On laptop
+# On laptop - Terminal 1
 source ~/ros2_ws/install/setup.bash
-ros2 run quad_action move_action_server &
-ros2 run quad_action move_action_client &
+ros2 run quad_control move_action_server &
+ros2 run quad_control move_action_client &
+```
+```bash
+# On laptop - Terminal 2
+# Activate a virtual environment to access YOLO from Ultralytics
+source venv/bin/activate
 ros2 run quad_vision yolo_node
 ```
-
 #### System Behavior
 
 Once all nodes are active, the system will:
