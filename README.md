@@ -103,8 +103,8 @@ When using the rolling executable, the robot has an automatic mode where it dete
 
 If motors are not responding:
 1. Check connections and power 
-3. If a motor shows errors, try disabling and re-enabling its torque, switch the U2D2 off and on, and/or unplugging the power source to the U2D2
-4. Run ./sync_read_write again and run `h1` command to reset the robot to its home positio
+3. If a motor shows errors, try disabling and re-enabling its torque, switching the U2D2 off and on, and/or unplugging the power source to the U2D2
+4. Run ./sync_read_write again and run `h1` command to reset the robot to its home position
 
 If the robot falls during rolling:
 1. Cancel ./roll
@@ -117,7 +117,7 @@ If the robot falls during rolling:
 
 This system enables autonomous bowling using computer vision (YOLO) and machine learning. The robot uses IMU data and visual feedback to find, roll toward, and knock down bowling pins.
 
-#### Step 1: Start the `quad_motor_control` Node on the RPi5 by ssh from the laptop
+#### Step 1: Start the `quad_motor_control` Node on the RPi5 through ssh from the laptop
 - The laptop and pi must have the same wifi.
 
 quad_motor_control node:
@@ -158,4 +158,3 @@ Once all nodes are active, the system will:
 - Use YOLO to detect if **2 or more pins** are visible for **3 or more seconds**
 - Transform into the rolling configuration
 - Roll forward to knock down the pins
-- Stop automatically once the pins are hit
