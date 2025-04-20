@@ -121,14 +121,6 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 
 ///////////////////////////////// WALKING START /////////////////////////////////
 
-// Constants
-// TURNING RIGHT
-// const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
-// const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-// const int CW_CCW_TICKS = static_cast<int>(25 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
-// const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
-// const int CW_CCW_TICKS_BACKLEG = static_cast<int>(35 * TICKS_PER_DEGREE);
-
 // TURNING RIGHT
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
 const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
@@ -317,13 +309,9 @@ void generate_movement_arrays_roll_fw() {
   // Start with perfect_cir for all movements
   copy_array(blue_up_cir, perfect_cir);
   copy_array(blue_up_propel, perfect_cir);
-
-  // copy_array(blue_down_cir, perfect_cir)
-
+  
   copy_array(yellow_up_cir, perfect_cir);
   copy_array(yellow_up_propel, perfect_cir);
-
-  // copy_array(yellow_down_cir, perfect_cir);
   
   std::cout << "GENERATING FOR BLUE LEGS\n";
   // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
@@ -333,18 +321,12 @@ void generate_movement_arrays_roll_fw() {
   blue_up_propel[11] += UP_TICKS_PROPEL_SMALL;      // Up LEG 4
   blue_up_propel[8] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 3
 
-  // blue_down_cir[11] += UP_DOWN_TICKS;    // Down LEG 4
-  // blue_down_cir[8] += UP_DOWN_TICKS;    // Down LEG 3
-
   std::cout << "GENERATING FOR YELLOW LEGS\n";
   yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;      // Up LEG 2
   yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;      // Up LEG 1
 
   yellow_up_propel[5] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 4
   yellow_up_propel[2] += UP_TICKS_PROPEL_SMALL;      // Up LEG 3
-
-  // yellow_down_cir[5] -= UP_DOWN_TICKS;    // Down LEG 2
-  // yellow_down_cir[2] -= UP_DOWN_TICKS;    // Down LEG 1
 
 }
 
@@ -668,26 +650,6 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
   printf("\n");
 }
 
-void print_present(dynamixel::GroupSyncRead &groupSyncRead, 
-                 dynamixel::PacketHandler *packetHandler, 
-                 dynamixel::PortHandler *portHandler)
-{
-    // Read all present positions
-    int dxl_comm_result = groupSyncRead.txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS) {
-        printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
-    }
-
-    // Print present positions of connected motors
-    printf("\nCurrent Positions:\n");
-    for (int id = 1; id <= NUM_MOTORS; id++) {
-        if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-            int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-            printf("[ID:%d] Position: %d\n", id, position);
-        }
-    }
-    printf("\n");
-}
 
 void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
@@ -893,7 +855,7 @@ std::string get_random_command() {
     static std::mt19937 gen(rd());  // Mersenne Twister RNG
     static std::uniform_int_distribution<int> dist(0, 1); // Randomly pick 0 or 1
 
-    return dist(gen) ? "rfy" : "rfb"; // Return "rfy" if 1, "rfb" if 0
+    return dist(gen) ? "rpy" : "rpb"; // Return "rpy" if 1, "rpb" if 0
 }
 
 int main() 
@@ -1028,9 +990,6 @@ int main()
     // Variables for data accumulation
     float accumulated_tilt_angle = 0;
 
-    // float accumulated_accel_z = 0;
-    // float accumulated_gyro_y = 0;
-
     int sample_count = 0;
     
   while (true) {
@@ -1109,7 +1068,7 @@ int main()
         } else {
           std::cout << "Unknown orientation. Executing random roll...\n";
           std::string random_cmd = get_random_command();
-          if (random_cmd == "rfy") {
+          if (random_cmd == "rpy") {
               move_to(yellow_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
           } else {
               move_to(blue_up_propel, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
@@ -1118,130 +1077,14 @@ int main()
           move_to(perfect_cir, groupSyncWrite, packetHandler, groupSyncRead, portHandler);
       }
 
-
-
         // Reset accumulators
         // after the window size is met, instead of prematurely which is immediately after the decision
         accumulated_tilt_angle = 0;
         sample_count = 0;
     }
 
-    if (command == "get") {
-      scan_motors(groupSyncRead, packetHandler, portHandler);
-    }
-
-    else if (command == "h1") {
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
-
-    
-    else if (command == "cirh") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(700));  // Allow TIME for motors to reach the position
-      move_to(cir_to_blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(cir_to_both_blues_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(cir_to_yellow_up60, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(cir_to_yellow_up90, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(home_tiptoe_thin, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));  // Allow TIME for motors to reach the position
-      move_to(home_tiptoe, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-
-    }
-    else if (command == "hcir") {
-      move_to(aligned_before_rolling, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      move_to(walk_to_cir1, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      std::this_thread::sleep_for(std::chrono::milliseconds(300));
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
-
-    else if (command == "cir") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
-
-    // recover from LEFT side on the ground
-    else if (command == "recol") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      move_to(s_shape_30_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      move_to(s_shape_full_90_out, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-      move_to(blue3_180, groupSyncWrite, packetHandler,groupSyncRead, portHandler);
-    }
-   
-    
-    // ROLL FW
-    else if (command == "rfw") {  
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      
-
-      const int NUM_MOVEMENTS = 4;
-      int* roll_fw_movements[NUM_MOVEMENTS] = {
-        yellow_up_cir,
-        perfect_cir,
-        blue_up_cir,
-        perfect_cir
-      };
-      
-      while (1) {
-        for (int i = 0; i < NUM_MOVEMENTS; i++) {
-          move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-          std::this_thread::sleep_for(std::chrono::milliseconds(300));  
-        }
-      }
-    }
-
-    // ROLL FW
-    else if (command == "rfy") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-
-      const int NUM_MOVEMENTS = 2;
-      int* roll_fw_movements[NUM_MOVEMENTS] = {
-        yellow_up_cir,
-        perfect_cir
-      };
-
-      int sleep_amount[NUM_MOVEMENTS] = {
-        300,
-        100
-      };
-      
-      
-      for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_amount[i]));  
-      }
-    }
-
-    // ROLL FW
-    else if (command == "rfb") {
-      move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
-
-      const int NUM_MOVEMENTS = 2;
-      int* roll_fw_movements[NUM_MOVEMENTS] = {
-        blue_up_cir,
-        perfect_cir
-      };
-      
-      int sleep_amount[NUM_MOVEMENTS] = {
-        300,
-        100
-      };
-      
-      for (int i = 0; i < NUM_MOVEMENTS; i++) {
-        move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_amount[i]));  
-      }
-    }
-
     // ROLL PROPEL FW
-    else if (command == "rpy") {
+    if (command == "rpy") {
       move_to(perfect_cir, groupSyncWrite, packetHandler,groupSyncRead, portHandler); 
       const int NUM_MOVEMENTS = 2;
 
@@ -1270,38 +1113,14 @@ int main()
       }
     }
 
-    else if (command == "ali") {
-      move_to(
-        aligned_before_rolling,
-        groupSyncWrite, 
-        packetHandler,
-        groupSyncRead,
-        portHandler); 
-    }
     else {
       std::cout << "Unknown command: " << command << "\n";
     }
-
-     
-   
 
     // Adjust sampling rate (lower value for higher frequency)
     // usleep(2000); // 10ms delay (~100Hz sampling rate)
 
   }
-
-  // for (int i = 0; i < 20; i++) {
-  //   // Disable Dynamixel# Torque
-  //   dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, DXL_ID, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE, &dxl_error);
-  //   if (dxl_comm_result != COMM_SUCCESS)
-  //   {
-  //     printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
-  //   }
-  //   else if (dxl_error != 0)
-  //   {
-  //     printf("%s\n", packetHandler->getRxPacketError(dxl_error));
-  //   }
-  // }
 
 // csvFile.close();
 // Close port
