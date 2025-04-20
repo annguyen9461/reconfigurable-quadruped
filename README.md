@@ -23,6 +23,7 @@ The robot has 12 servo motors, with 3 motors per leg. Each leg has the following
 cd self-reconfigurable-quadruped/c++/control/sync_read_write
 make
 ./sync_read_write
+# then type `h1` command to move to home position for walking
 ```
 
 ### Rolling Mode
@@ -31,6 +32,7 @@ make
 cd self-reconfigurable-quadruped/c++/control/sync_read_write
 make
 ./sync_read_write
+# type `h1` command to move to home position for walking
 # then type `hcir` command to transform to rolling mode
 ```
 ```bash
