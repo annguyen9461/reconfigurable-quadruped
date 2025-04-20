@@ -145,7 +145,7 @@ quad_motor_control node:
 ```bash
 # On laptop - RPi5 Terminal
 ssh <rpi_name>@<ip_address>
-cd ~/self-reconfigurable-quadruped/ros2_ws
+cd self-reconfigurable-quadruped/ros2_ws
 colcon build
 source install/setup.bash
 ros2 run quad_motor_control quad_motor_control
@@ -168,7 +168,7 @@ These nodes:
 
 ```bash
 # On laptop - Terminal 1
-cd ~/self-reconfigurable-quadruped/ros2_ws
+cd self-reconfigurable-quadruped/ros2_ws
 colcon build
 source install/setup.bash
 ros2 run quad_control move_action_server &
@@ -176,7 +176,7 @@ ros2 run quad_control move_action_client &
 ```
 ```bash
 # On laptop - Terminal 2
-cd ~/self-reconfigurable-quadruped/ros2_ws
+cd self-reconfigurable-quadruped/ros2_ws
 source install/setup.bash
 # Activate a virtual environment to access YOLO from Ultralytics
 source venv/bin/activate
