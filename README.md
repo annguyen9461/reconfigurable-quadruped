@@ -19,15 +19,26 @@ The robot has 12 servo motors, with 3 motors per leg. Each leg has the following
 ## Quickstart Option 1: Pure C++ Control
 
 ### Overall Control
-- cd self-reconfigurable-quadruped/c++/control/sync_read_write
-- make
-- ./sync_read_write
+```bash
+cd self-reconfigurable-quadruped/c++/control/sync_read_write
+make
+./sync_read_write
+```
 
 ### Rolling Mode
-- run ./sync_read_write executable and transform the robot using `hcir` (home to circle)
-- cd self-reconfigurable-quadruped/c++/control/rolling_imu
-- make
-- ./roll
+```bash
+# Terminal 1
+cd self-reconfigurable-quadruped/c++/control/sync_read_write
+make
+./sync_read_write
+# then type `hcir` command to transform to rolling mode
+```
+```bash
+# Terminal 2
+cd self-reconfigurable-quadruped/c++/control/rolling_imu
+make
+./roll
+```
 
 ## Basic Usage
 
