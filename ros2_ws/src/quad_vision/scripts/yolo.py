@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
 
-# import rclpy
-# from ultralytics import YOLO
-# from rclpy.node import Node
-# from sensor_msgs.msg import Image
-# from cv_bridge import CvBridge
-
 import os
 import rclpy
 from ultralytics import YOLO
@@ -34,12 +28,8 @@ class YoloNode(Node):
     def __init__(self):
         super().__init__("pose")
         self.bridge = CvBridge()
-
-        # self.declare_parameter("model",
-        #                        value="yolo11s-obb.pt")
-        # self.model = YOLO(self.get_parameter("model").get_parameter_value().string_value)
-
-         # Get package path dynamically
+        
+        # Get package path dynamically
         package_path = get_package_share_directory('quad_vision')
 
         # Path to trained model (best.pt)
@@ -76,18 +66,6 @@ class YoloNode(Node):
 
             # Count bowling pins with confidence > 0.7
             bowling_pins_count = sum((class_ids == 1) & (confidences > 0.7))
-
-            # self.get_logger().info(f"{bowling_pins_count} bowling pins")
-
-            # Print each detection
-            # for i, box in enumerate(boxes):
-            #     class_id = int(box.cls.item())
-            #     confidence = float(box.conf.item())
-            #     bbox = box.xyxy[0].tolist()  # Bounding box [x_min, y_min, x_max, y_max]
-
-            #     self.get_logger().info(
-            #         f"Object {i+1}: Class={class_names[class_id]}, Confidence={confidence:.2f}, BBox={bbox}"
-            #     )
 
             # Publish the count as an Int32 message
             count_msg = Int32()

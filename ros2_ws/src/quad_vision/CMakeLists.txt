@@ -22,14 +22,6 @@ find_package(quad_interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
-
-# Install executables
-# install(TARGETS 
-#   vision 
-#   listener
-#   talker
-#   DESTINATION lib/${PROJECT_NAME})
-
 # Install launch files
 install(
   DIRECTORY launch
@@ -45,7 +37,6 @@ install(DIRECTORY config/
 install(
   PROGRAMS 
   scripts/yolo.py
-  # scripts/img_proc.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

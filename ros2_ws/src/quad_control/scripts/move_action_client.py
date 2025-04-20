@@ -8,7 +8,6 @@ from quad_interfaces.action import Move   # The action type
 from quad_interfaces.msg import SetConfig
 from quad_interfaces.msg import RobotState
 
-from action_msgs.msg import GoalStatus
 import time
 
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy
@@ -129,10 +128,6 @@ class MoveActionClient(Node):
                 # We've reached HOME1 during turning - can continue turning
                 pass
                 
-            # elif self.curr_state == self.STOPPED_TURNING and self.found_enough_pins:
-            #     # Robot has stopped turning, now transition to roll
-            #     self.transition_to_roll()
-                
             elif self.curr_state == self.AT_ROLL_STATIONARY:
                 # We've reached roll position, now start rolling
                 self.start_rolling()
@@ -227,14 +222,6 @@ class MoveActionClient(Node):
         future = self.executor.create_task(self._transition_to_roll_async())
         await future
     
-    # def transition_to_roll(self):
-    #     """Transition to rolling configuration."""
-    #     self.get_logger().info("Transitioning to roll configuration")
-    #     self.publish_config_once(3)  # Roll configuration
-    #     # Create a task for the async operation
-    #     future = self.executor.create_task(self._transition_to_roll_async())
-    #     return future
-    
     async def _transition_to_roll_async(self):
         """Async implementation of transition to roll."""
         await self.send_goal("hcir")
@@ -262,11 +249,6 @@ class MoveActionClient(Node):
 def main(args=None):
     rclpy.init(args=args)
     client_node = MoveActionClient()
-
-    # rclpy.spin(client_node)
-    # client_node.destroy_node()
-    # rclpy.shutdown()
-
     executor = SingleThreadedExecutor()
     executor.add_node(client_node)
     client_node.executor = executor

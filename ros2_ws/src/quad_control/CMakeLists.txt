@@ -14,15 +14,6 @@ find_package(quad_interfaces REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rclcpp_components REQUIRED)
 
-add_executable(control_test src/control_test.cpp)
-target_include_directories(control_test PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
-target_compile_features(control_test PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-
-# install(TARGETS control_test
-#   DESTINATION lib/${PROJECT_NAME})
-
 # Install Python scripts
 install(
   PROGRAMS 
@@ -35,13 +26,6 @@ install(
   scripts/move_action_client.py
   DESTINATION lib/${PROJECT_NAME}
   RENAME move_action_client
-)
-
-# Install Python scripts
-install(
-  PROGRAMS 
-  scripts/states.py
-  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

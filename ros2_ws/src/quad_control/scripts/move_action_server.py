@@ -9,7 +9,6 @@ from quad_interfaces.msg import MotorPositions
 from std_msgs.msg import String
 
 import time
-import states
 
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
@@ -118,14 +117,6 @@ class MoveActionServer(Node):
         movement_type = goal_handle.request.movement
         self.get_logger().info(f"Executing movement: {movement_type}")
 
-        #  # Append the seeds for the Fibonacci sequence
-        # feedback_msg = Move.Feedback()
-        
-        # # Initial feedback message
-        # feedback_msg.status_message = f"Starting {movement_type}..."
-        # feedback_msg.still_moving = True
-        # goal_handle.publish_feedback(feedback_msg)
-
         if movement_type == "turning":
             self.publish_robot_state(self.TURNING)
             self.get_logger().info("Starting turn movement...")
@@ -150,13 +141,6 @@ class MoveActionServer(Node):
             self.publish_robot_state(self.WALK_TO_ROLL)
             self.get_logger().info("Transitioning to rolling mode...")
             
-            # # Wait for robot to reach rolling position
-            # while not self.is_at_target_config(self.perfect_cir):
-            #     # feedback_msg.status_message = "Trans to roll..."
-            #     # feedback_msg.still_movng = True
-            #     # goal_handle.publish_feedback(feedback_msg)
-            #     time.sleep(0.05)
-
             time.sleep(0.5)
             
             self.get_logger().info("Transition to roll config completed.")
@@ -172,20 +156,11 @@ class MoveActionServer(Node):
             self.publish_robot_state(self.STOPPED_ROLLING)
             self.get_logger().info("Stopped rolling.")
 
-        # # Final feedback and result
-        # feedback_msg.status_message = f"{movement_type} completed"
-        # feedback_msg.still_moving = False
-        # goal_handle.publish_feedback(feedback_msg)
-
         # Mark goal as succeeded
         goal_handle.succeed()
         
         # Populate result message
         result = Move.Result()
-        # self.get_logger().info(f"Result object attributes: {dir(result)}")
-        # self.get_logger().info(f"Result object type: {type(result)}")
-        # result.arrived = True
-        # self.get_logger().info('Returning result: {0}'.format(result.arrived))
         return result
 
 
@@ -201,8 +176,6 @@ def main(args=None):
 
     node.destroy()
     rclpy.shutdown()
-
-
 
 if __name__ == '__main__':
     main()

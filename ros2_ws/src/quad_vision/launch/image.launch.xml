@@ -15,15 +15,8 @@
     
     <node pkg='rviz2' exec='rviz2' args="-d $(var rviz_config)"/>
 
-
     <node pkg='quad_vision' exec='yolo.py' name='yolo'>
         <remap from='image' to='/camera/camera/color/image_raw' />
     </node>
-
-    <!-- <node pkg='quad_vision' exec='img_proc' name='img_proc' output='screen'>
-        <remap from='rgb_image' to='/camera/camera/color/image_raw' />
-        <remap from='depth_image' to='/camera/camera/aligned_depth_to_color/image_raw' />
-        <remap from='color_camera_info' to='/camera/camera/color/camera_info' />
-    </node> -->
 
 </launch>
