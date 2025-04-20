@@ -97,14 +97,6 @@ int DXL_ID;
 bool toggle_position = false;  // Toggles between the two positions
 bool forward_running = false;
 
-void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
-                 dynamixel::PacketHandler *packetHandler, 
-                 dynamixel::PortHandler *portHandler);
-
-void set_torque(dynamixel::PacketHandler *packetHandler, 
-                dynamixel::PortHandler *portHandler, 
-                const char *command, char *ids_str); 
-
 // ALL CONFIGS
 // 1 for WALKING, 2 for ROLLING
 int mode = 1;
@@ -112,95 +104,25 @@ int present_positions[NUM_MOTORS + 1] = {0,
   2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
 };
 
-int aligned_before_rolling[NUM_MOTORS + 1] = {0, 
-  2045, 2053, 3049, 2054, 2035, 1014, 2044, 2047, 3071, 3051, 2043, 1056
-};
-int home_walking2[NUM_MOTORS + 1] = {0, 
-  2879, 2032, 3049, 1440, 2066, 1014, 2835, 2009, 3071, 2429, 2078, 1056
-};
-
-///////////////////////////////// WALKING START /////////////////////////////////
-
-// TURNING RIGHT
-const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
-const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-const int CW_CCW_TICKS = static_cast<int>(10 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
-const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
-const int CW_CCW_TICKS_BACKLEG = static_cast<int>(20 * TICKS_PER_DEGREE);
-
-
-// Home Tiptoe Positions
-int home_tiptoe[NUM_MOTORS + 1] = {0, 
-  2745,  // [ID:1]
-  2187,  // [ID:2]
-  3062,  // [ID:3]
-  1343,  // [ID:4]
-  1890,  // [ID:5]
-  1025,  // [ID:6]
-  2752,  // [ID:7]
-  2190,  // [ID:8]
-  3072,  // [ID:9]
-  2429,  // [ID:10]
-  1864,  // [ID:11]
-  1050   // [ID:12]
-};
-
-
-// Leg 4 Movements
-int leg4_up[NUM_MOTORS + 1] = {0}; 
-int leg4_cw[NUM_MOTORS + 1] = {0};
-int leg4_down[NUM_MOTORS + 1] = {0};
-
-// Leg 3 Movements
-int leg3_up[NUM_MOTORS + 1] = {0}; 
-int leg3_ccw[NUM_MOTORS + 1] = {0};
-int leg3_down[NUM_MOTORS + 1] = {0};
-
-// Leg 1 Movements
-int leg1_up[NUM_MOTORS + 1] = {0}; 
-int leg1_ccw[NUM_MOTORS + 1] = {0};
-int leg1_down[NUM_MOTORS + 1] = {0};
-
-// Leg 2 Movements
-int leg2_up[NUM_MOTORS + 1] = {0}; 
-int leg2_ccw[NUM_MOTORS + 1] = {0};
-int leg2_down[NUM_MOTORS + 1] = {0};
-///////////////////////////////// WALKING END /////////////////////////////////
-
 ///////////////////////////////// ROLLING START /////////////////////////////////
-const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE); 
+const double TICKS_PER_DEGREE = 4096.0 / 360.0;
 
+const int UP_DOWN_TICKS_ROLL = static_cast<int>(50 * TICKS_PER_DEGREE); 
 const int UP_TICKS_PROPEL_SMALL = static_cast<int>(30 * TICKS_PER_DEGREE);
 
 // Circle Positions
 int perfect_cir[NUM_MOTORS + 1] = {0, 
-  2040,  // [ID:1]
-  1098,  // [ID:2]
-  3081,  // [ID:3]
-  2054,  // [ID:4]
-  2997,  // [ID:5]
-  1007,  // [ID:6]
-  2041,  // [ID:7]
-  2993,  // [ID:8]
-  1045,  // [ID:9]
-  3054,  // [ID:10]
-  1095,  // [ID:11]
-  3091   // [ID:12]
+  2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
 };
 
 // BLUE
 // Leg 3 and 4 Movements
-int blue_up_cir[NUM_MOTORS + 1] = {0}; 
-int blue_down_cir[NUM_MOTORS + 1] = {0};
-
 int blue_up_propel[NUM_MOTORS + 1] = {0}; 
 
 // YELLOW
 // Leg 1 and 2 Movements
-int yellow_up_cir[NUM_MOTORS + 1] = {0}; 
-int yellow_down_cir[NUM_MOTORS + 1] = {0};
+int yellow_up_propel[NUM_MOTORS + 1] = {0};
 
-int yellow_up_propel[NUM_MOTORS + 1] = {0}; 
 ///////////////////////////////// ROLLING END /////////////////////////////////
 
 // Function to copy array
@@ -211,164 +133,23 @@ void copy_array(int* dest, int* src) {
 }
 
 // Function to populate movement arrays based on sequence
-void generate_movement_arrays_walk_fw(bool turning_right) {
-  // Start with home_tiptoe for all movements
-  copy_array(leg4_up, home_tiptoe);
-  copy_array(leg4_cw, home_tiptoe);
-  copy_array(leg4_down, home_tiptoe);
-  
-  copy_array(leg3_up, home_tiptoe);
-  copy_array(leg3_ccw, home_tiptoe);
-  copy_array(leg3_down, home_tiptoe);
-
-  copy_array(leg1_up, home_tiptoe);
-  copy_array(leg1_ccw, home_tiptoe);
-  copy_array(leg1_down, home_tiptoe);
-
-  copy_array(leg2_up, home_tiptoe);
-  copy_array(leg2_ccw, home_tiptoe);
-  copy_array(leg2_down, home_tiptoe);
-  
-  if (turning_right == 1) {
-    std::cout << "GENERATING FOR TURNING RIGHT\n";
-    // --- Leg 4 Movements ---
-    leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
-    copy_array(leg4_cw, leg4_up);
-    leg4_cw[10] += CW_CCW_TICKS;       // Forward CW (ID:10)
-    copy_array(leg4_down, leg4_cw);
-    leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
-
-    // --- Leg 3 Movements ---
-    copy_array(leg3_up, leg4_down);
-    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
-    copy_array(leg3_ccw, leg3_up);
-    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
-    copy_array(leg3_down, leg3_ccw);
-    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
-
-    // --- Leg 1 Movements ---
-    leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
-    copy_array(leg1_ccw, leg1_up);
-    leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
-    copy_array(leg1_down, leg1_ccw);
-    leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
-
-    // --- Leg 2 Movements ---
-    copy_array(leg2_up, leg1_down);
-    leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
-    copy_array(leg2_ccw, leg2_up);
-    leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
-    copy_array(leg2_down, leg2_ccw);
-    leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
-  } 
-  else if (turning_right == 0) {
-    std::cout << "GENERATING FOR TURNING LEFT\n";
-    // TURNING LEFT
-    // --- Leg 3 Movements ---
-    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
-    copy_array(leg3_ccw, leg3_up);
-    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
-    copy_array(leg3_down, leg3_ccw);
-    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
-
-    // --- Leg 4 Movements ---
-    copy_array(leg4_up, leg3_down);
-    leg4_up[11] -= UP_DOWN_TICKS;      // Up (ID:11)
-    copy_array(leg4_cw, leg4_up);
-    leg4_cw[10] += CW_CCW_TICKS;       // Forward CW (ID:10)
-    copy_array(leg4_down, leg4_cw);
-    leg4_down[11] += UP_DOWN_TICKS;    // Down (ID:11)
-
-    // --- Leg 3 Movements ---
-    copy_array(leg3_up, leg4_down);
-    leg3_up[8] += UP_DOWN_TICKS;       // Up (ID:8)
-    copy_array(leg3_ccw, leg3_up);
-    leg3_ccw[7] -= CW_CCW_TICKS;       // Forward CCW (ID:7)
-    copy_array(leg3_down, leg3_ccw);
-    leg3_down[8] -= UP_DOWN_TICKS;     // Down (ID:8)
-
-     // --- Leg 2 Movements ---
-    leg2_up[5] -= UP_DOWN_TICKS_BACKLEG;       // Up (ID:5)
-    copy_array(leg2_ccw, leg2_up);
-    leg2_ccw[4] -= CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:4)
-    copy_array(leg2_down, leg2_ccw);
-    leg2_down[5] += UP_DOWN_TICKS_BACKLEG;     // Down (ID:5)
-  
-    // --- Leg 1 Movements ---
-    copy_array(leg1_up, leg2_down);
-    leg1_up[2] += UP_DOWN_TICKS_BACKLEG;       // Up (ID:2)
-    copy_array(leg1_ccw, leg1_up);
-    leg1_ccw[1] += CW_CCW_TICKS_BACKLEG;       // Forward CCW (ID:1)
-    copy_array(leg1_down, leg1_ccw);
-    leg1_down[2] -= UP_DOWN_TICKS_BACKLEG;     // Down (ID:2)
-  }
-}
-
-// Function to populate movement arrays based on sequence
 void generate_movement_arrays_roll_fw() {
   // Start with perfect_cir for all movements
-  copy_array(blue_up_cir, perfect_cir);
   copy_array(blue_up_propel, perfect_cir);
-  
-  copy_array(yellow_up_cir, perfect_cir);
   copy_array(yellow_up_propel, perfect_cir);
   
   std::cout << "GENERATING FOR BLUE LEGS\n";
   // BLUE FOLDS IN REVERSE SO REVERSE INCREMENTS
-  blue_up_cir[11] += UP_DOWN_TICKS_ROLL;      // Up LEG 4
-  blue_up_cir[8] -= UP_DOWN_TICKS_ROLL;      // Up LEG 3
-
   blue_up_propel[11] += UP_TICKS_PROPEL_SMALL;      // Up LEG 4
   blue_up_propel[8] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 3
 
   std::cout << "GENERATING FOR YELLOW LEGS\n";
-  yellow_up_cir[5] -= UP_DOWN_TICKS_ROLL;      // Up LEG 2
-  yellow_up_cir[2] += UP_DOWN_TICKS_ROLL;      // Up LEG 1
-
   yellow_up_propel[5] -= UP_TICKS_PROPEL_SMALL;      // Up LEG 4
   yellow_up_propel[2] += UP_TICKS_PROPEL_SMALL;      // Up LEG 3
 
 }
 
-int home_tiptoe_thin[NUM_MOTORS + 1] = {0, 
-  2207, 2325, 3053, 1818, 1789, 1020, 2226, 2299, 3070, 2833, 1786, 1049
-};
-
-// WALK TO CIR
-int walk_to_cir1[NUM_MOTORS + 1] = {0, 
-    2045, 1637, 3059, 2052, 2435, 1017, 2045, 1983, 2726, 3051, 2085, 1396
-};
-
-// CIR TO WALK
-int cir_to_blue3_180[NUM_MOTORS + 1] = {0, 
-    2047, 1041, 3089, 2050, 3043, 996, 2086, 2987, 3082, 3054, 1099, 3098
-};
-int cir_to_both_blues_180[NUM_MOTORS + 1] = {0, 
-    2047, 974, 3096, 2049, 3088, 993, 2086, 2979, 3082, 3054, 1101, 1052
-};
-
-// RECOVERY LEFT SIDE ON GROUND
-int s_shape_30_out[NUM_MOTORS + 1] = {0, 
-    2023, 1458, 3088, 2059, 2640, 977, 2081, 2642, 1018, 3085, 1459, 3099
-};
-int s_shape_full_90_out[NUM_MOTORS + 1] = {0, 
-    2023, 2140, 3071, 2091, 1958, 962, 2064, 2051, 1003, 3087, 2045, 3098
-};
-int blue3_180[NUM_MOTORS + 1] = {0, 
-    2020, 2140, 3069, 2140, 1958, 946, 1997, 2051, 3070, 3097, 2043, 3081
-};
-int cir_to_yellow_up60[NUM_MOTORS + 1] = {0, 
-    2045, 1281, 3096, 2045, 2829, 989, 2103, 2987, 3062, 3053, 1100, 1052
-};
-int cir_to_yellow_up90[NUM_MOTORS + 1] = {0, 
-    2046, 1631, 3097, 2042, 2485, 984, 2105, 2990, 3060, 3053, 1104, 1052
-};
-// RECOVERY RIGHT SIDE ON GROUND
-
-
-// Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
-// #define DOWN_MOTOR2  2048  // Down (flat no under)
 #define UP_MOTOR2  3074  // Up
 // ROLLING
 #define DOWN_MOTOR2  1020  // Down (for rolling)
@@ -385,8 +166,6 @@ int cir_to_yellow_up90[NUM_MOTORS + 1] = {0,
 #define DOWN_MOTOR11 2044  // Down (flat no under)
 #define UP_MOTOR11  957  // Up
 
-
-
 // Yaw movement (1, 4, 7, 10) (CLOCKWISE & COUNTER-CLOCKWISE)
 #define CLOCKWISE_MOTOR1       1858
 #define COUNTER_CLOCKWISE_MOTOR1 3010
@@ -399,8 +178,6 @@ int cir_to_yellow_up90[NUM_MOTORS + 1] = {0,
 
 #define CLOCKWISE_MOTOR10      2004
 #define COUNTER_CLOCKWISE_MOTOR10 3215
-
-
 
 // Fold movement (3, 6, 9, 12) (CLOCKWISE & COUNTER-CLOCKWISE)
 #define CLOCKWISE_MOTOR3       990
@@ -415,151 +192,8 @@ int cir_to_yellow_up90[NUM_MOTORS + 1] = {0,
 #define CLOCKWISE_MOTOR12      3093 
 #define COUNTER_CLOCKWISE_MOTOR12 1041
 
-// WALKING
-// Struct to store both motors per leg (roll and yaw)
-struct LegMotors {
-  int roll_motor_id;     // Motor responsible for up/down
-  int yaw_motor_id;      // Motor responsible for side-to-side
-  int roll_down;         // Min position for roll movement
-  int roll_up;           // Max position for roll movement
-  int yaw_cw;            // Min position for yaw (CLOCKWISE)
-  int yaw_ccw;           // Max position for yaw (COUNTER-CLOCKWISE)
-};
-
-// Map each leg number to its corresponding motors (using defines)
-std::unordered_map<int, LegMotors> leg_motor_map = {
-  {1, {2, 1, DOWN_MOTOR2, UP_MOTOR2, CLOCKWISE_MOTOR1, COUNTER_CLOCKWISE_MOTOR1}},  
-  {2, {5, 4, DOWN_MOTOR5, UP_MOTOR5, CLOCKWISE_MOTOR4, COUNTER_CLOCKWISE_MOTOR4}},  
-  {3, {8, 7, DOWN_MOTOR8, UP_MOTOR8, CLOCKWISE_MOTOR7, COUNTER_CLOCKWISE_MOTOR7}},  
-  {4, {11, 10, DOWN_MOTOR11, UP_MOTOR11, CLOCKWISE_MOTOR10, COUNTER_CLOCKWISE_MOTOR10}}
-};
-
-// ROLLING
-// Struct to store motors for rolling
-struct LegMotorsFold {
-  int fold_motor_id;
-  int fold_cw;
-  int fold_ccw;
-};
-
-// Map each leg number to its corresponding motors (using defines)
-std::unordered_map<int, LegMotorsFold> fold_map = {
-  {1, {3, CLOCKWISE_MOTOR3, COUNTER_CLOCKWISE_MOTOR3}},  
-  {2, {6, CLOCKWISE_MOTOR6, COUNTER_CLOCKWISE_MOTOR6}},  
-  {3, {9, CLOCKWISE_MOTOR9, COUNTER_CLOCKWISE_MOTOR9}},  
-  {4, {12, CLOCKWISE_MOTOR12, COUNTER_CLOCKWISE_MOTOR12}}
-};
-
-
 int degree_to_pos_diff(int degree) {
   return static_cast<int>((degree/360.0) * 4095);   // used 360.0 to prevent zero for small angles
-}
-
-// Fold the motor CW by a given degree amount
-int fold_cw(int leg_num, int degree) {
-  LegMotorsFold motors = fold_map[leg_num];
-  int fold_cw = motors.fold_cw;     // Clockwise position
-  int fold_ccw = motors.fold_ccw;   // Counter-clockwise position
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.fold_motor_id];
-
-  // Ensure position stays within limits when moving CLOCKWISE
-  if (fold_ccw > fold_cw) {
-      return std::max(curr_pos_motor - diff, fold_cw);
-  } else {
-      return std::min(curr_pos_motor + diff, fold_cw);
-  }
-}
-
-// Fold the motor CCW by a given degree amount
-int fold_ccw(int leg_num, int degree) {
-  LegMotorsFold motors = fold_map[leg_num];
-  int fold_cw = motors.fold_cw;     // Clockwise position
-  int fold_ccw = motors.fold_ccw;   // Counter-clockwise position
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.fold_motor_id];
-
-  // Ensure position stays within limits when moving CLOCKWISE
-  if (fold_ccw > fold_cw) {
-      return std::max(curr_pos_motor + diff, fold_cw);
-  } else {
-      return std::min(curr_pos_motor - diff, fold_cw);
-  }
-}
-
-
-// Moves the motor CLOCKWISE by a given degree amount (YAW motor)
-int go_clockwise(int leg_num, int degree) {
-    LegMotors motors = leg_motor_map[leg_num];
-  int yaw_cw = motors.yaw_cw;     // Clockwise position
-  int yaw_ccw = motors.yaw_ccw;   // Counter-clockwise position
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.yaw_motor_id];
-
-  // Print debug information
-  std::cout << "Leg " << leg_num << ":\n";
-  std::cout << "  Yaw Motor ID: " << motors.yaw_motor_id << "\n";
-  std::cout << "  Roll Motor ID: " << motors.roll_motor_id << "\n";
-  std::cout << "  Current Yaw Position: " << curr_pos_motor << "\n";
-  std::cout << "  Clockwise Limit: " << yaw_cw << "\n";
-  std::cout << "  Counter-Clockwise Limit: " << yaw_ccw << "\n";
-  std::cout << "  Degree to Move: " << degree << "\n";
-  std::cout << "  Position Difference: " << diff << "\n";
-
-  // Ensure position stays within limits when moving CLOCKWISE
-  if (yaw_ccw > yaw_cw) {
-      return std::max(curr_pos_motor + diff, yaw_cw);
-  } else {
-      return std::min(curr_pos_motor - diff, yaw_cw);
-  }
-}
-
-// Moves the motor COUNTER-CLOCKWISE by a given degree amount (YAW motor)
-int go_counter_clockwise(int leg_num, int degree) {
-  LegMotors motors = leg_motor_map[leg_num];
-  int yaw_cw = motors.yaw_cw;
-  int yaw_ccw = motors.yaw_ccw;
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.yaw_motor_id];
-
-  // Ensure position stays within limits when moving COUNTER-CLOCKWISE
-  if (yaw_ccw > yaw_cw) {
-      return std::min(curr_pos_motor - diff, yaw_ccw);
-  } else {
-      return std::max(curr_pos_motor + diff, yaw_ccw);
-  }
-}
-
-// Moves the motor UP by a given degree amount (ROLL motor)
-int go_up(int leg_num, int degree) {
-  LegMotors motors = leg_motor_map[leg_num];
-  int roll_up = motors.roll_up;
-  int roll_down = motors.roll_down;
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.roll_motor_id];
-
-  // Ensure position stays within limits when moving UP
-  if (roll_up > roll_down) {
-      return std::min(curr_pos_motor + diff, roll_up);
-  } else {
-      return std::max(curr_pos_motor - diff, roll_up);
-  }
-}
-
-// Moves the motor DOWN by a given degree amount (ROLL motor)
-int go_down(int leg_num, int degree) {
-  LegMotors motors = leg_motor_map[leg_num];
-  int roll_up = motors.roll_up;
-  int roll_down = motors.roll_down;
-  int diff = degree_to_pos_diff(degree);
-  int curr_pos_motor = present_positions[motors.roll_motor_id];
-
-  // Ensure position stays within limits when moving UP
-  if (roll_up > roll_down) {
-      return std::max(curr_pos_motor - diff, roll_down);
-  } else {
-      return std::min(curr_pos_motor + diff, roll_down);
-  }
 }
 
 int getch()
@@ -610,46 +244,6 @@ int kbhit(void)
 #endif
 }
 
-void scan_motors(dynamixel::GroupSyncRead &groupSyncRead, 
-                 dynamixel::PacketHandler *packetHandler, 
-                 dynamixel::PortHandler *portHandler)
-{
-  printf("Scanning for connected Dynamixel motors...\n");
-
-  // Clear previous parameters
-  groupSyncRead.clearParam();
-  
-  // Scan for active motors
-  for (int id = 1; id <= NUM_MOTORS; id++) {
-      int dxl_comm_result = packetHandler->ping(portHandler, id);
-      if (dxl_comm_result == COMM_SUCCESS) {
-          printf("Found Dynamixel ID: %d\n", id);
-
-          // Add ID to GroupSyncRead
-          bool dxl_addparam_result = groupSyncRead.addParam(id);
-          if (!dxl_addparam_result) {
-              printf("Failed to add ID %d to SyncRead\n", id);
-          }
-      }
-  }
-
-  // Read all present positions
-  int dxl_comm_result = groupSyncRead.txRxPacket();
-  if (dxl_comm_result != COMM_SUCCESS) {
-      printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
-  }
-
-  // Print present positions of connected motors
-  printf("\nCurrent Positions:\n");
-  for (int id = 1; id <= NUM_MOTORS; id++) {
-      if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-          int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-          printf("[ID:%d] Position: %d\n", id, position);
-      }
-  }
-  printf("\n");
-}
-
 
 void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
@@ -681,60 +275,6 @@ void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead,
   // for (int id = 1; id <= NUM_MOTORS; id++) {
   //   printf("[ID: %d] Position: %d\n", id, present_positions[id]);
   // }
-}
-
-void update_one_motor_pos(dynamixel::GroupSyncRead &groupSyncRead, 
-  dynamixel::PacketHandler *packetHandler, 
-  dynamixel::PortHandler *portHandler, 
-  int motor_id) // Only update this motor
-{
-  // Clear previous parameters
-  groupSyncRead.clearParam();
-
-  // Add only the specified motor for reading
-  bool dxl_addparam_result = groupSyncRead.addParam(motor_id);
-  if (!dxl_addparam_result) {
-  printf("Failed to add ID %d to SyncRead\n", motor_id);
-  return;
-  }
-
-  // Read position for the selected motor
-  int dxl_comm_result = groupSyncRead.txRxPacket();
-  if (dxl_comm_result != COMM_SUCCESS) {
-  printf("Failed to read position for ID %d: %s\n", motor_id, packetHandler->getTxRxResult(dxl_comm_result));
-  return;
-  }
-
-  // Update only the specified motor
-  if (groupSyncRead.isAvailable(motor_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-  int32_t position = groupSyncRead.getData(motor_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-  present_positions[motor_id] = position;
-  printf("[ID:%d] Updated Position: %d\n", motor_id, position);
-  }
-}
-
-void set_torque(dynamixel::PacketHandler *packetHandler, 
-                dynamixel::PortHandler *portHandler, 
-                const char *command, char *ids_str)
-{
-  bool enable = (strcmp(command, "en") == 0) ? TORQUE_ENABLE : TORQUE_DISABLE;
-  uint8_t dxl_error = 0;
-
-  char *token = strtok(ids_str, " ");
-  while (token != NULL) {
-      int dxl_id = atoi(token);
-      if (dxl_id < 1 || dxl_id > NUM_MOTORS) {
-          printf("Invalid ID: %d. Must be between 1 and %d.\n", dxl_id, NUM_MOTORS);
-      } else {
-          int dxl_comm_result = packetHandler->write1ByteTxRx(portHandler, dxl_id, ADDR_PRO_TORQUE_ENABLE, enable, &dxl_error);
-          if (dxl_comm_result != COMM_SUCCESS) {
-              printf("[ID:%d] Torque change failed: %s\n", dxl_id, packetHandler->getTxRxResult(dxl_comm_result));
-          } else {
-              printf("[ID:%d] Torque %s\n", dxl_id, enable ? "ENABLED" : "DISABLED");
-          }
-      }
-      token = strtok(NULL, " ");
-  }
 }
 
 void move_to(
@@ -819,37 +359,6 @@ void move_to_target_positions(
   groupSyncWrite.clearParam();
 }
 
-void gradual_transition(int* next_positions, 
-                         dynamixel::GroupSyncWrite &groupSyncWrite, 
-                         dynamixel::PacketHandler *packetHandler,
-                         dynamixel::GroupSyncRead &groupSyncRead,  // Added parameter
-                         dynamixel::PortHandler *portHandler) {  // Added parameter
-    const int step_size = 17;
-    float step_arr[NUM_MOTORS + 1] = {0};
-    int num_motors = NUM_MOTORS;
-
-    int updated_positions[NUM_MOTORS + 1];
-
-    // Ensure present_positions is updated before starting the transition
-    update_present_positions(groupSyncRead, packetHandler, portHandler);
-    
-    std::copy(std::begin(present_positions), std::end(present_positions), std::begin(updated_positions));
-
-    for (int i = 1; i <= num_motors; i++) {
-        step_arr[i] = static_cast<float>(next_positions[i] - updated_positions[i]) / step_size;
-    }
-
-    for (int step = 0; step < step_size; step++) {
-        for (int i = 1; i <= num_motors; i++) {
-            updated_positions[i] += std::round(step_arr[i]);  // Fix rounding issue
-        }
-        move_to_target_positions(updated_positions, groupSyncWrite, packetHandler);
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    }
-
-    move_to_target_positions(next_positions, groupSyncWrite, packetHandler);
-}
-
 std::string get_random_command() {
     static std::random_device rd;   // Non-deterministic random seed
     static std::mt19937 gen(rd());  // Mersenne Twister RNG
@@ -860,9 +369,6 @@ std::string get_random_command() {
 
 int main() 
 {
-  int perfect_cir[NUM_MOTORS + 1] = {0, 
-    2039, 1113, 3080, 2053, 2980, 1006, 2086, 2983, 1045, 3054, 1112, 3094
-  };
   generate_movement_arrays_roll_fw();
 
   // Initialize PortHandler instance
@@ -939,9 +445,6 @@ int main()
     }
   }
 
-
-    std::string input;
-
     int file;
     int adapter_nr = 1; // use /dev/i2c-1
     char filename[20];
@@ -993,8 +496,6 @@ int main()
     int sample_count = 0;
     
   while (true) {
-    std::cout << "ENTERING while loop\n";
-
     std::string command = "rpy";
 
     // Read gyroscope data
@@ -1044,9 +545,7 @@ int main()
     // std::cout << "Sample Count: " << sample_count << std::endl;
 
     // Check if enough samples have been collected
-    if (sample_count >= window_size) {
-        std::cout << "COLLECTED enough samples while loop\n";
-        
+    if (sample_count >= window_size) {        
         float avg_tilt_angle = accumulated_tilt_angle / sample_count;
         std::cout << "Average Tilt Angle: " << avg_tilt_angle << " degrees" << std::endl;
          // Use tilt angle to determine which side is under
@@ -1111,10 +610,6 @@ int main()
         move_to(roll_fw_movements[i], groupSyncWrite, packetHandler, groupSyncRead, portHandler);
         std::this_thread::sleep_for(std::chrono::milliseconds(700));  
       }
-    }
-
-    else {
-      std::cout << "Unknown command: " << command << "\n";
     }
 
     // Adjust sampling rate (lower value for higher frequency)
