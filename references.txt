@@ -1,0 +1,11 @@
+[1] https://journals.sagepub.com/doi/full/10.1177/1729881416658180.
+[2] https://github.com/ROBOTIS-GIT/DynamixelSDK
+[3] https://www.youtube.com/watch?v=bm5MBO7D13Q. DYNAMIXEL Quick Start Guide in C++
+[4] https://www.youtube.com/watch?v=E8XPqDjof4U&list=PLRG6WP3c31_Xg_IPNGJybiP8H4Lpy2RuY. DYNAMIXEL Quick Start Guide for ROS 2
+[5] https://emanual.robotis.com/docs/en/parts/interface/u2d2_power_hub/
+[6] https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_wizard2/
+[7] https://emanual.robotis.com/docs/en/dxl/dxl-quick-start-guide/
+[8] https://docs.ultralytics.com/tasks/obb/#how-do-i-train-a-yolo11n-obb-model-using-a-custom-dataset
+[9] https://github.com/IntelRealSense/realsense-ros
+[10] https://learn.adafruit.com/lsm6dsox-and-ism330dhc-6-dof-imu/arduino
+[11] https://github.com/MysteriousJ/Joystick-Input-Examples/blob/main/src/joydev.cpp
