@@ -16,18 +16,18 @@ The robot has 12 servo motors, with 3 motors per leg. Each leg has the following
 - **Yaw Motor** - Controls side-to-side movement
 - **Fold Motor** - Controls folding/unfolding of the leg
 
-## Setup & Compilation (Option 1: Pure C++ Control)
+## Quickstart Option 1: Pure C++ Control
 
 ### Overall Control
-- cd into sync_read_write folder
+- cd self-reconfigurable-quadruped/c++/control/sync_read_write
 - make
-- run ./sync_read_write executable
+- ./sync_read_write
 
 ### Rolling Mode
-- run ./sync_read_write executable and transform the robot using hcr (home to circle)
-- cd into rolling_imu folder
+- run ./sync_read_write executable and transform the robot using `hcir` (home to circle)
+- cd self-reconfigurable-quadruped/c++/control/rolling_imu
 - make
-- run ./roll executable
+- ./roll
 
 ## Basic Usage
 
@@ -111,14 +111,21 @@ If the robot falls during rolling:
 2. Return to circle position with `cir`
 3. Run ./roll again
 
-## Setup (Option 2: Autonomous Bowling using ROS2)
+## Quickstart Option 2: Autonomous Bowling
 
 ### ROS2-Based Autonomous Bowling System
 
-This system enables autonomous bowling using computer vision (YOLO) and machine learning. The robot uses IMU data and visual feedback to find, roll toward, and knock down bowling pins.
+This setup enables autonomous bowling using computer vision (YOLO) and machine learning. The robot uses IMU data and visual feedback to find, roll toward, and knock down bowling pins.
+
+ROS2 version: Jazzy
+
+```bash
+# DYNAMIXEL requirements
+sudo apt install ros-jazzy-dynamixel-sdk ros-jazzy-dynamixel-sdk-custom-interfaces
+```
 
 #### Step 1: Start the `quad_motor_control` Node on the RPi5 through ssh from the laptop
-- The laptop and pi must have the same wifi.
+- The laptop and the pi must have the same wifi.
 
 quad_motor_control node:
 - Controls the motors and reads IMU data for rolling mode
@@ -127,12 +134,22 @@ quad_motor_control node:
 ```bash
 # On laptop - RPi5 Terminal
 ssh <rpi_name>@<ip_address>
-cd ~/reconfigurable_quadruped/ros2_ws
+cd ~/self-reconfigurable-quadruped/ros2_ws
+colcon build
 source install/setup.bash
 ros2 run quad_motor_control quad_motor_control
 ```
 
-#### Step 2: Start Action Server, Client, and YOLO Node on Laptop
+#### Step 2: Set up a virtual environment for the computer vision task
+
+```bash
+# On laptop
+python3 -m venv venv       # create the venv
+source venv/bin/activate   # activate it
+pip install -r requirements.txt  # install everything from the file
+```
+
+#### Step 3: Start Action Server, Client, and YOLO Node on the laptop
 
 These nodes:
 - Handle motion planning and execution
@@ -140,12 +157,16 @@ These nodes:
 
 ```bash
 # On laptop - Terminal 1
-source ~/ros2_ws/install/setup.bash
+cd ~/self-reconfigurable-quadruped/ros2_ws
+colcon build
+source install/setup.bash
 ros2 run quad_control move_action_server &
 ros2 run quad_control move_action_client &
 ```
 ```bash
 # On laptop - Terminal 2
+cd ~/self-reconfigurable-quadruped/ros2_ws
+source install/setup.bash
 # Activate a virtual environment to access YOLO from Ultralytics
 source venv/bin/activate
 ros2 run quad_vision yolo_node
