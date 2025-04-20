@@ -271,10 +271,7 @@ void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead,
           present_positions[id] = position;
       }
   }
-  // printf("Present motor positions UPDATED\n");
-  // for (int id = 1; id <= NUM_MOTORS; id++) {
-  //   printf("[ID: %d] Position: %d\n", id, present_positions[id]);
-  // }
+
 }
 
 void move_to(

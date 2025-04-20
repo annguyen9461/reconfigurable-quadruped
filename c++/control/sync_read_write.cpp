@@ -107,18 +107,7 @@ int home_walking2[NUM_MOTORS + 1] = {0,
 };
 
 
-
-
 ///////////////////////////////// WALKING START /////////////////////////////////
-
-// Constants
-// TURNING RIGHT
-// const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
-// const int UP_DOWN_TICKS = static_cast<int>(30 * TICKS_PER_DEGREE);  // 30 degrees → 341 ticks
-// const int CW_CCW_TICKS = static_cast<int>(25 * TICKS_PER_DEGREE);   // 20 degrees → 227 ticks
-// const int UP_DOWN_TICKS_BACKLEG = static_cast<int>(22 * TICKS_PER_DEGREE); 
-// const int CW_CCW_TICKS_BACKLEG = static_cast<int>(35 * TICKS_PER_DEGREE);
-
 // WALKING
 const double TICKS_PER_DEGREE = 4096.0 / 360.0;  // ≈ 11.37778
 
@@ -456,35 +445,21 @@ int cir_to_blue3_180[NUM_MOTORS + 1] = {0,
 int cir_to_both_blues_180[NUM_MOTORS + 1] = {0, 
     2047, 974, 3096, 2049, 3088, 993, 2086, 2979, 3082, 3054, 1101, 1052
 };
-
-// RECOVERY LEFT SIDE ON GROUND
-int s_shape_30_out[NUM_MOTORS + 1] = {0, 
-    2023, 1458, 3088, 2059, 2640, 977, 2081, 2642, 1018, 3085, 1459, 3099
-};
-int s_shape_full_90_out[NUM_MOTORS + 1] = {0, 
-    2023, 2140, 3071, 2091, 1958, 962, 2064, 2051, 1003, 3087, 2045, 3098
-};
-int blue3_180[NUM_MOTORS + 1] = {0, 
-    2020, 2140, 3069, 2140, 1958, 946, 1997, 2051, 3070, 3097, 2043, 3081
-};
 int cir_to_yellow_up60[NUM_MOTORS + 1] = {0, 
     2045, 1281, 3096, 2045, 2829, 989, 2103, 2987, 3062, 3053, 1100, 1052
 };
 int cir_to_yellow_up90[NUM_MOTORS + 1] = {0, 
     2046, 1631, 3097, 2042, 2485, 984, 2105, 2990, 3060, 3053, 1104, 1052
 };
-// RECOVERY RIGHT SIDE ON GROUND
 
 
 // Up and Down movement (2, 5, 8, 11) (ROLL)
 // WALKING
-// #define DOWN_MOTOR2  2048  // Down (flat no under)
 #define UP_MOTOR2  3074  // Up
 // ROLLING
 #define DOWN_MOTOR2  1020  // Down (for rolling)
 
 // WALKING
-// #define DOWN_MOTOR5  2042  // Down (flat no under)
 #define UP_MOTOR5  1039  // Up
 // ROLLING
 #define DOWN_MOTOR5  2919  // Down (for rolling)
@@ -760,26 +735,6 @@ void scan_motors(dynamixel::GroupSyncRead &groupSyncRead,
   printf("\n");
 }
 
-void print_present(dynamixel::GroupSyncRead &groupSyncRead, 
-                 dynamixel::PacketHandler *packetHandler, 
-                 dynamixel::PortHandler *portHandler)
-{
-    // Read all present positions
-    int dxl_comm_result = groupSyncRead.txRxPacket();
-    if (dxl_comm_result != COMM_SUCCESS) {
-        printf("Failed to read positions: %s\n", packetHandler->getTxRxResult(dxl_comm_result));
-    }
-
-    // Print present positions of connected motors
-    printf("\nCurrent Positions:\n");
-    for (int id = 1; id <= NUM_MOTORS; id++) {
-        if (groupSyncRead.isAvailable(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-            int32_t position = groupSyncRead.getData(id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-            printf("[ID:%d] Position: %d\n", id, position);
-        }
-    }
-    printf("\n");
-}
 
 void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead, 
                  dynamixel::PacketHandler *packetHandler, 
@@ -811,36 +766,6 @@ void update_present_positions(dynamixel::GroupSyncRead &groupSyncRead,
   // for (int id = 1; id <= NUM_MOTORS; id++) {
   //   printf("[ID: %d] Position: %d\n", id, present_positions[id]);
   // }
-}
-
-void update_one_motor_pos(dynamixel::GroupSyncRead &groupSyncRead, 
-  dynamixel::PacketHandler *packetHandler, 
-  dynamixel::PortHandler *portHandler, 
-  int motor_id) // Only update this motor
-{
-  // Clear previous parameters
-  groupSyncRead.clearParam();
-
-  // Add only the specified motor for reading
-  bool dxl_addparam_result = groupSyncRead.addParam(motor_id);
-  if (!dxl_addparam_result) {
-  printf("Failed to add ID %d to SyncRead\n", motor_id);
-  return;
-  }
-
-  // Read position for the selected motor
-  int dxl_comm_result = groupSyncRead.txRxPacket();
-  if (dxl_comm_result != COMM_SUCCESS) {
-  printf("Failed to read position for ID %d: %s\n", motor_id, packetHandler->getTxRxResult(dxl_comm_result));
-  return;
-  }
-
-  // Update only the specified motor
-  if (groupSyncRead.isAvailable(motor_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)) {
-  int32_t position = groupSyncRead.getData(motor_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION);
-  present_positions[motor_id] = position;
-  printf("[ID:%d] Updated Position: %d\n", motor_id, position);
-  }
 }
 
 void set_torque(dynamixel::PacketHandler *packetHandler, 
