@@ -180,7 +180,7 @@ ros2 run quad_control move_action_client &
 ```bash
 # On laptop - Terminal 2
 cd self-reconfigurable-quadruped
-# Activate a virtual environment to access YOLO from Ultralytics
+# Activate the virtual environment to access YOLO from Ultralytics
 source venv/bin/activate
 cd ros2_ws
 source install/setup.bash
