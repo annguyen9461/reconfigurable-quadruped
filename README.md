@@ -157,6 +157,7 @@ ros2 run quad_motor_control quad_motor_control
 
 ```bash
 # On laptop
+cd self-reconfigurable-quadruped
 python3 -m venv venv       # create the venv
 source venv/bin/activate   # activate it
 pip install -r requirements.txt  # install everything from the file
@@ -178,10 +179,11 @@ ros2 run quad_control move_action_client &
 ```
 ```bash
 # On laptop - Terminal 2
-cd self-reconfigurable-quadruped/ros2_ws
-source install/setup.bash
+cd self-reconfigurable-quadruped
 # Activate a virtual environment to access YOLO from Ultralytics
 source venv/bin/activate
+cd ros2_ws
+source install/setup.bash
 ros2 run quad_vision yolo_node
 ```
 #### System Behavior
