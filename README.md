@@ -175,7 +175,7 @@ cd self-reconfigurable-quadruped/ros2_ws
 colcon build
 source install/setup.bash
 ros2 run quad_control move_action_server &
-ros2 run quad_control move_action_client &
+ros2 run quad_control move_action_client
 ```
 ```bash
 # On laptop - Terminal 2
