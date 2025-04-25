@@ -1,6 +1,6 @@
 # Transformerbot Control System
 
-This README describes the usage of the control system for the quadruped robot, including both walking and rolling modes. The ROS2 code also performs a autonomous bowling using computer vision (YOLO) and machine learning.
+This README describes the usage of the control system for the quadruped robot, including both walking and rolling modes. The ROS2 code also performs autonomous bowling using computer vision (YOLO) and machine learning.
 
 ## Demo
 https://github.com/user-attachments/assets/16f294a2-c4f4-4af3-99e2-1b8f990bea4d
